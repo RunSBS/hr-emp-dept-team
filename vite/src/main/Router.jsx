@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
-import Login from './Login';
-import Sign from './Sign';
-import Main from './Main';
-import Calender from "../features/일정/pages/Calender";
-import Home from './Home'
+import Login from './Login.jsx';
+import Sign from './Sign.jsx';
+import Main from './Main.jsx';
+import Calender from "../features/일정/pages/Calender.jsx";
+import Home from './Home.jsx'
 function Router() {
     return (
         <Routes>
