@@ -72,7 +72,7 @@ const Home = () => {
                             <Collapse in={openWork}>
                                 <div>
                                     <Nav className="flex-column ms-3">
-                                        <Nav.Link as={Link} to="/main/work/attendance">출퇴근</Nav.Link>
+                                        <Nav.Link as={Link} to="/main/work/attendance">출퇴근 기록</Nav.Link>
                                         <Nav.Link as={Link} to="/main/work/leave">휴가관리</Nav.Link>
                                         <Nav.Link as={Link} to="/main/work/overtime">초과근무</Nav.Link>
                                     </Nav>
