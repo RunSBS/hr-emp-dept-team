@@ -1,12 +1,10 @@
 package boot.team.hr.hyun.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -14,11 +12,24 @@ import java.sql.Timestamp;
 @Setter
 public class Emp {
     @Id
-    public Integer emp_id;
-    public String emp_name;
-    public Integer dept_id;
-    public String email;
-    public String role;
-    public Timestamp created_at;
-    public Timestamp updated_at;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "emp_id") // DB 컬럼명은 emp_id
+    private Integer empId;    // Java 필드명은 empId
+
+    @Column(name = "emp_name")
+    private String empName;
+
+    @Column(name = "dept_id")
+    private Integer deptId;
+
+    private String email;
+    private String role;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }
