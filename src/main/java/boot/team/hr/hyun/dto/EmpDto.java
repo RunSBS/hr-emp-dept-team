@@ -8,11 +8,11 @@ import lombok.ToString;
 @Setter
 @ToString
 public class EmpDto {
-    private String emp_id;
-    private String emp_name;
-    private String dept_id;
+    private String empId;   // React의 empId와 매핑
+    private String empName; // React의 empName과 매핑
+    private String deptId;  // React의 deptId와 매핑
     private String email;
     private String role;
-    private String created_at;
-    private String updated_at;
+    private String createdAt;
+    private String updatedAt;
 }
