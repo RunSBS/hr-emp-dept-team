@@ -24,7 +24,9 @@ public class Emp {
     @Column(name = "dept_id")
     private Integer deptId;
 
+    @Column(nullable = false, unique = true)
     private String email;
+
     private String role;
 
     @Column(name = "created_at")

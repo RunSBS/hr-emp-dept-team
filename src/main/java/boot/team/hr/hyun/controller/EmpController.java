@@ -3,6 +3,7 @@ package boot.team.hr.hyun.controller;
 import boot.team.hr.hyun.dto.EmpDto;
 import boot.team.hr.hyun.service.EmpService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class EmpController {
     }
 
     @PostMapping("/insert")
+    @PreAuthorize("hasRole('ADMIN')")
     public void insertEmp(@RequestBody EmpDto empDto){
         empService.insertEmp(empDto);
     }
