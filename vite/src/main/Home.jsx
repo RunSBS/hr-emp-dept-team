@@ -2,9 +2,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/home.css";
 import { Container, Row, Col, Nav, Navbar, Collapse } from "react-bootstrap";
 import {Link, Outlet, useNavigate} from "react-router-dom";
-import React, { useState } from "react";
+import React, {useState} from "react";
+import {useAuth} from "./AuthContext.jsx";
 
 const Home = () => {
+    const [openInvite,setOpenInvite]=useState(false);
     const [openHr, setOpenHr] = useState(false);
     const [openWork, setOpenWork] = useState(false);
     const [openSchedule, setOpenSchedule] = useState(false);
@@ -17,7 +19,9 @@ const Home = () => {
         await fetch("/back/logout", { method: "POST", credentials: "include" });
         navigate("/"); // 로그아웃 후 로그인 페이지 이동
     };
-
+    const {user}=useAuth();
+    console.log(user);
+    console.log(user.role);
     return (
         <div className="admin-page">
             {/* 상단 Navbar */}
@@ -41,7 +45,19 @@ const Home = () => {
 
                             {/* 홈 */}
                             <Nav.Link as={Link} to="/main">홈</Nav.Link>
-
+                            
+                            {/*초대*/}
+                            
+                            <Nav.Link onClick={() => setOpenInvite(!openInvite)}>
+                                초대 {openInvite ? "▾" : "▸"}
+                            </Nav.Link>
+                            <Collapse in={openInvite}>
+                                <div>
+                                    <Nav className="flex-column ms-3">
+                                        <Nav.Link as={Link} to="/main/invite/record">초대 내역</Nav.Link>
+                                    </Nav>
+                                </div>
+                            </Collapse>
                             {/* 인사 */}
                             <Nav.Link onClick={() => setOpenHr(!openHr)}>
                                 인사 {openHr ? "▾" : "▸"}

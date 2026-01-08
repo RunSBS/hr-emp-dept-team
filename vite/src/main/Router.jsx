@@ -31,6 +31,7 @@ import LeaveApproval from "../features/work/pages/LeaveApproval.jsx";
 import AnnualPromotion from "../features/work/pages/AnnualPromotion.jsx";
 import Dispatch from "../features/hrm/pages/Dispatch.jsx";
 import EmpSign from "./EmpSign.jsx";
+import Record from "../features/invite/Record.jsx";
 function Router() {
     return (
         <Routes>
@@ -39,6 +40,10 @@ function Router() {
             <Route path="/empsign" element={<EmpSign />} />
             <Route path="/main" element={<Home />}>
                 <Route index  element={<EmpMain />}/>   {/* /main */}
+
+                <Route path="invite">
+                    <Route path="record"   element={<Record/>}/>
+                </Route>
 
                 <Route path="hr">
                     <Route path="all"   element={<All />}/>

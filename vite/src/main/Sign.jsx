@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Container, Card, Button, Form } from "react-bootstrap";
+import "./styles/login.css";
 
 const Sign = () => {
     const navigate = useNavigate();
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -14,67 +15,60 @@ const Sign = () => {
         }
 
         try {
-            const response = await fetch("/back/signup/admin", {
+            const res = await fetch("/back/signup/admin", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
-                }),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
             });
 
-            if (!response.ok) {
-                throw new Error("회원가입 실패");
-            }
+            if (!res.ok) throw new Error("회원가입 실패");
 
             alert("관리자 회원가입 성공");
-            navigate("/"); // 로그인 페이지로 이동
-
-        } catch (error) {
-            alert(error.message);
+            navigate("/");
+        } catch (e) {
+            alert(e.message);
         }
     };
 
     return (
-        <>
-            <div style={{ display: "flex" }}>
-                <h1 style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
-                    로그인
-                </h1>
-                &nbsp;
-                <h1 style={{ cursor: "pointer" }} onClick={() => navigate("/sign")}>
-                    관리자가입
-                </h1>
-                &nbsp;
-                <h1 style={{ cursor: "pointer" }} onClick={() => navigate("/empsign")}>
-                    사원가입
-                </h1>
-            </div>
+        <Container fluid className="login-wrapper">
+            <Card className="login-card">
 
-            <h2>관리자 회원가입</h2>
+                <div className="top-btn-group">
+                    <button onClick={() => navigate("/")}>로그인</button>
+                    <button onClick={() => navigate("/sign")}>관리자 가입</button>
+                    <button onClick={() => navigate("/empsign")}>사원 가입</button>
+                </div>
 
-            <div>
-                email:
-                <input
-                    type="text"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-            </div>
+                <Card.Body>
+                    <h4 className="login-title">관리자 회원가입</h4>
 
-            <div>
-                pwd:
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-            </div>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Control
+                                type="email"
+                                placeholder="Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </Form.Group>
 
-            <button onClick={handleSignUp}>회원가입</button>
-        </>
+                        <Form.Group className="mb-3">
+                            <Form.Control
+                                type="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </Form.Group>
+
+                        <Button className="login-btn w-100" onClick={handleSignUp}>
+                            관리자 회원가입
+                        </Button>
+                    </Form>
+                </Card.Body>
+            </Card>
+        </Container>
     );
 };
 

@@ -1,7 +1,10 @@
 package boot.team.hr.min.account.config;
 
+import boot.team.hr.min.account.service.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,10 +13,13 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.List;
 
+@EnableMethodSecurity(prePostEnabled = true)
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final CustomUserDetailsService customUserDetailsService;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -26,21 +32,24 @@ public class SecurityConfig {
                     return corsConfig;
                 }))
                 .csrf(csrf -> csrf.disable())
-
-                // 회원가입 API는 인증 없이 접근 가능, 나머지는 인증 필요
+                
+                //일단 전부오픈
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/signup/**").permitAll()  // 회원가입 허용
-                        .anyRequest().authenticated()              // 그 외 요청은 인증 필요
+                        .anyRequest().permitAll()
                 )
-
+                .userDetailsService(customUserDetailsService)
                 // 로그인 설정
                 .formLogin(form -> form
                         .loginProcessingUrl("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/main", true)
+                        .successHandler((request, response, authentication) -> {
+                            response.setStatus(200);
+                        })
+                        .failureHandler((request, response, exception) -> {
+                            response.setStatus(401);
+                        })
                 )
-
                 // 로그아웃 설정
                 .logout(logout -> logout
                         .logoutUrl("/logout")

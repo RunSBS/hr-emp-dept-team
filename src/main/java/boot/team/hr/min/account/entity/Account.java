@@ -19,11 +19,14 @@ import java.time.LocalDateTime;
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_seq")
     @SequenceGenerator(
-            name = "account_seq",
-            sequenceName = "ACCOUNT_SEQ",
+            name = "acc_seq",
+            sequenceName = "ACC_SEQ",
             allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "acc_seq"
     )
     private Long id;
 
