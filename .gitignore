@@ -36,7 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
-.yml
+*.yml
 
 # Node / Frontend
 node_modules/

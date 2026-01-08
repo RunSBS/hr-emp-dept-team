@@ -6,7 +6,9 @@ const EmpSelectAll = () => {
 
     const handleClick = async () => {
         try {
-            const res = await axios("/back/hyun/emp/selectAll");
+            const res = await axios.get("/back/hyun/emp/selectAll",{
+                withCredentials: true,
+            });
             setEmpList(res.data);
             console.log("조회 결과 : ", res.data);
         } catch (e) {
@@ -39,7 +41,7 @@ const EmpSelectAll = () => {
                                 <td>{emp.empId}</td>
                                 <td>{emp.deptId}</td>
                                 <td>{emp.empName}</td>
-                                <td>{emp.email}</td>
+                                <td>{emp.email}<button>초대</button></td>
                                 <td>{emp.role}</td>
                                 <td>{emp.createdAt}</td>
                                 <td>{emp.updatedAt}</td>
