@@ -1,7 +1,7 @@
 package boot.team.hr.min.account.service;
 
-import boot.team.hr.hyun.entity.Emp;
-import boot.team.hr.hyun.repo.EmpRepository;
+import boot.team.hr.hyun.emp.entity.Emp;
+import boot.team.hr.hyun.emp.repo.EmpRepository;
 import boot.team.hr.min.account.entity.Account;
 import boot.team.hr.min.account.repository.AccountRepository;
 import boot.team.hr.min.account.security.CustomUserDetails;
