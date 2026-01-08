@@ -26,7 +26,7 @@ public class Emp {
 
     private String email;
     private String role; // CEO, Manager, TeamLeader, Employee ( CEO -> 담당관 -> 팀장 -> 사원)
-//    private Integer managerId; // 직속상관 ( 사수 )
+    private Integer managerId; // 직속상관 ( 사수 )
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

@@ -3,7 +3,6 @@ import "../styles/home.css";
 import { Container, Row, Col, Nav, Navbar, Collapse } from "react-bootstrap";
 import {Link, Outlet, useNavigate} from "react-router-dom";
 import React, {useState} from "react";
-import {useAuth} from "./AuthContext.jsx";
 
 const Home = () => {
     const [openInvite,setOpenInvite]=useState(false);
@@ -19,9 +18,7 @@ const Home = () => {
         await fetch("/back/logout", { method: "POST", credentials: "include" });
         navigate("/"); // 로그아웃 후 로그인 페이지 이동
     };
-    const {user}=useAuth();
-    console.log(user);
-    console.log(user.role);
+
     return (
         <div className="admin-page">
             {/* 상단 Navbar */}
