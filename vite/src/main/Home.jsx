@@ -3,9 +3,11 @@ import "../styles/home.css";
 import { Container, Row, Col, Nav, Navbar, Collapse } from "react-bootstrap";
 import {Link, Outlet, useNavigate} from "react-router-dom";
 import React, {useState} from "react";
-import {useAuth} from "./AuthContext.jsx";
+import { useAuth } from "./AuthContext";
+
 
 const Home = () => {
+
     const [openInvite,setOpenInvite]=useState(false);
     const [openHr, setOpenHr] = useState(false);
     const [openWork, setOpenWork] = useState(false);
@@ -16,19 +18,21 @@ const Home = () => {
     const [openReward, setOpenReward] = useState(false);
     const navigate = useNavigate();
 
+    const {user} = useAuth();
+    console.log(user);
+    console.log(user?.role);
+
     const handleLogout = async () => {
         await fetch("/back/logout", { method: "POST", credentials: "include" });
         navigate("/"); // 로그아웃 후 로그인 페이지 이동
     };
-    const {user}=useAuth();
-    console.log(user);
-    console.log(user.role);
+
     return (
         <div className="admin-page">
             {/* 상단 Navbar */}
             <Navbar className="custom-navbar">
                 <Container>
-                    <Navbar.Brand>
+                          <Navbar.Brand>
                         <div className="brand">HR</div>
                     </Navbar.Brand>
                     <Nav className="ms-auto">
@@ -48,7 +52,6 @@ const Home = () => {
                             <Nav.Link as={Link} to="/main">홈</Nav.Link>
                             
                             {/*초대*/}
-                            
                             <Nav.Link onClick={() => setOpenInvite(!openInvite)}>
                                 초대 {openInvite ? "▾" : "▸"}
                             </Nav.Link>
@@ -81,20 +84,32 @@ const Home = () => {
                             <Collapse in={openWork}>
                                 <div>
                                     <Nav className="flex-column ms-3">
-                                        <Nav.Link as={Link} to="/main/work/employee/attendance">출퇴근 기록</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/work/employee/request">휴가(연가) 신청</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/work/employee/status">휴가 신청 현황</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/work/employee/usage">연차 사용 현황</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/work/employee/workpolicy">근태 정책 조회</Nav.Link>
-
-                                        {/*<Nav.Link as={Link} to="/main/work/admin-attandance">출퇴근 내역 관리</Nav.Link>*/}
-                                        {/*<Nav.Link as={Link} to="/main/work/admin-policy">근태 정책 관리</Nav.Link>*/}
-                                        {/*<Nav.Link as={Link} to="/main/work/leave-approval">휴가 신청 승인</Nav.Link>*/}
-                                        {/*<Nav.Link as={Link} to="/main/work/annual-promotion">연차 촉진 관리</Nav.Link>*/}
-                                        <Nav.Link as={Link} to="/main/work/admin/attendance">출퇴근 내역 관리</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/work/admin/adminworkpolicy">근태 정책 관리</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/work/admin/leaveapproval">휴가 신청 승인</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/work/admin/annualleave">연차 촉진 관리</Nav.Link>
+                                        {/*근태: 일반 사원과 팀장*/}
+                                        {(user?.role === "EMP" || user?.role === "LEADER") && (
+                                            <>
+                                                <Nav.Link as={Link} to="/main/work/employee/attendance">출퇴근 기록</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/work/employee/request">휴가(연가) 신청</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/work/employee/status">휴가 신청 현황</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/work/employee/usage">연차 사용 현황</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/work/employee/workpolicy">근태 정책 조회</Nav.Link>
+                                            </>
+                                        )}
+                                        {/*근태: 근태 관리자 */}
+                                        {user?.role === "HR" && (
+                                            <>
+                                                <Nav.Link as={Link} to="/main/work/admin/attendance">출퇴근 내역 관리</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/work/admin/adminworkpolicy">근태 정책 관리</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/work/admin/annualleave">연차 촉진 관리</Nav.Link>
+                                            </>
+                                        )}
+                                        {/*근태: 팀장*/}
+                                        {user?.role === "LEADER" && (
+                                            <>
+                                                <h1>...</h1>
+                                                <Nav.Link as={Link} to="/main/work/admin/attendance">출퇴근 내역 관리</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/work/admin/leaveapproval">휴가 신청 승인</Nav.Link>
+                                            </>
+                                        )}
                                     </Nav>
                                 </div>
                             </Collapse>
@@ -106,12 +121,21 @@ const Home = () => {
                             <Collapse in={openSalary}>
                                 <div>
                                     <Nav className="flex-column ms-3">
-                                        <Nav.Link as={Link} to="/main/work/employee/salary">급여 조회</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/work/employee/oballowance">외근 수당 조회</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/work/employee/salarypolicy">급여 정책 조회</Nav.Link>
-
-                                        <Nav.Link as={Link} to="/main/work/employee/adminsalary">급여 관리</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/work/employee/adminsalarypolicy">급여 정책 관리</Nav.Link>
+                                        {/*급여: 일반사원과 팀장*/}
+                                        {(user?.role === "EMP" || user?.role === "LEADER") && (
+                                            <>
+                                                <Nav.Link as={Link} to="/main/salary/employee/salary">급여 조회</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/salary/employee/oballowance">외근 수당 조회</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/salary/employee/salarypolicy">급여 정책 조회</Nav.Link>
+                                            </>
+                                        )}
+                                        {/*급여: 근태 관리자*/}
+                                        {user?.role === "HR" && (
+                                            <>
+                                                <Nav.Link as={Link} to="/main/salary/employee/adminsalary">급여 관리</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/salary/employee/adminsalarypolicy">급여 정책 관리</Nav.Link>
+                                            </>
+                                        )}
                                     </Nav>
                                 </div>
                             </Collapse>
