@@ -18,14 +18,14 @@ const Home = () => {
     const [openReward, setOpenReward] = useState(false);
     const navigate = useNavigate();
 
-    const {user} = useAuth();
-    console.log(user);
-    console.log(user?.role);
-
     const handleLogout = async () => {
         await fetch("/back/logout", { method: "POST", credentials: "include" });
         navigate("/"); // 로그아웃 후 로그인 페이지 이동
     };
+
+    const {user} = useAuth();
+    console.log(user);
+    console.log(user?.role);
 
     return (
         <div className="admin-page">
@@ -84,10 +84,12 @@ const Home = () => {
                             <Collapse in={openWork}>
                                 <div>
                                     <Nav className="flex-column ms-3">
+                                        <Nav.Link as={Link} to="/main/work/employee/attendance">출퇴근 기록</Nav.Link>
                                         {/*근태: 일반 사원과 팀장*/}
                                         {(user?.role === "EMP" || user?.role === "LEADER") && (
                                             <>
-                                                <Nav.Link as={Link} to="/main/work/employee/attendance">출퇴근 기록</Nav.Link>
+                                                {/*user가 null인 상태에서 Home이 먼저 렌더링되고 있고,
+                                                    AuthContext에서 “로그인 사용자 조회”가 아직 끝나지 않았어요.*/}
                                                 <Nav.Link as={Link} to="/main/work/employee/request">휴가(연가) 신청</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/employee/status">휴가 신청 현황</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/employee/usage">연차 사용 현황</Nav.Link>
@@ -105,7 +107,6 @@ const Home = () => {
                                         {/*근태: 팀장*/}
                                         {user?.role === "LEADER" && (
                                             <>
-                                                <h1>...</h1>
                                                 <Nav.Link as={Link} to="/main/work/admin/attendance">출퇴근 내역 관리</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/admin/leaveapproval">휴가 신청 승인</Nav.Link>
                                             </>
