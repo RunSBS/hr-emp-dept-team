@@ -3,7 +3,7 @@ import "../styles/home.css";
 import { Container, Row, Col, Nav, Navbar, Collapse } from "react-bootstrap";
 import {Link, Outlet, useNavigate} from "react-router-dom";
 import React, {useState} from "react";
-import { useAuth } from "./AuthContext.jsx";
+import {useAuth} from "./AuthContext.jsx";
 
 const Home = () => {
 
@@ -17,8 +17,8 @@ const Home = () => {
     const [openReward, setOpenReward] = useState(false);
     const navigate = useNavigate();
 
-    const { logout } = useAuth();
-
+    const { user,logout } = useAuth();
+    console.log(user);
 
     const handleLogout = async () => {
         try {
