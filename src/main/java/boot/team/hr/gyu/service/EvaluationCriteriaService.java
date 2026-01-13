@@ -4,6 +4,7 @@ import boot.team.hr.gyu.dto.CurrentUserDTO;
 import boot.team.hr.gyu.dto.EvaluationCriteriaDTO;
 import boot.team.hr.gyu.entity.EvaluationCriteria;
 import boot.team.hr.gyu.repository.EvaluationCriteriaRepository;
+import boot.team.hr.hyun.dept.repo.DeptRepository;
 import boot.team.hr.hyun.emp.entity.Emp;
 import boot.team.hr.hyun.emp.repo.EmpRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +28,17 @@ public class EvaluationCriteriaService {
         Emp emp = empRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+        Integer deptId = null;
+        if (emp.getDept() != null) {
+            deptId = emp.getDept().getDeptNo(); // Dept PK
+        }
+
         System.out.println("[평가항목관리] 사용자 조회 - 이메일: " + email + ", 이름: " + emp.getEmpName() + ", 직급: " + emp.getEmpRole());
 
         return CurrentUserDTO.builder()
-                .id(emp.getId())
                 .empId(emp.getEmpId())
                 .empName(emp.getEmpName())
-                .deptId(emp.getDeptId())
+                .deptId(deptId)
                 .email(emp.getEmail())
                 .empRole(emp.getEmpRole())
                 .build();

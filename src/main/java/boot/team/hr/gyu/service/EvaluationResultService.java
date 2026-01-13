@@ -75,9 +75,9 @@ public class EvaluationResultService {
      */
     private EvaluationResultDTO convertToDetailedDTO(EvaluationResult result) {
         // 직원 정보 조회
-        Emp emp = empRepository.findByEmpId(result.getEmpId())
+        Emp emp = empRepository.findById(result.getEmpId())
                 .orElse(null);
-        Emp evaluator = empRepository.findByEmpId(result.getEvaluatorId())
+        Emp evaluator = empRepository.findById(result.getEvaluatorId())
                 .orElse(null);
 
         // 평가 항목별 점수 조회
