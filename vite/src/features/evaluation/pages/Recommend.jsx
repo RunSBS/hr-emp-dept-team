@@ -1,8 +1,8 @@
 const Recommend = () => {
-    return(
-        <>
-            <h1>recommend</h1>
-        </>
-    )
-}
+  return (
+      <>
+      <div>회원가입 및 로그인</div>
+      </>
+  );
+};
 export default Recommend;

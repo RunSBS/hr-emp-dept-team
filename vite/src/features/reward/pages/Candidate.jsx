@@ -1,8 +1,8 @@
 const Candidate = () => {
-    return(
-        <>
-            <h1>candidate</h1>
-        </>
-    )
-}
+  return (
+      <>
+      <div>회원가입 및 로그인</div>
+      </>
+  );
+};
 export default Candidate;
