@@ -3,9 +3,6 @@ import "../styles/home.css";
 import { Container, Row, Col, Nav, Navbar, Collapse } from "react-bootstrap";
 import {Link, Outlet, useNavigate} from "react-router-dom";
 import React, {useState} from "react";
-import { useAuth } from "./AuthContext";
-
-//import {useAuth} from "./AuthContext";
 import { useAuth } from "./AuthContext.jsx";
 
 const Home = () => {

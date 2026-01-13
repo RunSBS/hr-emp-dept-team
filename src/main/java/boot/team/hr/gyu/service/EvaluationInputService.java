@@ -34,11 +34,14 @@ public class EvaluationInputService {
         Emp emp = empRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+        Integer deptId = null;
+        if (emp.getDept() != null) {
+            deptId = emp.getDept().getDeptNo(); // Dept PK
+        }
         return CurrentUserDTO.builder()
-                .id(emp.getId())
                 .empId(emp.getEmpId())
                 .empName(emp.getEmpName())
-                .deptId(emp.getDeptId())
+                .deptId(deptId)
                 .email(emp.getEmail())
                 .empRole(emp.getEmpRole())
                 .build();
@@ -61,18 +64,17 @@ public class EvaluationInputService {
         } else if ("LEADER".equals(currentUser.getEmpRole())) {
             // LEADER는 같은 부서의 EMP 목록 조회
             targets = empRepository.findAll().stream()
-                    .filter(emp -> emp.getDeptId() != null
-                            && emp.getDeptId().equals(currentUser.getDeptId())
+                    .filter(emp -> emp.getDept().getDeptNo() != null
+                            && emp.getDept().getDeptNo().equals(currentUser.getDept().getDeptNo())
                             && "EMP".equals(emp.getEmpRole()))
                     .collect(Collectors.toList());
         }
 
         return targets.stream()
                 .map(emp -> EvaluationTargetDTO.builder()
-                        .id(emp.getId())
                         .empId(emp.getEmpId())
                         .empName(emp.getEmpName())
-                        .deptId(emp.getDeptId())
+                        .deptId(emp.getDept().getDeptNo())
                         .empRole(emp.getEmpRole())
                         .build())
                 .collect(Collectors.toList());
@@ -85,7 +87,7 @@ public class EvaluationInputService {
         Emp evaluator = empRepository.findByEmail(evaluatorEmail)
                 .orElseThrow(() -> new IllegalArgumentException("평가자를 찾을 수 없습니다."));
 
-        Emp target = empRepository.findByEmpId(targetEmpId)
+        Emp target = empRepository.findById(targetEmpId)
                 .orElseThrow(() -> new IllegalArgumentException("평가 대상자를 찾을 수 없습니다."));
 
         // CEO는 LEADER 평가 가능
@@ -96,8 +98,8 @@ public class EvaluationInputService {
         // LEADER는 같은 부서의 EMP 평가 가능
         if ("LEADER".equals(evaluator.getEmpRole())
                 && "EMP".equals(target.getEmpRole())
-                && evaluator.getDeptId() != null
-                && evaluator.getDeptId().equals(target.getDeptId())) {
+                && evaluator.getDept().getDeptNo() != null
+                && evaluator.getDept().getDeptNo().equals(target.getDept().getDeptNo())) {
             return true;
         }
 
@@ -212,8 +214,8 @@ public class EvaluationInputService {
      * EvaluationResult를 EvaluationResultDTO로 변환
      */
     private EvaluationResultDTO convertToResultDTO(EvaluationResult result) {
-        Emp emp = empRepository.findByEmpId(result.getEmpId()).orElse(null);
-        Emp evaluator = empRepository.findByEmpId(result.getEvaluatorId()).orElse(null);
+        Emp emp = empRepository.findById(result.getEmpId()).orElse(null);
+        Emp evaluator = empRepository.findById(result.getEvaluatorId()).orElse(null);
 
         List<EvaluationScore> scores = scoreRepository.findByEvaluationId(result.getEvaluationId());
         Map<Long, EvaluationCriteria> criteriaMap = criteriaRepository.findAll().stream()
