@@ -1,7 +1,7 @@
 import {useState} from "react";
 import axios from "axios";
 
-const OutsourcingCompanyInsert = () => {
+const OutsourcingAssignmentUpdate = () => {
 
     const [form, setForm] = useState({
         deptNo: "",    // 카멜케이스로 통일
@@ -25,28 +25,44 @@ const OutsourcingCompanyInsert = () => {
 
         try {
             // Spring Boot의 @RequestBody가 이 JSON 객체를 EmpDto로 변환합니다.
-            const res = await axios.post("/back/hyun/dept/insert",
+            const res = await axios.put("/back/hyun/dept/update",
                 form,
                 {withCredentials: true}
             );
-            console.log("등록 성공 :", res.data);
-            alert("파견업체 등록이 완료되었습니다.");
+            console.log("수정 성공 :", res.data);
+            alert("사원 수정이 완료되었습니다.");
         } catch(e) {
-            console.log("등록 실패 :", e);
-            alert("등록 실패");
+            console.log("수정 실패 :", e);
+            alert("수정 실패");
         }
     };
 
     return (
         <div>
-            <h2>파견업체 등록</h2>
+            <h2>부서 수정</h2>
 
             <form onSubmit={handleSubmit}>
                 <table>
                     <tbody>
+
                     <tr>
                         <th>
-                            <label htmlFor="deptName">업체명</label>
+                            <label htmlFor="deptNo">부서 번호</label>
+                        </th>
+                        <td>
+                            <input
+                                id="deptNo"
+                                name="deptNo" // DTO 필드명과 일치
+                                type="number"
+                                value={form.deptNo} // state 키값과 일치
+                                onChange={handleChange}
+                            />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            <label htmlFor="deptName">부서명</label>
                         </th>
                         <td>
                             <input
@@ -60,7 +76,7 @@ const OutsourcingCompanyInsert = () => {
 
                     <tr>
                         <th>
-                            <label htmlFor="deptLoc">계약 시작일</label>
+                            <label htmlFor="deptLoc">사내 부서 위치</label>
                         </th>
                         <td>
                             <input
@@ -75,7 +91,7 @@ const OutsourcingCompanyInsert = () => {
 
                     <tr>
                         <th>
-                            <label htmlFor="parentDeptNo">계약 종료일</label>
+                            <label htmlFor="parentDeptNo">상위 부서 번호</label>
                         </th>
                         <td>
                             <input
@@ -87,12 +103,41 @@ const OutsourcingCompanyInsert = () => {
                             />
                         </td>
                     </tr>
+
+                    <tr>
+                        <th>
+                            <label htmlFor="treeLevel">트리 내 계층</label>
+                        </th>
+                        <td>
+                            <input
+                                id="treeLevel"
+                                name="treeLevel"
+                                type="number"
+                                value={form.treeLevel}
+                                onChange={handleChange}
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label htmlFor="siblingOrder">트리 내 형제 순서</label>
+                        </th>
+                        <td>
+                            <input
+                                id="siblingOrder"
+                                name="siblingOrder"
+                                type="number"
+                                value={form.siblingOrder}
+                                onChange={handleChange}
+                            />
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
-                <button type="submit">업체 등록</button>
+                <button type="submit">부서 수정</button>
             </form>
         </div>
     );
 };
 
-export default OutsourcingCompanyInsert;
+export default OutsourcingAssignmentUpdate;

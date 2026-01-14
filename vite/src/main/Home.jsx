@@ -65,7 +65,7 @@ const Home = () => {
                                 </div>
                             </Collapse>
                             {/* 인사 */}
-                            <Nav.Link onClick={() => setOpenHr(!openHr)}>
+                            <Nav.Link as={Link} to="/main/hr/all" onClick={() => setOpenHr(!openHr)}>
                                 인사 {openHr ? "▾" : "▸"}
                             </Nav.Link>
                             <Collapse in={openHr}>
@@ -74,7 +74,7 @@ const Home = () => {
                                         <Nav.Link as={Link} to="/main/hr/all">전체</Nav.Link>
                                         <Nav.Link as={Link} to="/main/hr/dept">부서</Nav.Link>
                                         <Nav.Link as={Link} to="/main/hr/emp">사원</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/hr/dispatch">파견</Nav.Link>
+                                        <Nav.Link as={Link} to="/main/hr/outsourcing">파견</Nav.Link>
                                     </Nav>
                                 </div>
                             </Collapse>

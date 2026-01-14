@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 
-const OutsourcingCompanySelectAll = () => {
+const OutsourcingAssignmentSelectAll = () => {
     const [deptList, setDeptList] = useState([]);
 
     useEffect(() => {
@@ -62,4 +62,4 @@ const OutsourcingCompanySelectAll = () => {
     );
 };
 
-export default OutsourcingCompanySelectAll;
+export default OutsourcingAssignmentSelectAll;

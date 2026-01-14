@@ -61,6 +61,7 @@ public class DeptService {
         dept.setUpdatedAt(LocalDateTime.now());
         deptRepository.save(dept);
     }
+    @Transactional
     public void updateDept(DeptDto deptDto){
         Dept dept = deptRepository.findById(deptDto.getDeptNo())
                 .orElseThrow(()-> new RuntimeException("해당 부서 없음"));

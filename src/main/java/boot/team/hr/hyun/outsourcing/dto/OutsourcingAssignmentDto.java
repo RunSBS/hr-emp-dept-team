@@ -15,7 +15,7 @@ public class OutsourcingAssignmentDto {
     private Long assignmentId;
 
     // 외래키 ID (등록/수정 시 이 ID들로 엔티티를 찾음)
-    private Long empId;
+    private String empId;
     private Long companyId;
 
     // 화면 표시용 (조회 시 이름도 같이 보여주면 편함)

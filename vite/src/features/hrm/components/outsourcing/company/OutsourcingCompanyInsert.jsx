@@ -1,10 +1,10 @@
 import {useState} from "react";
 import axios from "axios";
 
-const OutsourcingCompanyDelete = () => {
+const OutsourcingCompanyInsert = () => {
 
     const [form, setForm] = useState({
-        deptNo: ""
+        companyName : ""
     });
 
     const handleChange = (e) => {
@@ -20,45 +20,44 @@ const OutsourcingCompanyDelete = () => {
 
         try {
             // Spring Boot의 @RequestBody가 이 JSON 객체를 EmpDto로 변환합니다.
-            const res = await axios.delete("/back/hyun/dept/delete", {
-             data : form,
-             withCredentials: true
-            });
-            console.log("삭제 성공 :", res.data);
-            alert("사원 삭제가 완료되었습니다.");
+            const res = await axios.post("/back/hyun/outsourcing/insertCompany",
+                form,
+                {withCredentials: true}
+            );
+            console.log("등록 성공 :", res.data);
+            alert("파견업체 등록이 완료되었습니다.");
         } catch(e) {
-            console.log("삭제 실패 :", e);
-            alert("삭제 실패");
+            console.log("등록 실패 :", e);
+            alert("등록 실패");
         }
     };
 
     return (
         <div>
-            <h2>부서 삭제</h2>
+            <h2>파견업체 등록</h2>
 
             <form onSubmit={handleSubmit}>
                 <table>
                     <tbody>
                     <tr>
                         <th>
-                            <label htmlFor="deptNo">삭제할 부서 번호</label>
+                            <label htmlFor="companyName">업체명</label>
                         </th>
                         <td>
                             <input
-                                id="deptNo"
-                                name="deptNo" // DTO 필드명과 일치
-                                type="text"
-                                value={form.deptNo} // state 키값과 일치
+                                id="companyName"
+                                name="companyName" // DTO 필드명과 일치
+                                value={form.companyName}
                                 onChange={handleChange}
                             />
                         </td>
                     </tr>
                     </tbody>
                 </table>
-                <button type="submit">부서 삭제</button>
+                <button type="submit">업체 등록</button>
             </form>
         </div>
     );
 };
 
-export default OutsourcingCompanyDelete;
+export default OutsourcingCompanyInsert;

@@ -34,12 +34,13 @@ import ObAllowance from "../features/salary/pages/employee/ObAllowance";
 import SalaryPolicy from "../features/salary/pages/employee/SalaryPolicy";
 import AdminSalary from "../features/salary/pages/admin/AdminSalary";
 import AdminSalaryPolicy from "../features/salary/pages/admin/AdminSalaryPolicy";
-import Dispatch from "../features/hrm/pages/Dispatch.jsx";
+import Dispatch from "../features/hrm/pages/Outsourcing.jsx";
 import EmpSign from "./EmpSign.jsx";
 
 import Record from "../features/invite/Record.jsx";
 import ApprovalLayout from "../features/approval/components/ApprovalLayout.jsx";
 import Detail from "../features/approval/pages/Detail.jsx";
+import Outsourcing from "../features/hrm/pages/Outsourcing.jsx";
 function Router() {
     return (
         <Routes>
@@ -57,7 +58,7 @@ function Router() {
                     <Route path="all"   element={<All />}/>
                     <Route path="dept"  element={<Dept />}/>
                     <Route path="emp"   element={<Emp />}/>
-                    <Route path="dispatch"   element={<Dispatch />}/>
+                    <Route path="outsourcing"   element={<Outsourcing />}/>
                 </Route>
 
                 <Route path="work">
