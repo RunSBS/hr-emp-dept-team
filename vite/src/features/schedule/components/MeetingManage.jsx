@@ -1,157 +1,175 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { Card, Button, Row, Col, Badge } from "react-bootstrap";
+
+import MeetingBookingModal from "../components/MeetingBookingModal.jsx";
+import MeetingRoomModal from "../components/MeetingRoomModal.jsx";
+
+import "../styles/meetingManage.css";
 
 const MeetingManage = () => {
-    const [room, setRoom] = useState([]);
-    const [currentView, setCurrentView] = useState("list");
-    const [form, setForm] = useState({
-        meetingRoomId: "",
-        name: "",
-        location: "",
-        capacity: "",
-    });
+    const [rooms, setRooms] = useState([]);
+
+    // 예약 모달용
+    const [selectedRoom, setSelectedRoom] = useState(null);
+    const [editingBooking, setEditingBooking] = useState(null);
+
+    // 회의실 모달용
+    const [roomModalOpen, setRoomModalOpen] = useState(false);
+    const [editingRoom, setEditingRoom] = useState(null);
+
+    const fetchData = async () => {
+        const roomRes = await axios.get("/back/room");
+        const bookingRes = await axios.get("/back/booking");
+
+        // 회의실 + 예약 병합 (회의실당 1개 예약 가정)
+        const merged = roomRes.data.map(r => ({
+            ...r,
+            booking: bookingRes.data.find(
+                b => b.meetingRoomId === r.meetingRoomId
+            )
+        }));
+
+        setRooms(merged);
+    };
 
     useEffect(() => {
-        axios.get("/back/room", { withCredentials: true })
-            .then(res => setRoom(res.data))
-            .catch(err => console.error(err));
+        fetchData();
     }, []);
-
-    const handleChange = (e) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value,
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const newRoom = {
-                ...form,
-                capacity: parseInt(form.capacity),
-            };
-
-            await axios.post("/back/room", newRoom);
-
-            setRoom(prev => [...prev, newRoom]);
-            setForm({ meetingRoomId: "", name: "", location: "", capacity: "" });
-            setCurrentView("list");
-            alert("회의실 생성 완료");
-        } catch (e) {
-            console.error(e);
-            alert("회의실 생성 실패");
-        }
-    };
-
-    const handleEdit = (r) => {
-        setForm({
-            meetingRoomId: r.meetingRoomId,
-            name: r.name,
-            location: r.location,
-            capacity: r.capacity,
-        });
-        setCurrentView("update");
-    };
-
-    const handleUpdate = async (e) => {
-        e.preventDefault();
-        try {
-            const updatedRoom = {
-                meetingRoomId: form.meetingRoomId,
-                name: form.name,
-                location: form.location,
-                capacity: parseInt(form.capacity),
-            };
-
-            await axios.put(`/back/room/${form.meetingRoomId}`, updatedRoom);
-
-            setRoom(prev =>
-                prev.map(r =>
-                    r.meetingRoomId === form.meetingRoomId ? updatedRoom : r
-                )
-            );
-
-            setCurrentView("list");
-            alert("회의실 수정 완료");
-        } catch (e) {
-            console.error(e);
-            alert("회의실 수정 실패");
-        }
-    };
-
-    const handleDelete = async (id) => {
-        if (!window.confirm("삭제하시겠습니까?")) return;
-        try {
-            await axios.delete(`/back/room/${id}`);
-            setRoom(prev => prev.filter(r => r.meetingRoomId !== id));
-            alert("회의실 삭제 완료");
-        } catch (e) {
-            console.error(e);
-            alert("회의실 삭제 실패");
-        }
-    };
 
     return (
         <>
-            <h2>회의실 관리 (ADMIN)</h2>
-
-            <div style={{ marginBottom: "10px" }}>
-                <button onClick={() => setCurrentView("list")}>회의실 조회</button>
-                <button onClick={() => setCurrentView("create")}>회의실 생성</button>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                {/* 회의실 생성 버튼 */}
+                <Button
+                    variant="primary"
+                    onClick={() => {
+                        setEditingRoom(null);   // 생성 모드
+                        setRoomModalOpen(true);
+                    }}
+                >
+                    새 회의실 생성
+                </Button>
             </div>
 
-            {currentView === "list" && (
-                <table border="1">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>이름</th>
-                        <th>위치</th>
-                        <th>수용 인원</th>
-                        <th>수정</th>
-                        <th>삭제</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {room.map(r => (
-                        <tr key={r.meetingRoomId}>
-                            <td>{r.meetingRoomId}</td>
-                            <td>{r.name}</td>
-                            <td>{r.location}</td>
-                            <td>{r.capacity}</td>
-                            <td>
-                                <button onClick={() => handleEdit(r)}>수정</button>
-                            </td>
-                            <td>
-                                <button onClick={() => handleDelete(r.meetingRoomId)}>
-                                    삭제
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
+            <Row xs={1} md={2} lg={3} className="g-4">
+                {rooms.map(r => (
+                    <Col key={r.meetingRoomId}>
+                        <Card className="h-100 shadow-sm">
+                            <Card.Body>
+                                <div className="d-flex justify-content-between">
+                                    <h5>{r.name}</h5>
+                                    {r.booking ? (
+                                        <Badge bg="danger">예약중</Badge>
+                                    ) : (
+                                        <Badge bg="success">예약 가능</Badge>
+                                    )}
+                                </div>
+
+                                <div className="text-muted small">
+                                    {r.location} · {r.capacity}명
+                                </div>
+
+                                <hr />
+
+                                {/* 예약 정보 */}
+                                {r.booking ? (
+                                    <div className="booking-info">
+                                        <div>
+                                            <strong>예약자</strong> {r.booking.empId}
+                                        </div>
+                                        <div>
+                                            {r.booking.startTime} ~ {r.booking.endTime}
+                                        </div>
+                                        <div className="text-muted">
+                                            {r.booking.description}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-muted">
+                                        예약이 없습니다.
+                                    </div>
+                                )}
+                            </Card.Body>
+
+                            <Card.Footer className="bg-white border-0">
+                                <div className="d-flex justify-content-end gap-2 flex-wrap">
+                                    {/* 회의실 수정 */}
+                                    <Button
+                                        size="sm"
+                                        variant="outline-primary"
+                                        onClick={() => {
+                                            setEditingRoom(r);
+                                            setRoomModalOpen(true);
+                                        }}
+                                    >
+                                        회의실 수정
+                                    </Button>
+
+                                    {r.booking ? (
+                                        <>
+                                            <Button
+                                                size="sm"
+                                                variant="outline-secondary"
+                                                onClick={() => {
+                                                    setSelectedRoom(r);
+                                                    setEditingBooking(r.booking);
+                                                }}
+                                            >
+                                                예약 수정
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="outline-danger"
+                                                onClick={async () => {
+                                                    await axios.delete(
+                                                        `/back/booking/${r.booking.id}`
+                                                    );
+                                                    fetchData();
+                                                }}
+                                            >
+                                                예약 취소
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <Button
+                                            size="sm"
+                                            variant="success"
+                                            onClick={() => {
+                                                setSelectedRoom(r);
+                                                setEditingBooking(null);
+                                            }}
+                                        >
+                                            예약
+                                        </Button>
+                                    )}
+                                </div>
+                            </Card.Footer>
+                        </Card>
+                    </Col>
+                ))}
+            </Row>
+
+            {/* 예약 모달 */}
+            {selectedRoom && (
+                <MeetingBookingModal
+                    room={selectedRoom}
+                    booking={editingBooking}
+                    onClose={() => {
+                        setSelectedRoom(null);
+                        setEditingBooking(null);
+                    }}
+                    onSuccess={fetchData}
+                />
             )}
 
-            {currentView === "create" && (
-                <form onSubmit={handleSubmit}>
-                    ID <input name="meetingRoomId" value={form.meetingRoomId} onChange={handleChange} /><br/>
-                    이름 <input name="name" value={form.name} onChange={handleChange} /><br/>
-                    위치 <input name="location" value={form.location} onChange={handleChange} /><br/>
-                    인원 <input name="capacity" value={form.capacity} onChange={handleChange} /><br/>
-                    <button type="submit">생성</button>
-                </form>
-            )}
-
-            {currentView === "update" && (
-                <form onSubmit={handleUpdate}>
-                    ID <input value={form.meetingRoomId} readOnly /><br/>
-                    이름 <input name="name" value={form.name} onChange={handleChange} /><br/>
-                    위치 <input name="location" value={form.location} onChange={handleChange} /><br/>
-                    인원 <input name="capacity" value={form.capacity} onChange={handleChange} /><br/>
-                    <button type="submit">수정</button>
-                </form>
+            {/* 회의실 생성/수정 모달 */}
+            {roomModalOpen && (
+                <MeetingRoomModal
+                    room={editingRoom}
+                    onClose={() => setRoomModalOpen(false)}
+                    onSuccess={fetchData}
+                />
             )}
         </>
     );

@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import ProjectMemberModal from "../components/ProjectMemberModal.jsx";
+import ProjectFormModal from "../components/ProjectFormModal.jsx";
+
+import { Card, Button, Row, Col, Badge } from "react-bootstrap";
 
 const Project = () => {
     const [projects, setProjects] = useState([]);
-    const [currentView, setCurrentView] = useState("list");
+    const [selectedProjectId, setSelectedProjectId] = useState(null);
+
+    // 🔹 생성 / 수정 모달 상태
+    const [showFormModal, setShowFormModal] = useState(false);
+    const [mode, setMode] = useState("create"); // "create" | "edit"
     const [editId, setEditId] = useState(null);
 
     const [form, setForm] = useState({
@@ -12,45 +20,40 @@ const Project = () => {
         methodology: "",
         startDate: "",
         endDate: "",
-        status: "" // UI에서는 입력 안 받음
+        status: ""
     });
 
-    // 최초 조회
+    /* ================= 최초 조회 ================= */
     useEffect(() => {
         axios.get("/back/project")
             .then(res => setProjects(res.data))
             .catch(err => console.error(err));
     }, []);
 
+    /* ================= 공통 ================= */
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
-    // 생성
-    const handleCreate = async () => {
-        try {
-            const res = await axios.post("/back/project", form);
-            setProjects(prev => [...prev, res.data]);
-
-            setForm({
-                name: "",
-                description: "",
-                methodology: "",
-                startDate: "",
-                endDate: "",
-                status: ""
-            });
-
-            setCurrentView("list");
-        } catch (e) {
-            console.error(e);
-            alert("생성 실패");
-        }
+    /* ================= 생성 ================= */
+    const openCreateModal = () => {
+        setMode("create");
+        setEditId(null);
+        setForm({
+            name: "",
+            description: "",
+            methodology: "",
+            startDate: "",
+            endDate: "",
+            status: ""
+        });
+        setShowFormModal(true);
     };
 
-    // 수정 버튼
-    const handleEdit = (p) => {
+    /* ================= 수정 ================= */
+    const openEditModal = (p) => {
+        setMode("edit");
         setEditId(p.id);
         setForm({
             name: p.name,
@@ -60,31 +63,32 @@ const Project = () => {
             endDate: p.endDate ?? "",
             status: p.status
         });
-        setCurrentView("update");
+        setShowFormModal(true);
     };
 
-    // 수정 저장
-    const handleUpdate = async () => {
+    /* ================= 저장 (생성/수정 통합) ================= */
+    const handleSubmit = async () => {
         try {
-            const updatedProject = { ...form };
+            if (mode === "create") {
+                const res = await axios.post("/back/project", form);
+                setProjects(prev => [...prev, res.data]);
+            } else {
+                await axios.put(`/back/project/${editId}`, form);
+                setProjects(prev =>
+                    prev.map(p =>
+                        p.id === editId ? { ...p, ...form } : p
+                    )
+                );
+            }
 
-            await axios.put(`/back/project/${editId}`, updatedProject);
-
-            setProjects(prev =>
-                prev.map(p =>
-                    p.id === editId ? { ...p, ...updatedProject } : p
-                )
-            );
-
-            setEditId(null);
-            setCurrentView("list");
+            setShowFormModal(false);
         } catch (e) {
             console.error(e);
-            alert("수정 실패");
+            alert(mode === "create" ? "생성 실패" : "수정 실패");
         }
     };
 
-    // 삭제
+    /* ================= 삭제 ================= */
     const handleDelete = async (id) => {
         if (!window.confirm("삭제하시겠습니까?")) return;
         try {
@@ -98,126 +102,88 @@ const Project = () => {
 
     return (
         <>
-            <h1>Project</h1>
+            <h1 className="mb-4">Project</h1>
 
             {/* 상단 버튼 */}
-            <div style={{ marginBottom: "20px" }}>
-                <button
-                    onClick={() => setCurrentView("list")}
-                    style={{ marginLeft: "10px" }}
-                >
-                    목록
-                </button>
-                <button
-                    onClick={() => {
-                        setCurrentView("create");
-                        setEditId(null);
-                    }}
-                >
-                    생성
-                </button>
+            <div className="mb-3">
+                <Button onClick={openCreateModal}>새 프로젝트 생성</Button>
             </div>
 
-            {/* 생성 / 수정 폼 */}
-            {(currentView === "create" || currentView === "update") && (
-                <div style={{ maxWidth: "600px" }}>
-                    <div style={{ marginBottom: "10px" }}>
-                        <label>이름</label><br />
-                        <input
-                            name="name"
-                            value={form.name}
-                            onChange={handleChange}
-                            style={{ width: "100%" }}
-                        />
-                    </div>
+            {/* 프로젝트 카드 목록 */}
+            <Row xs={1} md={2} lg={3} className="g-4">
+                {projects.map(p => (
+                    <Col key={p.id}>
+                        <Card className="h-100 shadow-sm">
+                            <Card.Header className="d-flex justify-content-between align-items-center">
+                                <strong>{p.name}</strong>
+                                <div className="d-flex gap-2">
+                                    <Badge bg="secondary">{p.methodology}</Badge>
+                                    <Badge bg="info">{p.status}</Badge>
+                                </div>
+                            </Card.Header>
 
-                    <div style={{ marginBottom: "10px" }}>
-                        <label>설명</label><br />
-                        <textarea
-                            name="description"
-                            value={form.description}
-                            onChange={handleChange}
-                            rows={3}
-                            style={{ width: "100%" }}
-                        />
-                    </div>
+                            <Card.Body>
+                                <Card.Text>{p.description}</Card.Text>
 
-                    <div style={{ marginBottom: "10px" }}>
-                        <label>방법론</label><br />
-                        <input
-                            name="methodology"
-                            value={form.methodology}
-                            onChange={handleChange}
-                            style={{ width: "100%" }}
-                        />
-                    </div>
+                                <Row className="text-muted small">
+                                    <Col>
+                                        <strong>시작일</strong><br />
+                                        {p.startDate}
+                                    </Col>
+                                    <Col>
+                                        <strong>종료일</strong><br />
+                                        {p.endDate}
+                                    </Col>
+                                </Row>
+                            </Card.Body>
 
-                    <div style={{ marginBottom: "10px" }}>
-                        <label>시작일</label><br />
-                        <input
-                            type="datetime-local"
-                            name="startDate"
-                            value={form.startDate}
-                            onChange={handleChange}
-                            style={{ width: "100%" }}
-                        />
-                    </div>
+                            <Card.Footer className="bg-white border-0">
+                                <div className="d-flex justify-content-end gap-2">
+                                    <Button
+                                        size="sm"
+                                        variant="outline-secondary"
+                                        onClick={() => openEditModal(p)}
+                                    >
+                                        수정
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="outline-danger"
+                                        onClick={() => handleDelete(p.id)}
+                                    >
+                                        삭제
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="primary"
+                                        onClick={() => setSelectedProjectId(p.id)}
+                                    >
+                                        참여자
+                                    </Button>
+                                </div>
+                            </Card.Footer>
+                        </Card>
+                    </Col>
+                ))}
+            </Row>
 
-                    <div style={{ marginBottom: "20px" }}>
-                        <label>종료일</label><br />
-                        <input
-                            type="datetime-local"
-                            name="endDate"
-                            value={form.endDate}
-                            onChange={handleChange}
-                            style={{ width: "100%" }}
-                        />
-                    </div>
-
-                    {currentView === "create" ? (
-                        <button onClick={handleCreate}>생성</button>
-                    ) : (
-                        <button onClick={handleUpdate}>수정</button>
-                    )}
-                </div>
+            {/* 참여자 모달 */}
+            {selectedProjectId && (
+                <ProjectMemberModal
+                    projectId={selectedProjectId}
+                    onClose={() => setSelectedProjectId(null)}
+                />
             )}
 
-            {/* 목록 */}
-            {currentView === "list" && (
-                <table
-                    border="1"
-                    style={{ width: "100%", marginTop: "20px" }}
-                >
-                    <thead>
-                    <tr>
-                        <th>이름</th>
-                        <th>방법론</th>
-                        <th>설명</th>
-                        <th>상태</th>
-                        <th>관리</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {projects.map(p => (
-                        <tr key={p.id}>
-                            <td>{p.name}</td>
-                            <td>{p.methodology}</td>
-                            <td>{p.description}</td>
-                            <td>{p.status}</td>
-                            <td>
-                                <button onClick={() => handleEdit(p)}>수정</button>
-                                <button
-                                    onClick={() => handleDelete(p.id)}
-                                    style={{ marginLeft: "5px" }}
-                                >
-                                    삭제
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            )}
+            {/* 생성 / 수정 공용 모달 */}
+            <ProjectFormModal
+                show={showFormModal}
+                mode={mode}
+                form={form}
+                onChange={handleChange}
+                onSubmit={handleSubmit}
+                onClose={() => setShowFormModal(false)}
+            />
         </>
     );
 };
