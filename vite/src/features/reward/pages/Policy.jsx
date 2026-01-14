@@ -3,6 +3,9 @@ import { policyApi } from '../api/policyApi';
 import '../styles/Policy.css';
 
 const Policy = () => {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [hasPermission, setHasPermission] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [policyList, setPolicyList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState(null);
@@ -15,8 +18,37 @@ const Policy = () => {
   });
 
   useEffect(() => {
-    fetchPolicies();
+    checkPermissionAndLoadData();
   }, []);
+
+  const checkPermissionAndLoadData = async () => {
+    try {
+      setLoading(true);
+
+      // 현재 사용자 정보 조회
+      const user = await policyApi.getCurrentUser();
+      setCurrentUser(user);
+      console.log('[포상정책관리] 현재 로그인 사용자:', user);
+      console.log('[포상정책관리] 사용자 포지션:', user.empRole);
+
+      // 권한 체크: empRole이 "REWARD" 또는 "CEO"인 경우만 관리 권한 부여
+      if (user.empRole === 'REWARD' || user.empRole === 'CEO') {
+        setHasPermission(true);
+        console.log('[포상정책관리] 포상 정책 관리 권한 있음');
+      } else {
+        setHasPermission(false);
+        console.log('[포상정책관리] 포상 정책 관리 권한 없음');
+      }
+
+      // 포상 정책 목록 조회 (권한 관계없이 모두 조회 가능)
+      await fetchPolicies();
+    } catch (error) {
+      console.error('[포상정책관리] 데이터 로딩 실패:', error);
+      setHasPermission(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchPolicies = async () => {
     try {
@@ -140,6 +172,27 @@ const Policy = () => {
     const unit = rewardType === '휴가' ? '일' : '원';
     return amount.toLocaleString() + unit;
   };
+
+  if (loading) {
+    return <div className="reward-policy-container">로딩 중...</div>;
+  }
+
+  if (!hasPermission) {
+    return (
+      <div className="reward-policy-container">
+        <div className="no-permission">
+          <h2>접근 권한이 없습니다</h2>
+          <p>포상 정책 관리는 포상관리자와 CEO만 가능합니다.</p>
+          {currentUser && (
+            <div className="user-info">
+              <p>현재 사용자: {currentUser.empName}</p>
+              <p>직급: {currentUser.empRole}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="reward-policy-container">

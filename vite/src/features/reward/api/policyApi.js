@@ -3,6 +3,14 @@ import axios from 'axios';
 const API_BASE_URL = '/back/api/reward/policy';
 
 export const policyApi = {
+  // 현재 로그인 사용자 정보 조회
+  getCurrentUser: async () => {
+    const response = await axios.get(`${API_BASE_URL}/current-user`, {
+      withCredentials: true,
+    });
+    return response.data;
+  },
+
   getAllPolicies: async () => {
     const response = await axios.get(API_BASE_URL);
     return response.data;
