@@ -9,6 +9,8 @@ const Project = () => {
     const [projects, setProjects] = useState([]);
     const [selectedProjectId, setSelectedProjectId] = useState(null);
 
+    const [page, setPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
     // 🔹 생성 / 수정 모달 상태
     const [showFormModal, setShowFormModal] = useState(false);
     const [mode, setMode] = useState("create"); // "create" | "edit"
@@ -25,11 +27,25 @@ const Project = () => {
 
     /* ================= 최초 조회 ================= */
     useEffect(() => {
-        axios.get("/back/project")
-            .then(res => setProjects(res.data))
-            .catch(err => console.error(err));
+        fetchProjects(0);
     }, []);
+    //페이징으로 조회
+    const fetchProjects = async (pageNumber = 0) => {
+        try {
+            const res = await axios.get("/back/project", {
+                params: {
+                    page: pageNumber,
+                    size: 6
+                }
+            });
 
+            setProjects(res.data.content);      // 프로젝트 목록
+            setPage(res.data.number);            // 현재 페이지
+            setTotalPages(res.data.totalPages);  // 전체 페이지 수
+        } catch (err) {
+            console.error(err);
+        }
+    };
     /* ================= 공통 ================= */
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -70,18 +86,13 @@ const Project = () => {
     const handleSubmit = async () => {
         try {
             if (mode === "create") {
-                const res = await axios.post("/back/project", form);
-                setProjects(prev => [...prev, res.data]);
+                await axios.post("/back/project", form);
             } else {
                 await axios.put(`/back/project/${editId}`, form);
-                setProjects(prev =>
-                    prev.map(p =>
-                        p.id === editId ? { ...p, ...form } : p
-                    )
-                );
             }
 
             setShowFormModal(false);
+            fetchProjects(page); // 현재 페이지 다시 조회
         } catch (e) {
             console.error(e);
             alert(mode === "create" ? "생성 실패" : "수정 실패");
@@ -91,9 +102,16 @@ const Project = () => {
     /* ================= 삭제 ================= */
     const handleDelete = async (id) => {
         if (!window.confirm("삭제하시겠습니까?")) return;
+
         try {
             await axios.delete(`/back/project/${id}`);
-            setProjects(prev => prev.filter(p => p.id !== id));
+
+            // 현재 페이지가 비면 이전 페이지로
+            if (projects.length === 1 && page > 0) {
+                fetchProjects(page - 1);
+            } else {
+                fetchProjects(page);
+            }
         } catch (e) {
             console.error(e);
             alert("삭제 실패");
@@ -184,6 +202,29 @@ const Project = () => {
                 onSubmit={handleSubmit}
                 onClose={() => setShowFormModal(false)}
             />
+            <div className="d-flex justify-content-center align-items-center mt-4 gap-3">
+                <Button
+                    size="sm"
+                    variant="outline-secondary"
+                    disabled={page === 0}
+                    onClick={() => fetchProjects(page - 1)}
+                >
+                    이전
+                </Button>
+
+                <span>
+                    {page + 1} / {totalPages}
+                </span>
+
+                <Button
+                    size="sm"
+                    variant="outline-secondary"
+                    disabled={page === totalPages - 1}
+                    onClick={() => fetchProjects(page + 1)}
+                >
+                    다음
+                </Button>
+            </div>
         </>
     );
 };

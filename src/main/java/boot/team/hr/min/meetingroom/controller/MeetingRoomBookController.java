@@ -1,7 +1,7 @@
-package boot.team.hr.min.meetingroombook.controller;
+package boot.team.hr.min.meetingroom.controller;
 
-import boot.team.hr.min.meetingroombook.dto.MeetingRoomBookDto;
-import boot.team.hr.min.meetingroombook.service.MeetingRoomBookService;
+import boot.team.hr.min.meetingroom.dto.MeetingRoomBookDto;
+import boot.team.hr.min.meetingroom.service.MeetingRoomBookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,6 +1,6 @@
-package boot.team.hr.min.meetingroombook.dto;
+package boot.team.hr.min.meetingroom.dto;
 
-import boot.team.hr.min.meetingroombook.entitiy.MeetingRoomBook;
+import boot.team.hr.min.meetingroom.entity.MeetingRoomBook;
 import lombok.Data;
 
 import java.time.LocalDateTime;

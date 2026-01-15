@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -33,18 +34,25 @@ public class AccountController {
     @GetMapping("/me")
     public Map<String, Object> me(Authentication authentication) {
 
+        Map<String, Object> result = new HashMap<>();
+
         if (authentication == null || !authentication.isAuthenticated()) {
-            return Map.of("authenticated", false);
+            result.put("authenticated", false);
+            return result;
         }
 
         CustomUserDetails user =
                 (CustomUserDetails) authentication.getPrincipal();
 
-        return Map.of(
-                "authenticated", true,
-                "email", user.getUsername(),
-                "role", user.getFinalRole()
-        );
+        result.put("authenticated", true);
+        result.put("email", user.getUsername());
+        result.put("role", user.getFinalRole());
+
+        if (user.getEmpId() != null) {
+            result.put("empId", user.getEmpId());
+        }
+
+        return result;
     }
 
 

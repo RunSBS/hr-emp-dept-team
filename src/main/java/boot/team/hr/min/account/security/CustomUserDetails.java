@@ -12,10 +12,13 @@ public class CustomUserDetails implements UserDetails {
 
     private final Account account;
     private final String finalRole;
+    private final String empId;
 
-    public CustomUserDetails(Account account, String finalRole) {
+    public CustomUserDetails(Account account, String finalRole,String empId) {
         this.account = account;
         this.finalRole = finalRole;
+        this.empId = empId;
+
     }
 
     public String getFinalRole() {
@@ -24,6 +27,10 @@ public class CustomUserDetails implements UserDetails {
 
     public Account getAccount() {
         return account;
+    }
+
+    public String getEmpId() {
+        return empId;
     }
 
     @Override

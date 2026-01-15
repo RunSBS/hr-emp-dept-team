@@ -1,108 +1,93 @@
-/* 모달 배경 오버레이 */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.45);
+/* ===== 전체 시간표 ===== */
+.timetable {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
 }
 
-/* 모달 박스 */
-.modal-box {
-    background: #ffffff;
-    width: 420px;
-    max-width: 90%;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    animation: modalFadeIn 0.2s ease-out;
-}
-
-/* 제목 */
-.modal-box h4 {
-    margin-bottom: 20px;
-    font-size: 1.25rem;
-    font-weight: 600;
+/* ===== 시간 블럭 ===== */
+.time-block {
+    width: 56px;
+    height: 48px;
+    line-height: 48px;
     text-align: center;
-}
-
-/* 폼 그룹 */
-.form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 14px;
-}
-
-.form-group label {
-    font-size: 0.85rem;
-    color: #555;
-    margin-bottom: 4px;
-}
-
-/* 입력창 */
-.form-group input {
-    padding: 8px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    font-size: 0.9rem;
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.3);
-}
-
-/* 버튼 영역 */
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 20px;
-}
-
-/* 버튼 공통 */
-.modal-actions button {
-    padding: 6px 14px;
-    font-size: 0.9rem;
-    border-radius: 6px;
-    border: none;
+    background-color: #fff;
     cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+    transition: all 0.15s ease;
 }
 
-/* 취소 버튼 */
-.btn-secondary {
-    background: #e0e0e0;
-    color: #333;
+/* hover */
+.time-block:hover {
+    background-color: #f0f8ff;
 }
 
-.btn-secondary:hover {
-    background: #d5d5d5;
-}
-
-/* 확인 버튼 */
-.btn-primary {
-    background: #0d6efd;
+/* 예약된 시간 */
+.time-block.booked {
+    background-color: gray;
     color: #fff;
+    cursor: not-allowed;
+    border-color: gray;
 }
 
-.btn-primary:hover {
-    background: #0b5ed7;
+
+.time-block.selecting {
+    background-color: #fff3cd;
+    border-color: #ffc107;
 }
 
-/* 애니메이션 */
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* 선택 완료된 범위 */
+.time-block.selected {
+    background-color: #d1e7dd;
+    border-color: #198754;
+    color: #000;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    background-color: rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 2000;
+}
+
+.modal-content {
+    position: relative;
+    z-index: 2001;
+
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 420px;
+    max-width: 90%;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+/* 작은 모달 배경 */
+.mini-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 작은 모달 */
+.mini-modal {
+    background: #fff;
+    padding: 16px;
+    border-radius: 8px;
+    width: 320px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }

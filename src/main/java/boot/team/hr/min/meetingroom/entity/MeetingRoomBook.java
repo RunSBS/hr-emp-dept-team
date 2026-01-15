@@ -1,7 +1,6 @@
-package boot.team.hr.min.meetingroombook.entitiy;
+package boot.team.hr.min.meetingroom.entity;
 
 import boot.team.hr.hyun.emp.entity.Emp;
-import boot.team.hr.min.meetingroom.entity.MeetingRoom;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

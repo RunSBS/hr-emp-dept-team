@@ -9,6 +9,7 @@ import "../styles/meetingManage.css";
 
 const MeetingManage = () => {
     const [rooms, setRooms] = useState([]);
+    const [bookings, setBookings] = useState([]);
 
     // 예약 모달용
     const [selectedRoom, setSelectedRoom] = useState(null);
@@ -18,33 +19,46 @@ const MeetingManage = () => {
     const [roomModalOpen, setRoomModalOpen] = useState(false);
     const [editingRoom, setEditingRoom] = useState(null);
 
+    /* =========================
+       회의실 + 예약 조회
+    ========================= */
     const fetchData = async () => {
-        const roomRes = await axios.get("/back/room");
-        const bookingRes = await axios.get("/back/booking");
+        const [roomRes, bookingRes] = await Promise.all([
+            axios.get("/back/room"),
+            axios.get("/back/booking"),
+        ]);
 
-        // 회의실 + 예약 병합 (회의실당 1개 예약 가정)
-        const merged = roomRes.data.map(r => ({
-            ...r,
-            booking: bookingRes.data.find(
-                b => b.meetingRoomId === r.meetingRoomId
-            )
-        }));
-
-        setRooms(merged);
+        setRooms(roomRes.data);
+        setBookings(bookingRes.data);
     };
 
     useEffect(() => {
         fetchData();
     }, []);
 
+    /* =========================
+       현재 사용 중 여부 판단
+    ========================= */
+    const isRoomInUse = (roomId) => {
+        const now = new Date();
+
+        return bookings.some(b => {
+            if (b.meetingRoomId !== roomId) return false;
+
+            const start = new Date(b.startTime);
+            const end = new Date(b.endTime);
+
+            return now >= start && now < end;
+        });
+    };
+
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
-                {/* 회의실 생성 버튼 */}
                 <Button
                     variant="primary"
                     onClick={() => {
-                        setEditingRoom(null);   // 생성 모드
+                        setEditingRoom(null);
                         setRoomModalOpen(true);
                     }}
                 >
@@ -53,88 +67,43 @@ const MeetingManage = () => {
             </div>
 
             <Row xs={1} md={2} lg={3} className="g-4">
-                {rooms.map(r => (
-                    <Col key={r.meetingRoomId}>
-                        <Card className="h-100 shadow-sm">
-                            <Card.Body>
-                                <div className="d-flex justify-content-between">
-                                    <h5>{r.name}</h5>
-                                    {r.booking ? (
-                                        <Badge bg="danger">예약중</Badge>
-                                    ) : (
-                                        <Badge bg="success">예약 가능</Badge>
-                                    )}
-                                </div>
+                {rooms.map((r) => {
+                    const inUse = isRoomInUse(r.meetingRoomId);
 
-                                <div className="text-muted small">
-                                    {r.location} · {r.capacity}명
-                                </div>
-
-                                <hr />
-
-                                {/* 예약 정보 */}
-                                {r.booking ? (
-                                    <div className="booking-info">
-                                        <div>
-                                            <strong>예약자</strong> {r.booking.empId}
-                                        </div>
-                                        <div>
-                                            {r.booking.startTime} ~ {r.booking.endTime}
-                                        </div>
-                                        <div className="text-muted">
-                                            {r.booking.description}
-                                        </div>
+                    return (
+                        <Col key={r.meetingRoomId}>
+                            <Card
+                                className={`h-100 shadow-sm meeting-room-card ${
+                                    inUse ? "booking-active" : ""
+                                }`}
+                            >
+                                <Card.Body>
+                                    <div className="d-flex justify-content-between">
+                                        <h5>{r.name}</h5>
+                                        <Badge bg={inUse ? "danger" : "success"} className="status-badge">
+                                            {inUse ? "사용중" : "예약 가능"}
+                                        </Badge>
                                     </div>
-                                ) : (
-                                    <div className="text-muted">
-                                        예약이 없습니다.
+
+                                    <div>
+                                        위치-{r.location}
                                     </div>
-                                )}
-                            </Card.Body>
-
-                            <Card.Footer className="bg-white border-0">
-                                <div className="d-flex justify-content-end gap-2 flex-wrap">
-                                    {/* 회의실 수정 */}
-                                    <Button
-                                        size="sm"
-                                        variant="outline-primary"
-                                        onClick={() => {
-                                            setEditingRoom(r);
-                                            setRoomModalOpen(true);
-                                        }}
-                                    >
-                                        회의실 수정
-                                    </Button>
-
-                                    {r.booking ? (
-                                        <>
-                                            <Button
-                                                size="sm"
-                                                variant="outline-secondary"
-                                                onClick={() => {
-                                                    setSelectedRoom(r);
-                                                    setEditingBooking(r.booking);
-                                                }}
-                                            >
-                                                예약 수정
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="outline-danger"
-                                                onClick={async () => {
-                                                    await axios.delete(
-                                                        `/back/booking/${r.booking.id}`
-                                                    );
-                                                    fetchData();
-                                                }}
-                                            >
-                                                예약 취소
-                                            </Button>
-                                        </>
-                                    ) : (
+                                    <div>수용인원-{r.capacity}명</div>
+                                    <div className="d-flex justify-content-end gap-2 flex-wrap">
                                         <Button
                                             size="sm"
-                                            variant="success"
+                                            className="btn-room-edit"
+                                            onClick={() => {
+                                                setEditingRoom(r);
+                                                setRoomModalOpen(true);
+                                            }}
+                                        >
+                                            회의실 수정
+                                        </Button>
+
+                                        <Button
+                                            size="sm"
+                                            className="btn-room-edit"
                                             onClick={() => {
                                                 setSelectedRoom(r);
                                                 setEditingBooking(null);
@@ -142,12 +111,14 @@ const MeetingManage = () => {
                                         >
                                             예약
                                         </Button>
-                                    )}
-                                </div>
-                            </Card.Footer>
-                        </Card>
-                    </Col>
-                ))}
+
+                                    </div>
+                                </Card.Body>
+
+                            </Card>
+                        </Col>
+                    );
+                })}
             </Row>
 
             {/* 예약 모달 */}
@@ -158,6 +129,7 @@ const MeetingManage = () => {
                     onClose={() => {
                         setSelectedRoom(null);
                         setEditingBooking(null);
+                        fetchData();
                     }}
                     onSuccess={fetchData}
                 />

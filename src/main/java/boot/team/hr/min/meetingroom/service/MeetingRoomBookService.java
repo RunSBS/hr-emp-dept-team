@@ -1,12 +1,12 @@
-package boot.team.hr.min.meetingroombook.service;
+package boot.team.hr.min.meetingroom.service;
 
 import boot.team.hr.hyun.emp.entity.Emp;
 import boot.team.hr.hyun.emp.repo.EmpRepository;
 import boot.team.hr.min.meetingroom.entity.MeetingRoom;
 import boot.team.hr.min.meetingroom.repository.MeetingRoomRepository;
-import boot.team.hr.min.meetingroombook.dto.MeetingRoomBookDto;
-import boot.team.hr.min.meetingroombook.entitiy.MeetingRoomBook;
-import boot.team.hr.min.meetingroombook.repository.MeetingRoomBookRepository;
+import boot.team.hr.min.meetingroom.dto.MeetingRoomBookDto;
+import boot.team.hr.min.meetingroom.entity.MeetingRoomBook;
+import boot.team.hr.min.meetingroom.repository.MeetingRoomBookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
