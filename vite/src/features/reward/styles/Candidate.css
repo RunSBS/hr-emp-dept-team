@@ -1,0 +1,346 @@
+.candidate-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.candidate-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 0 20px 0;
+}
+
+.candidate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  padding: 10px 20px;
+  background-color: #999;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.back-button:hover {
+  background-color: #808080;
+}
+
+/* 권한 없음 화면 */
+.no-permission {
+  text-align: center;
+  padding: 40px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 40px;
+}
+
+.no-permission h2 {
+  color: #f44336;
+  margin-bottom: 10px;
+}
+
+.no-permission p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.user-info {
+  background-color: white;
+  padding: 15px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.user-info p {
+  margin: 5px 0;
+  color: #333;
+}
+
+/* 추천 방식 선택 */
+.nomination-type-selection {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.nomination-type-selection h2 {
+  font-size: 20px;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.type-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.type-button {
+  flex: 1;
+  min-width: 250px;
+  max-width: 350px;
+  padding: 30px 20px;
+  background-color: white;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.type-button:hover {
+  border-color: #4CAF50;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.manual-button:hover {
+  border-color: #4CAF50;
+}
+
+.ai-button:hover {
+  border-color: #2196F3;
+}
+
+.button-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.button-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.button-description {
+  font-size: 14px;
+  color: #666;
+}
+
+/* 내가 추천한 목록 */
+.my-nominations-section {
+  margin-top: 40px;
+}
+
+.my-nominations-section h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.nominations-table-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.nominations-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.nominations-table thead th {
+  background-color: #f5f5f5;
+  padding: 12px;
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 2px solid #ddd;
+}
+
+.nominations-table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.nominations-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.nominations-table tbody td {
+  padding: 12px;
+  text-align: left;
+}
+
+.reason-cell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.status-pending {
+  background-color: #FF9800;
+  color: white;
+}
+
+.status-approved {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.status-rejected {
+  background-color: #f44336;
+  color: white;
+}
+
+/* 수동 추천 폼 */
+.manual-nomination-form-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 30px;
+}
+
+.manual-nomination-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-section h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+  border-bottom: 2px solid #4CAF50;
+  padding-bottom: 10px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.form-textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.helper-text {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+.character-count {
+  text-align: right;
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.submit-button {
+  padding: 12px 30px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.submit-button:hover {
+  background-color: #45a049;
+}
+
+.cancel-button {
+  padding: 12px 30px;
+  background-color: #999;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.cancel-button:hover {
+  background-color: #808080;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .type-buttons {
+    flex-direction: column;
+  }
+
+  .type-button {
+    max-width: 100%;
+  }
+
+  .nominations-table {
+    font-size: 12px;
+  }
+
+  .nominations-table thead th,
+  .nominations-table tbody td {
+    padding: 8px;
+  }
+
+  .reason-cell {
+    max-width: 150px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .submit-button,
+  .cancel-button {
+    width: 100%;
+  }
+}

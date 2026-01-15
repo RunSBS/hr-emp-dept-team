@@ -75,7 +75,6 @@ public class RewardPolicyService {
         RewardPolicy policy = RewardPolicy.builder()
                 .policyName(dto.getPolicyName())
                 .rewardType(dto.getRewardType())
-                .rewardAmount(dto.getRewardAmount())
                 .description(dto.getDescription())
                 .isActive(dto.getIsActive() != null ? dto.getIsActive() : "Y")
                 .build();
@@ -90,7 +89,6 @@ public class RewardPolicyService {
 
         policy.setPolicyName(dto.getPolicyName());
         policy.setRewardType(dto.getRewardType());
-        policy.setRewardAmount(dto.getRewardAmount());
         policy.setDescription(dto.getDescription());
         policy.setIsActive(dto.getIsActive());
 
@@ -110,7 +108,6 @@ public class RewardPolicyService {
                 .policyId(policy.getPolicyId())
                 .policyName(policy.getPolicyName())
                 .rewardType(policy.getRewardType())
-                .rewardAmount(policy.getRewardAmount())
                 .description(policy.getDescription())
                 .isActive(policy.getIsActive())
                 .createdAt(policy.getCreatedAt())

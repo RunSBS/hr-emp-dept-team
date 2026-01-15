@@ -12,7 +12,6 @@ const Policy = () => {
   const [formData, setFormData] = useState({
     policyName: '',
     rewardType: '',
-    rewardAmount: '',
     description: '',
     isActive: 'Y'
   });
@@ -68,7 +67,6 @@ const Policy = () => {
       setFormData({
         policyName: policy.policyName,
         rewardType: policy.rewardType,
-        rewardAmount: policy.rewardAmount,
         description: policy.description || '',
         isActive: policy.isActive
       });
@@ -77,7 +75,6 @@ const Policy = () => {
       setFormData({
         policyName: '',
         rewardType: '',
-        rewardAmount: '',
         description: '',
         isActive: 'Y'
       });
@@ -91,7 +88,6 @@ const Policy = () => {
     setFormData({
       policyName: '',
       rewardType: '',
-      rewardAmount: '',
       description: '',
       isActive: 'Y'
     });
@@ -115,11 +111,6 @@ const Policy = () => {
 
     if (!formData.rewardType.trim()) {
       alert('포상 유형을 입력해주세요.');
-      return;
-    }
-
-    if (!formData.rewardAmount || formData.rewardAmount <= 0) {
-      alert('포상 금액은 0보다 커야 합니다.');
       return;
     }
 
@@ -167,12 +158,6 @@ const Policy = () => {
     });
   };
 
-  const formatAmount = (amount, rewardType) => {
-    if (!amount) return '0';
-    const unit = rewardType === '휴가' ? '일' : '원';
-    return amount.toLocaleString() + unit;
-  };
-
   if (loading) {
     return <div className="reward-policy-container">로딩 중...</div>;
   }
@@ -209,7 +194,6 @@ const Policy = () => {
             <tr>
               <th>정책명</th>
               <th>포상 유형</th>
-              <th>지급 값</th>
               <th>설명</th>
               <th>활성화 여부</th>
               <th>생성일시</th>
@@ -219,7 +203,7 @@ const Policy = () => {
           <tbody>
             {policyList.length === 0 ? (
               <tr>
-                <td colSpan="7" className="reward-policy-empty-message">
+                <td colSpan="6" className="reward-policy-empty-message">
                   등록된 포상 정책이 없습니다.
                 </td>
               </tr>
@@ -228,7 +212,6 @@ const Policy = () => {
                 <tr key={policy.policyId}>
                   <td>{policy.policyName}</td>
                   <td>{policy.rewardType}</td>
-                  <td>{formatAmount(policy.rewardAmount, policy.rewardType)}</td>
                   <td>{policy.description || '-'}</td>
                   <td>
                     <span className={policy.isActive === 'Y' ? 'reward-policy-active-badge' : 'reward-policy-inactive-badge'}>
@@ -280,19 +263,6 @@ const Policy = () => {
                   onChange={handleInputChange}
                   className="reward-policy-input"
                   maxLength="50"
-                  required
-                />
-              </div>
-
-              <div className="reward-policy-form-group">
-                <label className="reward-policy-label">포상 금액 *</label>
-                <input
-                  type="number"
-                  name="rewardAmount"
-                  value={formData.rewardAmount}
-                  onChange={handleInputChange}
-                  className="reward-policy-input"
-                  min="0"
                   required
                 />
               </div>

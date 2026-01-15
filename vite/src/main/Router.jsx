@@ -15,6 +15,7 @@ import Input from "../features/evaluation/pages/Input.jsx";
 import View from "../features/evaluation/pages/View.jsx";
 import Recommend from "../features/evaluation/pages/Recommend.jsx";
 import Policy from "../features/reward/pages/Policy.jsx";
+import RewardHistory from "../features/reward/pages/RewardHistory.jsx";
 import Candidate from "../features/reward/pages/Candidate.jsx";
 import Calender from "../features/schedule/pages/Calender.jsx";
 import Project from "../features/schedule/pages/Project.jsx";
@@ -103,7 +104,7 @@ function Router() {
                 <Route path="reward">
                 <Route path="admin/policy"   element={<Policy />}/>
                 <Route path="admin/candidate"  element={<Candidate />}/>
-                <Route path="history"  element={<History />}/>
+                <Route path="history"  element={<RewardHistory />}/>
                 </Route>
 
                 <Route path="approval" element={<ApprovalLayout />}>
