@@ -44,19 +44,28 @@ public class ProjectController {
         projectService.delete(id);
     }
 
-    @GetMapping
+    @GetMapping()
     public Page<ProjectDto> getProjects(
-            @PageableDefault(size=6,sort="id",direction = Sort.Direction.DESC)
-            Pageable pageable
-    ){
-        return projectService.findPage(pageable);
+            @PageableDefault(
+                    size = 6,
+                    sort = "id",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable,
+            @RequestParam(required = false) String keyword
+    ) {
+        return projectService.findPage(pageable, keyword);
     }
     //내프로젝트 찾기
     @GetMapping("/my")
     public Page<ProjectDto> myProjects(
             @AuthenticationPrincipal CustomUserDetails user,
-            Pageable pageable
+            Pageable pageable,
+            @RequestParam(required = false) String keyword
     ) {
-        return projectService.findMyProjects(user.getEmpId(), pageable);
+        return projectService.findMyProjects(
+                user.getEmpId(),
+                keyword,
+                pageable
+        );
     }
 }

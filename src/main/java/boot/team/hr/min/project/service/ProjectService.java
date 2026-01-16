@@ -67,13 +67,26 @@ public class ProjectService {
         repository.deleteById(id);
     }
     //page
-    @Transactional
-    public Page<ProjectDto> findPage(Pageable pageable){
-        return repository.findAll(pageable).map(ProjectDto::from);
+    @Transactional(readOnly = true)
+    public Page<ProjectDto> findPage(Pageable pageable, String keyword) {
+
+        Page<Project> page;
+        if (keyword == null || keyword.trim().isEmpty()) {
+            page = repository.findAll(pageable);
+        }
+        else {
+            page = repository.findByNameContainingIgnoreCase(keyword, pageable);
+        }
+
+        return page.map(ProjectDto::from);
     }
     @Transactional(readOnly = true)
-    public Page<ProjectDto> findMyProjects(String empId, Pageable pageable) {
-        return projectMemberRepository.findMyProjects(empId, pageable);
+    public Page<ProjectDto> findMyProjects(
+            String empId,
+            String keyword,
+            Pageable pageable
+    ) {
+        return projectMemberRepository.findMyProjects(empId, keyword, pageable);
     }
 
 }

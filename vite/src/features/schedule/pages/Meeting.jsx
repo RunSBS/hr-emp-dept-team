@@ -7,7 +7,6 @@ const Meeting = () => {
 
     return (
         <>
-            <h1>회의실</h1>
             <MeetingManage />
         </>
     );

@@ -79,3 +79,49 @@
     border-color: #7f878c;
     color: #fff;
 }
+/* 회의실 카드 감싸는 회색 박스 */
+.meeting-room-wrapper {
+    background-color: #f5f6f8; /* 연한 회색 */
+    padding: 24px;
+    border-radius: 12px;
+}
+
+/* 선택: 카드가 배경에서 살짝 떠 보이게 */
+.meeting-room-wrapper .meeting-room-card {
+    background-color: #ffffff;
+}
+
+/* 상단 바 */
+.meeting-top-bar {
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* 검색 + 버튼 묶음 */
+.meeting-search-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* 검색 input */
+.meeting-search-input {
+    width: 220px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #bcbcbc;
+    background-color: #f5f5f5;
+    font-size: 14px;
+}
+
+/* 검색 버튼 */
+.meeting-search-btn {
+    padding: 7px 14px;
+}
+
+/* disabled 상태 톤 정리 */
+.meeting-search-input:disabled,
+.meeting-search-btn:disabled {
+    opacity: 0.85;
+    cursor: not-allowed;
+}

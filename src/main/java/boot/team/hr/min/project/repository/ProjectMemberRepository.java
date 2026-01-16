@@ -21,21 +21,27 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Lo
     List<ProjectMember> findByEmp_EmpId(String empId);
 
     @Query("""
-        select new boot.team.hr.min.project.dto.ProjectDto(
-            p.id,
-            p.name,
-            p.description,
-            p.methodology,
-            p.startDate,
-            p.endDate,
-            p.status
-        )
-        from ProjectMember pm
-        join pm.project p
-        where pm.emp.empId = :empId
-    """)
+    select new boot.team.hr.min.project.dto.ProjectDto(
+        p.id,
+        p.name,
+        p.description,
+        p.methodology,
+        p.startDate,
+        p.endDate,
+        p.status
+    )
+    from ProjectMember pm
+    join pm.project p
+    where pm.emp.empId = :empId
+      and (
+           :keyword is null
+           or :keyword = ''
+           or lower(p.name) like lower(concat('%', :keyword, '%'))
+      )
+""")
     Page<ProjectDto> findMyProjects(
             @Param("empId") String empId,
+            @Param("keyword") String keyword,
             Pageable pageable
     );
 }
