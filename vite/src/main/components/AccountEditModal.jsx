@@ -8,6 +8,7 @@ import { useAuth } from "../AuthContext.jsx";
 const AccountEditModal = ({ show, onClose }) => {
     const navigate = useNavigate();
     const { user } = useAuth();
+    console.log(user);
 
     // 탭 상태
     const [activeTab, setActiveTab] = useState("info"); // info | security

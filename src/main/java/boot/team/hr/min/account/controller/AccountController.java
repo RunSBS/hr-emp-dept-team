@@ -50,6 +50,7 @@ public class AccountController {
 
         if (user.getEmpId() != null) {
             result.put("empId", user.getEmpId());
+            result.put("empName", user.getEmpName());
         }
 
         return result;

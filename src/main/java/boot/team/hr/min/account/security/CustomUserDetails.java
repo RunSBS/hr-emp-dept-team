@@ -13,12 +13,18 @@ public class CustomUserDetails implements UserDetails {
     private final Account account;
     private final String finalRole;
     private final String empId;
+    private final String empName; //
 
-    public CustomUserDetails(Account account, String finalRole,String empId) {
+    public CustomUserDetails(
+            Account account,
+            String finalRole,
+            String empId,
+            String empName   //
+    ) {
         this.account = account;
         this.finalRole = finalRole;
         this.empId = empId;
-
+        this.empName = empName;
     }
 
     public String getFinalRole() {
@@ -31,6 +37,10 @@ public class CustomUserDetails implements UserDetails {
 
     public String getEmpId() {
         return empId;
+    }
+
+    public String getEmpName() {
+        return empName;
     }
 
     @Override
@@ -70,6 +80,4 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }
-

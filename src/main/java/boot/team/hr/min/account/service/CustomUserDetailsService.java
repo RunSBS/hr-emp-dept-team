@@ -26,10 +26,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         String finalRole;
         String empId = null;
+        String empName = null;
 
         if ("ADMIN".equals(account.getRole())) {
             finalRole = "ADMIN";
-            // empId는 null 유지
+            // empId, empName = null
         }
         else if ("EMP".equals(account.getRole())) {
             Emp emp = empRepository.findByEmail(email)
@@ -37,11 +38,17 @@ public class CustomUserDetailsService implements UserDetailsService {
 
             finalRole = emp.getEmpRole();
             empId = emp.getEmpId();
+            empName = emp.getEmpName();
         }
         else {
             throw new UsernameNotFoundException("Invalid role");
         }
 
-        return new CustomUserDetails(account, finalRole, empId);
+        return new CustomUserDetails(
+                account,
+                finalRole,
+                empId,
+                empName
+        );
     }
 }
