@@ -20,26 +20,35 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) {
-        System.out.println("CustomUserDetailsService CALLED: " + email);
 
         Account account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Account not found"));
 
         String finalRole;
+        String empId = null;
+        String empName = null;
 
         if ("ADMIN".equals(account.getRole())) {
             finalRole = "ADMIN";
+            // empId, empName = null
         }
         else if ("EMP".equals(account.getRole())) {
             Emp emp = empRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("Emp not found"));
 
-            finalRole = emp.getEmpRole(); // Emp.empRole 사용
+            finalRole = emp.getEmpRole();
+            empId = emp.getEmpId();
+            empName = emp.getEmpName();
         }
         else {
             throw new UsernameNotFoundException("Invalid role");
         }
 
-        return new CustomUserDetails(account, finalRole);
+        return new CustomUserDetails(
+                account,
+                finalRole,
+                empId,
+                empName
+        );
     }
 }

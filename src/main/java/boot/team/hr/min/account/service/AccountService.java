@@ -52,4 +52,29 @@ public class AccountService {
 
         return accountRepository.save(emp).getId();
     }
+    //u 비밀번호변경
+    @Transactional
+    public void changePassword(Long accountId, String currentPw, String newPw) {
+
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("계정 없음"));
+
+        if (!passwordEncoder.matches(currentPw, account.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        account.setPassword(passwordEncoder.encode(newPw));
+    }
+
+    //
+    // D 회원 탈퇴
+    //
+    @Transactional
+    public void deleteAccount(Long accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("계정 없음"));
+
+        accountRepository.delete(account);
+    }
+
 }
