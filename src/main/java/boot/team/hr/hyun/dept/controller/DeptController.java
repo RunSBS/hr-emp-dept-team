@@ -29,9 +29,9 @@ public class DeptController {
         String tempLoginEmpId = "admin1"; // 아직 로그인 기능 연동 전이라면 임시로 고정값 사용
         deptService.updateDept(deptDto,tempLoginEmpId);
     }
-    @DeleteMapping("/delete")
-    public void deleteDeptById(@RequestBody DeptDto deptDto){
-        deptService.deleteDept(deptDto.getDeptNo());
+    @DeleteMapping("/delete/{deptNo}")
+    public void deleteDeptById(@PathVariable Integer deptNo){
+        deptService.deleteDept(deptNo);
     }
 
     // 부서번호로 조회하여 해당 부서의 변경이력을 반환

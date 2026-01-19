@@ -2,232 +2,292 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const OutsourcingAssignmentManager = () => {
-    const [assignments, setAssignments] = useState([]); // 전체 배치 데이터
-    const [emps, setEmps] = useState([]);               // 사원 선택용 리스트
-    const [companies, setCompanies] = useState([]);       // 업체 선택용 리스트
-    const [selected, setSelected] = useState(null);       // 선택된 상세 데이터
+    const [assignments, setAssignments] = useState([]);
+    const [companies, setCompanies] = useState([]);
+    const [availableEmps, setAvailableEmps] = useState([]);
+    const [allEmps, setAllEmps] = useState([]);
+    const [definedProjects, setDefinedProjects] = useState([]);
 
-    // 초기 데이터 로드
-    useEffect(() => {
-        fetchInitialData();
-    }, []);
+    const [selectedCompany, setSelectedCompany] = useState(null);
+    const [selectedProjectName, setSelectedProjectName] = useState("");
+    const [isCreatingNew, setIsCreatingNew] = useState(false);
+    const [newProjectInput, setNewProjectInput] = useState("");
+
+    const [roleFilter, setRoleFilter] = useState("ALL");
+    const [editingId, setEditingId] = useState(null);
+    const [editForm, setEditForm] = useState({});
+
+    // 날짜 기반 상태 계산
+    const calculateStatus = (start, end) => {
+        const today = new Date().toISOString().split('T')[0];
+        if (!start) return "예정";
+        if (start > today) return "예정";
+        if (end && end < today) return "종료";
+        return "진행중";
+    };
+
+    // 상태 배지 (진행중, 종료, 예정)
+    const getStatusBadge = (status) => {
+        switch(status) {
+            case "진행중": return <span className="badge bg-success shadow-sm" style={{fontSize: '0.65rem'}}>진행중</span>;
+            case "예정": return <span className="badge bg-primary shadow-sm" style={{fontSize: '0.65rem'}}>예정</span>;
+            case "종료": return <span className="badge bg-danger shadow-sm" style={{fontSize: '0.65rem'}}>종료</span>;
+            default: return <span className="badge bg-secondary" style={{fontSize: '0.65rem'}}>{status}</span>;
+        }
+    };
 
     const fetchInitialData = async () => {
         try {
-            const [assignRes, empRes, compRes] = await Promise.all([
+            const [assignRes, compRes, empRes] = await Promise.all([
                 axios.get("/back/hyun/outsourcing/selectAllAssignment", { withCredentials: true }),
-                axios.get("/back/hyun/emp/selectAll", { withCredentials: true }),
-                axios.get("/back/hyun/outsourcing/selectAllCompany", { withCredentials: true })
+                axios.get("/back/hyun/outsourcing/selectAllCompany", { withCredentials: true }),
+                axios.get("/back/hyun/emp/selectAll", { withCredentials: true })
             ]);
-            setAssignments(assignRes.data);
-            setEmps(empRes.data);
-            setCompanies(compRes.data);
-        } catch (e) {
-            console.error("데이터 로딩 실패", e);
-        }
+
+            const assignData = assignRes.data || [];
+            setAssignments(assignData);
+            setCompanies(compRes.data || []);
+            setAllEmps(empRes.data || []);
+
+            // 기존 DB 데이터에서 프로젝트 목록 추출 (업체별 격리용)
+            const projectsFromDB = assignData.map(a => ({
+                companyId: Number(a.companyId),
+                projectName: a.projectName
+            }));
+
+            const uniqueProjects = projectsFromDB.filter((v, i, a) =>
+                a.findIndex(t => (t.companyId === v.companyId && t.projectName === v.projectName)) === i
+            );
+            setDefinedProjects(uniqueProjects);
+
+            const assignedIds = assignData.map(a => a.empId);
+            const pool = (empRes.data || []).filter(e => !assignedIds.includes(e.empId));
+            setAvailableEmps(pool.sort((a, b) => (a.empRole === "LEADER" ? -1 : 1)));
+        } catch (e) { console.error("데이터 로딩 실패", e); }
     };
 
-    // UI 그룹화 로직: projectName을 Key로 사용하여 객체 생성
-    const getGroupedProjects = () => {
-        return assignments.reduce((acc, curr) => {
-            const key = curr.projectName || "미지정 프로젝트";
-            if (!acc[key]) acc[key] = [];
-            acc[key].push(curr);
-            return acc;
-        }, {});
+    useEffect(() => { fetchInitialData(); }, []);
+
+    const getProjectsForSelectedCompany = () => {
+        if (!selectedCompany) return [];
+        return definedProjects
+            .filter(p => Number(p.companyId) === Number(selectedCompany.companyId))
+            .map(p => p.projectName);
     };
 
-    const groupedData = getGroupedProjects();
+    const handleAddProject = () => {
+        if (!newProjectInput.trim()) return alert("프로젝트 명칭을 입력하세요.");
+        const isDuplicate = definedProjects.some(
+            p => Number(p.companyId) === Number(selectedCompany.companyId) && p.projectName === newProjectInput
+        );
+        if (isDuplicate) return alert("이미 등록된 프로젝트입니다.");
 
-    const handleSelect = (item) => {
-        setSelected({ ...item, isNew: false });
+        setDefinedProjects([...definedProjects, { companyId: Number(selectedCompany.companyId), projectName: newProjectInput }]);
+        setSelectedProjectName(newProjectInput);
+        setNewProjectInput("");
+        setIsCreatingNew(false);
     };
 
-    const handleNew = () => {
-        setSelected({
-            isNew: true,
-            assignmentId: null,
-            empId: "",
-            companyId: "",
-            projectName: "",
-            status: "예정",
-            startDate: "",
-            endDate: ""
-        });
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setSelected(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSave = async () => {
-        // 1. 상태에 따라 URL과 HTTP 메서드를 결정합니다.
-        const isNew = selected.isNew;
-        const url = isNew ? "/back/hyun/outsourcing/insertAssignment" : "/back/hyun/outsourcing/updateAssignment";
-        const method = isNew ? "post" : "put"; // insert는 post, update는 put
-
+    const handleAssign = async (emp) => {
+        if (!selectedProjectName) return alert("프로젝트를 선택해주세요.");
+        const startDate = new Date().toISOString().split('T')[0];
+        const newAssign = {
+            empId: emp.empId,
+            companyId: selectedCompany.companyId,
+            projectName: selectedProjectName,
+            startDate: startDate,
+            endDate: "",
+            status: calculateStatus(startDate, "")
+        };
         try {
-            // 2. axios 설정을 동적으로 적용합니다.
-            await axios({
-                method: method,
-                url: url,
-                data: selected,
-                withCredentials: true
-            });
-
-            alert(isNew ? "신규 배정이 저장되었습니다." : "배정 정보가 수정되었습니다.");
-            setSelected(null);
+            await axios.post("/back/hyun/outsourcing/insertAssignment", newAssign, { withCredentials: true });
             fetchInitialData();
-        } catch (e) {
-            console.error("저장 실패", e);
-            alert("저장 실패: 입력값을 확인하거나 서버 로그를 확인하세요.");
-        }
+        } catch (e) { alert("배정 실패"); }
+    };
+
+    const handleUpdate = async () => {
+        try {
+            const updatedForm = { ...editForm, status: calculateStatus(editForm.startDate, editForm.endDate) };
+            await axios.put("/back/hyun/outsourcing/updateAssignment", updatedForm, { withCredentials: true });
+            setEditingId(null);
+            fetchInitialData();
+        } catch (e) { alert("수정 실패"); }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("배치 정보를 삭제하시겠습니까?")) return;
+        if (!window.confirm("제거하시겠습니까?")) return;
         try {
-            await axios.delete("/back/hyun/outsourcing/deleteAssignment", {
-                data: { assignmentId: id },
-                withCredentials: true
-            });
-            alert("삭제되었습니다.");
-            setSelected(null);
+            await axios.delete(`/back/hyun/outsourcing/deleteAssignment/${id}`, { withCredentials: true });
             fetchInitialData();
-        } catch (e) {
-            alert("삭제 실패");
-        }
+        } catch (e) { alert("제거 실패"); }
+    };
+
+    const getMembersInProject = () => {
+        if (!selectedCompany || !selectedProjectName) return [];
+        return assignments
+            .filter(a => Number(a.companyId) === Number(selectedCompany.companyId) && a.projectName === selectedProjectName)
+            .map(a => {
+                const emp = allEmps.find(e => e.empId === a.empId);
+                return { ...a, empName: emp?.empName || a.empId, empRole: emp?.empRole || "EMP" };
+            })
+            .sort((a, b) => (a.empRole === "LEADER" ? -1 : 1));
     };
 
     return (
-        <div style={{ display: "flex", gap: "20px", marginTop: "10px" }}>
-            {/* 왼쪽: 프로젝트별 그룹 리스트 */}
-            <div style={{ width: "400px", border: "1px solid #ddd", borderRadius: "8px", padding: "15px", backgroundColor: "#fdfdfd" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                    <h5 style={{ margin: 0 }}>프로젝트별 인원</h5>
-                    <button onClick={handleNew} className="btn btn-sm btn-primary">+ 배정 추가</button>
-                </div>
-
-                <div style={{ maxHeight: "650px", overflowY: "auto", paddingRight: "5px" }}>
-                    {Object.keys(groupedData).length === 0 && <p style={{color: "#999", textAlign: "center"}}>데이터가 없습니다.</p>}
-
-                    {Object.keys(groupedData).map(projectName => (
-                        <div key={projectName} style={projectCardStyle}>
-                            {/* 프로젝트 헤더 */}
-                            <div style={projectHeaderStyle}>
-                                <span style={{ fontWeight: "bold" }}>{projectName}</span>
-                                <span className="badge bg-primary rounded-pill">{groupedData[projectName].length}명</span>
-                            </div>
-
-                            {/* 프로젝트 소속 인원 리스트 */}
-                            <div style={{ backgroundColor: "#fff" }}>
-                                {groupedData[projectName].map(emp => (
-                                    <div
-                                        key={emp.assignmentId}
-                                        onClick={() => handleSelect(emp)}
-                                        style={empItemStyle(selected?.assignmentId === emp.assignmentId)}
-                                    >
-                                        <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                            <span><strong>{emp.empId}</strong> 사원</span>
-                                            <span style={{
-                                                fontSize: "12px",
-                                                color: emp.status === "진행중" ? "#0d6efd" : "#6c757d"
-                                            }}>{emp.status}</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+        <div className="row g-0 border rounded shadow-sm bg-white" style={{ height: "80vh" }}>
+            {/* 1. 업체 선택 */}
+            <div className="col-md-2 border-end h-100 overflow-auto bg-light">
+                <div className="p-3 fw-bold border-bottom bg-white small">1. 업체 선택</div>
+                <div className="list-group list-group-flush">
+                    {companies.map(c => (
+                        <button key={c.companyId}
+                                onClick={() => { setSelectedCompany(c); setSelectedProjectName(""); setIsCreatingNew(false); }}
+                                className={`list-group-item list-group-item-action border-0 py-3 ${selectedCompany?.companyId === c.companyId ? 'bg-primary text-white' : ''}`}>
+                            {c.companyName}
+                        </button>
                     ))}
                 </div>
             </div>
 
-            {/* 오른쪽: 상세 정보 편집 폼 */}
-            <div style={{ flex: 1, border: "1px solid #ddd", borderRadius: "8px", padding: "25px", backgroundColor: "#fff" }}>
-                {selected ? (
-                    <div>
-                        <h4>{selected.isNew ? "신규 사원 배정" : "배정 상세 수정"}</h4>
-                        <hr />
-                        <div className="row g-3">
-                            <div className="col-md-6">
-                                <label className="form-label">대상 사원</label>
-                                <select className="form-select" name="empId" value={selected.empId} onChange={handleChange} disabled={!selected.isNew}>
-                                    <option value="">사원 선택</option>
-                                    {emps.map(e => <option key={e.empId} value={e.empId}>{e.empName} ({e.empId})</option>)}
-                                </select>
+            {/* 2. 프로젝트 관리 */}
+            <div className="col-md-3 border-end h-100 overflow-auto">
+                <div className="p-3 fw-bold border-bottom bg-light small">2. 프로젝트 관리</div>
+                {selectedCompany ? (
+                    <div className="p-2">
+                        {!isCreatingNew ? (
+                            <button className="btn btn-sm btn-dark w-100 mb-3 shadow-sm" onClick={() => setIsCreatingNew(true)}>+ 신규 등록</button>
+                        ) : (
+                            <div className="p-2 mb-3 bg-white border border-primary rounded shadow-sm">
+                                <input type="text" className="form-control form-control-sm mb-2" value={newProjectInput} onChange={e=>setNewProjectInput(e.target.value)} placeholder="프로젝트명" />
+                                <div className="d-flex gap-1">
+                                    <button className="btn btn-xs btn-primary flex-grow-1" onClick={handleAddProject}>생성</button>
+                                    <button className="btn btn-xs btn-light border flex-grow-1" onClick={()=>setIsCreatingNew(false)}>취소</button>
+                                </div>
                             </div>
-                            <div className="col-md-6">
-                                <label className="form-label">파견 업체</label>
-                                <select className="form-select" name="companyId" value={selected.companyId} onChange={handleChange} disabled={!selected.isNew}>
-                                    <option value="">업체 선택</option>
-                                    {companies.map(c => <option key={c.companyId} value={c.companyId}>{c.companyName}</option>)}
-                                </select>
-                            </div>
-                            <div className="col-12">
-                                <label className="form-label">프로젝트명</label>
-                                <input className="form-control" name="projectName" value={selected.projectName} onChange={handleChange} placeholder="프로젝트 이름을 입력하세요" />
-                            </div>
-                            <div className="col-md-4">
-                                <label className="form-label">진행 상태</label>
-                                <select className="form-select" name="status" value={selected.status} onChange={handleChange}>
-                                    <option value="예정">예정</option>
-                                    <option value="진행중">진행중</option>
-                                    <option value="종료">종료</option>
-                                </select>
-                            </div>
-                            <div className="col-md-4">
-                                <label className="form-label">파견 시작일</label>
-                                <input type="date" className="form-control" name="startDate" value={selected.startDate} onChange={handleChange} />
-                            </div>
-                            <div className="col-md-4">
-                                <label className="form-label">철수 예정일</label>
-                                <input type="date" className="form-control" name="endDate" value={selected.endDate} onChange={handleChange} />
+                        )}
+                        <div className="list-group">
+                            {getProjectsForSelectedCompany().map(name => (
+                                <button key={name} onClick={() => { setSelectedProjectName(name); setEditingId(null); }}
+                                        className={`list-group-item list-group-item-action small py-2 ${selectedProjectName === name ? 'bg-info text-white' : ''}`}>
+                                    <i className="bi bi-folder me-2"></i>{name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                ) : <div className="p-4 text-center text-muted small mt-5">업체를 선택하세요.</div>}
+            </div>
+
+            {/* 3. 인원 관리 */}
+            <div className="col-md-7 d-flex flex-column h-100 overflow-hidden bg-light">
+                <div className="p-3 bg-white border-bottom shadow-sm">
+                    <h6 className="mb-0 fw-bold text-primary">
+                        {selectedProjectName ? <span><i className="bi bi-building me-2"></i>{selectedCompany.companyName} &gt; {selectedProjectName}</span> : "프로젝트를 선택하세요"}
+                    </h6>
+                </div>
+
+                {selectedProjectName ? (
+                    <div className="row g-0 flex-grow-1 overflow-hidden">
+                        {/* 투입 멤버 리스트 */}
+                        <div className="col-md-6 border-end h-100 d-flex flex-column bg-white">
+                            <div className="p-2 border-bottom fw-bold small bg-light text-center">투입 멤버</div>
+                            <div className="flex-grow-1 overflow-auto">
+                                {getMembersInProject().map(m => (
+                                    <div key={m.assignmentId} className="border-bottom p-3">
+                                        <div className="d-flex justify-content-between align-items-start mb-2">
+                                            <div>
+                                                <div className="d-flex align-items-center gap-2 mb-1">
+                                                    <span className="fw-bold">{m.empName}</span>
+                                                    {m.empRole === 'LEADER' && <span className="badge bg-dark" style={{fontSize: '0.6rem'}}>팀장</span>}
+                                                    {getStatusBadge(m.status)}
+                                                </div>
+                                                <div className="text-muted" style={{fontSize: '0.75rem'}}>
+                                                    <i className="bi bi-calendar3 me-1"></i>
+                                                    {m.startDate} ~ {' '}
+                                                    {m.endDate ? m.endDate : (
+                                                        <span className={m.status === '진행중' ? 'text-success fw-bold' : 'text-primary'}>
+                                                            {m.status === '진행중' ? '진행 중' : '기한 미정'}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="d-flex gap-1">
+                                                <button onClick={() => { setEditingId(m.assignmentId); setEditForm({...m, endDate: m.endDate || ""}); }} className="btn btn-xs btn-outline-primary">수정</button>
+                                                <button onClick={() => handleDelete(m.assignmentId)} className="btn btn-xs btn-outline-danger">제거</button>
+                                            </div>
+                                        </div>
+                                        {editingId === m.assignmentId && (
+                                            <div className="mt-2 p-2 bg-light rounded border">
+                                                <div className="row g-1 mb-2">
+                                                    <div className="col-6"><label className="x-small text-muted">시작일</label><input type="date" className="form-control form-control-sm" value={editForm.startDate} onChange={e=>setEditForm({...editForm, startDate:e.target.value})} /></div>
+                                                    <div className="col-6"><label className="x-small text-muted">종료일</label><input type="date" className="form-control form-control-sm" value={editForm.endDate || ""} onChange={e=>setEditForm({...editForm, endDate:e.target.value})} /></div>
+                                                </div>
+                                                <div className="d-flex gap-1">
+                                                    <button className="btn btn-xs btn-success flex-grow-1" onClick={handleUpdate}>저장</button>
+                                                    <button className="btn btn-xs btn-light border flex-grow-1" onClick={()=>setEditingId(null)}>취소</button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
-                        <div style={{ marginTop: "40px", display: "flex", gap: "10px" }}>
-                            <button onClick={handleSave} className="btn btn-success px-4">저장</button>
-                            {!selected.isNew && (
-                                <button onClick={() => handleDelete(selected.assignmentId)} className="btn btn-outline-danger">배정 삭제</button>
-                            )}
-                            <button onClick={() => setSelected(null)} className="btn btn-light">취소</button>
+                        {/* 가용 인원 리스트 (버튼 탭 UI + 팀장 배지 적용) */}
+                        <div className="col-md-6 h-100 d-flex flex-column" style={{backgroundColor: "#FFFDEF"}}>
+                            <div className="p-2 border-bottom bg-white d-flex justify-content-between align-items-center">
+                                <span className="fw-bold small">배정 가능 인원</span>
+                                <div className="btn-group btn-group-sm shadow-sm" style={{ height: '28px' }}>
+                                    {["ALL", "LEADER", "EMP"].map(role => (
+                                        <button
+                                            key={role}
+                                            className={`btn btn-xs px-3 ${roleFilter === role ? 'btn-dark' : 'btn-outline-dark'}`}
+                                            onClick={() => setRoleFilter(role)}
+                                            style={{ fontSize: '0.65rem', fontWeight: 'bold' }}
+                                        >
+                                            {role === "ALL" ? "전체" : role === "LEADER" ? "팀장" : "사원"}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="flex-grow-1 overflow-auto p-2">
+                                {availableEmps
+                                    .filter(e => roleFilter === "ALL" || e.empRole === roleFilter)
+                                    .map(e => (
+                                        <div key={e.empId} className="p-2 px-3 border rounded bg-white mb-2 d-flex justify-content-between align-items-center shadow-sm">
+                                            <div className="small">
+                                                <div className="fw-bold d-flex align-items-center gap-2">
+                                                    {e.empName}
+                                                    {/* 가용 인원 쪽 팀장 배지 적용 완료 */}
+                                                    {e.empRole === 'LEADER' && (
+                                                        <span className="badge bg-dark" style={{ fontSize: '0.6rem', padding: '2px 5px' }}>팀장</span>
+                                                    )}
+                                                </div>
+                                                <div className="text-muted" style={{ fontSize: '0.7rem' }}>{e.empId} | {e.empRole}</div>
+                                            </div>
+                                            <button
+                                                onClick={() => handleAssign(e)}
+                                                className="btn btn-sm btn-primary py-0 px-3 shadow-sm"
+                                                style={{ borderRadius: '20px', fontSize: '0.75rem', height: '24px' }}
+                                            >
+                                                배정
+                                            </button>
+                                        </div>
+                                    ))}
+                                {availableEmps.filter(e => roleFilter === "ALL" || e.empRole === roleFilter).length === 0 && (
+                                    <div className="text-center py-5 text-muted small">해당 직급의 가용 인원이 없습니다.</div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 ) : (
-                    <div style={{ textAlign: "center", marginTop: "150px", color: "#ccc" }}>
-                        <h1 style={{fontSize: "60px"}}></h1>
-                        <p>프로젝트를 선택하거나 신규 배정을 등록해 주세요.</p>
+                    <div className="flex-grow-1 d-flex flex-column align-items-center justify-content-center text-muted">
+                        <i className="bi bi-folder2-open mb-2" style={{fontSize: '2rem'}}></i>
+                        <p>프로젝트를 선택해 주세요.</p>
                     </div>
                 )}
             </div>
         </div>
     );
 };
-
-// 스타일 상수
-const projectCardStyle = {
-    marginBottom: "15px",
-    border: "1px solid #eee",
-    borderRadius: "8px",
-    overflow: "hidden"
-};
-
-const projectHeaderStyle = {
-    backgroundColor: "#f8f9fa",
-    padding: "10px 15px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderBottom: "1px solid #eee"
-};
-
-const empItemStyle = (isActive) => ({
-    padding: "12px 15px",
-    cursor: "pointer",
-    borderBottom: "1px solid #f9f9f9",
-    backgroundColor: isActive ? "#e7f3ff" : "transparent",
-    fontSize: "14px"
-});
 
 export default OutsourcingAssignmentManager;

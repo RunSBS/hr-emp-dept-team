@@ -1,4 +1,4 @@
-package boot.team.hr.hyun.dept.dto;
+package boot.team.hr.hyun.emp.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -6,16 +6,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeptHistoryDto {
-    private Long deptHistoryId;
-    private Integer deptNo;
+public class EmpHistoryDto {
+    private Long empHistoryId;
+    private String empId;
 
     private String changeType;
     private String fieldName;   // deptName, deptLoc 등

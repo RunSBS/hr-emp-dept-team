@@ -44,8 +44,9 @@ public class OutsourcingController {
     public void updateOutsourcingAssignment(@RequestBody OutsourcingAssignmentDto outsourcingAssignmentDto){
         outsourcingService.updateOutsourcingAssignment(outsourcingAssignmentDto);
     }
-    @DeleteMapping("/deleteAssignment")
-    public void deleteOutsourcingAssignment(@RequestBody OutsourcingAssignmentDto outsourcingAssignmentDto){
-        outsourcingService.deleteOutsourcingAssignment(outsourcingAssignmentDto.getAssignmentId());
+    // 파견 배치 삭제 (수정된 코드)
+    @DeleteMapping("/deleteAssignment/{assignmentId}")
+    public void deleteOutsourcingAssignment(@PathVariable("assignmentId") Long assignmentId){
+        outsourcingService.deleteOutsourcingAssignment(assignmentId);
     }
 }
