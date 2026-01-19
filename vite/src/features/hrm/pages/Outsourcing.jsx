@@ -3,11 +3,15 @@ import OutsourcingAssignmentManager from "../components/outsourcing/assignment/O
 import OutsourcingCompanyManager from "../components/outsourcing/company/OutsourcingCompanyManager.jsx";
 
 const Outsourcing = () => {
-    const [subTab, setSubTab] = useState("company"); // company 또는 assignment
+    // 탭 상태값도 가독성을 위해 명확하게 관리 (company -> companies, assignment -> projects)
+    const [subTab, setSubTab] = useState("company");
 
     return (
         <div style={{ padding: "20px", backgroundColor: "#f8f9fa", minHeight: "100vh" }}>
-            <h2 className="mb-4 fw-bold">파견 및 외주 관리</h2>
+            <div className="d-flex align-items-center mb-4 gap-2">
+                <i className="bi bi-person-workspace text-primary fs-3"></i>
+                <h2 className="mb-0 fw-bold">외주 인력 및 프로젝트 관리</h2>
+            </div>
 
             {/* 상단 탭 버튼 영역 */}
             <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
@@ -21,10 +25,12 @@ const Outsourcing = () => {
                         borderRadius: "8px",
                         cursor: "pointer",
                         fontWeight: "bold",
-                        boxShadow: subTab === "company" ? "0 4px 6px rgba(0,123,255,0.2)" : "none"
+                        boxShadow: subTab === "company" ? "0 4px 12px rgba(0,123,255,0.15)" : "none",
+                        transition: "all 0.2s ease"
                     }}
                 >
-                    파견 업체 관리
+                    <i className="bi bi-building me-2"></i>
+                    협력 업체 등록
                 </button>
                 <button
                     onClick={() => setSubTab("assignment")}
@@ -36,10 +42,12 @@ const Outsourcing = () => {
                         borderRadius: "8px",
                         cursor: "pointer",
                         fontWeight: "bold",
-                        boxShadow: subTab === "assignment" ? "0 4px 6px rgba(0,123,255,0.2)" : "none"
+                        boxShadow: subTab === "assignment" ? "0 4px 12px rgba(0,123,255,0.15)" : "none",
+                        transition: "all 0.2s ease"
                     }}
                 >
-                    사원 배치 현황
+                    <i className="bi bi-person-plus me-2"></i>
+                    프로젝트 인력 배정
                 </button>
             </div>
 

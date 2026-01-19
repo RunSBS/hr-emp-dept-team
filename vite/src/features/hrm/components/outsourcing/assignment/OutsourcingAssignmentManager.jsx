@@ -17,7 +17,9 @@ const OutsourcingAssignmentManager = () => {
     const [editingId, setEditingId] = useState(null);
     const [editForm, setEditForm] = useState({});
 
-    // 날짜 기반 상태 계산
+    const [assignHistory, setAssignHistory] = useState([]);
+    const [historyViewId, setHistoryViewId] = useState(null);
+
     const calculateStatus = (start, end) => {
         const today = new Date().toISOString().split('T')[0];
         if (!start) return "예정";
@@ -26,7 +28,6 @@ const OutsourcingAssignmentManager = () => {
         return "진행중";
     };
 
-    // 상태 배지 (진행중, 종료, 예정)
     const getStatusBadge = (status) => {
         switch(status) {
             case "진행중": return <span className="badge bg-success shadow-sm" style={{fontSize: '0.65rem'}}>진행중</span>;
@@ -49,7 +50,6 @@ const OutsourcingAssignmentManager = () => {
             setCompanies(compRes.data || []);
             setAllEmps(empRes.data || []);
 
-            // 기존 DB 데이터에서 프로젝트 목록 추출 (업체별 격리용)
             const projectsFromDB = assignData.map(a => ({
                 companyId: Number(a.companyId),
                 projectName: a.projectName
@@ -66,6 +66,20 @@ const OutsourcingAssignmentManager = () => {
         } catch (e) { console.error("데이터 로딩 실패", e); }
     };
 
+    const fetchAssignHistory = async (assignId) => {
+        if (historyViewId === assignId) {
+            setHistoryViewId(null);
+            return;
+        }
+        try {
+            const res = await axios.get(`/back/hyun/outsourcing/selectAssignmentHistory?assignmentId=${assignId}`, { withCredentials: true });
+            // null 방지 처리
+            setAssignHistory(res.data || []);
+            setHistoryViewId(assignId);
+            setEditingId(null);
+        } catch (e) { console.error("배치 이력 로딩 실패", e); }
+    };
+
     useEffect(() => { fetchInitialData(); }, []);
 
     const getProjectsForSelectedCompany = () => {
@@ -75,13 +89,29 @@ const OutsourcingAssignmentManager = () => {
             .map(p => p.projectName);
     };
 
+    const handleRenameProject = async (oldName) => {
+        const newName = prompt(`'${oldName}' 프로젝트의 새 이름을 입력하세요.\n이 프로젝트에 소속된 모든 인원이 일괄 수정됩니다.`, oldName);
+        if (!newName || newName.trim() === "" || newName === oldName) return;
+
+        try {
+            await axios.put("/back/hyun/outsourcing/updateProjectName", {
+                companyId: selectedCompany.companyId,
+                oldProjectName: oldName,
+                newProjectName: newName
+            }, { withCredentials: true });
+
+            alert("프로젝트명이 성공적으로 수정되었습니다.");
+            await fetchInitialData();
+            if (selectedProjectName === oldName) setSelectedProjectName(newName);
+        } catch (e) { alert("수정 실패"); }
+    };
+
     const handleAddProject = () => {
         if (!newProjectInput.trim()) return alert("프로젝트 명칭을 입력하세요.");
         const isDuplicate = definedProjects.some(
             p => Number(p.companyId) === Number(selectedCompany.companyId) && p.projectName === newProjectInput
         );
         if (isDuplicate) return alert("이미 등록된 프로젝트입니다.");
-
         setDefinedProjects([...definedProjects, { companyId: Number(selectedCompany.companyId), projectName: newProjectInput }]);
         setSelectedProjectName(newProjectInput);
         setNewProjectInput("");
@@ -135,14 +165,14 @@ const OutsourcingAssignmentManager = () => {
 
     return (
         <div className="row g-0 border rounded shadow-sm bg-white" style={{ height: "80vh" }}>
-            {/* 1. 업체 선택 */}
+            {/* 1. 협력 업체 선택 */}
             <div className="col-md-2 border-end h-100 overflow-auto bg-light">
-                <div className="p-3 fw-bold border-bottom bg-white small">1. 업체 선택</div>
+                <div className="p-3 fw-bold border-bottom bg-white small text-secondary text-center">1. 협력 업체</div>
                 <div className="list-group list-group-flush">
                     {companies.map(c => (
                         <button key={c.companyId}
                                 onClick={() => { setSelectedCompany(c); setSelectedProjectName(""); setIsCreatingNew(false); }}
-                                className={`list-group-item list-group-item-action border-0 py-3 ${selectedCompany?.companyId === c.companyId ? 'bg-primary text-white' : ''}`}>
+                                className={`list-group-item list-group-item-action border-0 py-3 ${selectedCompany?.companyId === c.companyId ? 'bg-primary text-white shadow-sm fw-bold' : ''}`}>
                             {c.companyName}
                         </button>
                     ))}
@@ -151,48 +181,59 @@ const OutsourcingAssignmentManager = () => {
 
             {/* 2. 프로젝트 관리 */}
             <div className="col-md-3 border-end h-100 overflow-auto">
-                <div className="p-3 fw-bold border-bottom bg-light small">2. 프로젝트 관리</div>
+                <div className="p-3 fw-bold border-bottom bg-light small text-secondary text-center">2. 프로젝트 목록</div>
                 {selectedCompany ? (
                     <div className="p-2">
                         {!isCreatingNew ? (
-                            <button className="btn btn-sm btn-dark w-100 mb-3 shadow-sm" onClick={() => setIsCreatingNew(true)}>+ 신규 등록</button>
+                            <button className="btn btn-sm btn-outline-dark w-100 mb-3 fw-bold" onClick={() => setIsCreatingNew(true)}>
+                                <i className="bi bi-plus-lg me-1"></i> 프로젝트 추가
+                            </button>
                         ) : (
                             <div className="p-2 mb-3 bg-white border border-primary rounded shadow-sm">
                                 <input type="text" className="form-control form-control-sm mb-2" value={newProjectInput} onChange={e=>setNewProjectInput(e.target.value)} placeholder="프로젝트명" />
                                 <div className="d-flex gap-1">
-                                    <button className="btn btn-xs btn-primary flex-grow-1" onClick={handleAddProject}>생성</button>
-                                    <button className="btn btn-xs btn-light border flex-grow-1" onClick={()=>setIsCreatingNew(false)}>취소</button>
+                                    <button className="btn btn-xs btn-primary flex-grow-1" onClick={handleAddProject}>생성하기</button>
+                                    <button className="btn btn-xs btn-light border flex-grow-1" onClick={()=>setIsCreatingNew(false)}>취소하기</button>
                                 </div>
                             </div>
                         )}
                         <div className="list-group">
                             {getProjectsForSelectedCompany().map(name => (
-                                <button key={name} onClick={() => { setSelectedProjectName(name); setEditingId(null); }}
-                                        className={`list-group-item list-group-item-action small py-2 ${selectedProjectName === name ? 'bg-info text-white' : ''}`}>
-                                    <i className="bi bi-folder me-2"></i>{name}
-                                </button>
+                                <div key={name} className="d-flex align-items-center mb-2 gap-1 px-1">
+                                    <button onClick={() => { setSelectedProjectName(name); setEditingId(null); setHistoryViewId(null); }}
+                                            className={`list-group-item list-group-item-action small py-2 border rounded flex-grow-1 text-truncate ${selectedProjectName === name ? 'bg-info text-white fw-bold border-info' : 'bg-white'}`}>
+                                        <i className={`bi ${selectedProjectName === name ? 'bi-folder-fill' : 'bi-folder'} me-2`}></i>{name}
+                                    </button>
+                                    <button onClick={(e) => { e.stopPropagation(); handleRenameProject(name); }}
+                                            className="btn btn-xs btn-outline-secondary border d-flex align-items-center gap-1 flex-shrink-0"
+                                            style={{ fontSize: '0.65rem', padding: '0.4rem 0.5rem' }}>
+                                        <i className="bi bi-pencil-square"></i>
+                                        <span>이름 수정</span>
+                                    </button>
+                                </div>
                             ))}
                         </div>
                     </div>
-                ) : <div className="p-4 text-center text-muted small mt-5">업체를 선택하세요.</div>}
+                ) : <div className="p-4 text-center text-muted small mt-5">업체를 먼저 선택해 주세요.</div>}
             </div>
 
-            {/* 3. 인원 관리 */}
+            {/* 3. 인원 관리 메인 */}
             <div className="col-md-7 d-flex flex-column h-100 overflow-hidden bg-light">
-                <div className="p-3 bg-white border-bottom shadow-sm">
-                    <h6 className="mb-0 fw-bold text-primary">
-                        {selectedProjectName ? <span><i className="bi bi-building me-2"></i>{selectedCompany.companyName} &gt; {selectedProjectName}</span> : "프로젝트를 선택하세요"}
+                <div className="p-3 bg-white border-bottom shadow-sm d-flex justify-content-between align-items-center">
+                    <h6 className="mb-0 fw-bold text-dark text-truncate">
+                        {selectedProjectName ?
+                            <span><span className="text-primary">{selectedCompany.companyName}</span> <i className="bi bi-chevron-right small px-1"></i> {selectedProjectName}</span>
+                            : "프로젝트를 선택해 주세요"}
                     </h6>
                 </div>
 
                 {selectedProjectName ? (
                     <div className="row g-0 flex-grow-1 overflow-hidden">
-                        {/* 투입 멤버 리스트 */}
                         <div className="col-md-6 border-end h-100 d-flex flex-column bg-white">
-                            <div className="p-2 border-bottom fw-bold small bg-light text-center">투입 멤버</div>
+                            <div className="p-2 border-bottom fw-bold small bg-light text-center">투입 인력 현황</div>
                             <div className="flex-grow-1 overflow-auto">
                                 {getMembersInProject().map(m => (
-                                    <div key={m.assignmentId} className="border-bottom p-3">
+                                    <div key={m.assignmentId} className={`border-bottom p-3 ${historyViewId === m.assignmentId ? 'bg-info bg-opacity-10' : ''}`}>
                                         <div className="d-flex justify-content-between align-items-start mb-2">
                                             <div>
                                                 <div className="d-flex align-items-center gap-2 mb-1">
@@ -201,30 +242,50 @@ const OutsourcingAssignmentManager = () => {
                                                     {getStatusBadge(m.status)}
                                                 </div>
                                                 <div className="text-muted" style={{fontSize: '0.75rem'}}>
-                                                    <i className="bi bi-calendar3 me-1"></i>
-                                                    {m.startDate} ~ {' '}
-                                                    {m.endDate ? m.endDate : (
-                                                        <span className={m.status === '진행중' ? 'text-success fw-bold' : 'text-primary'}>
-                                                            {m.status === '진행중' ? '진행 중' : '기한 미정'}
-                                                        </span>
-                                                    )}
+                                                    <i className="bi bi-calendar3 me-1"></i>{m.startDate} ~ {m.endDate || "진행중"}
                                                 </div>
                                             </div>
-                                            <div className="d-flex gap-1">
-                                                <button onClick={() => { setEditingId(m.assignmentId); setEditForm({...m, endDate: m.endDate || ""}); }} className="btn btn-xs btn-outline-primary">수정</button>
-                                                <button onClick={() => handleDelete(m.assignmentId)} className="btn btn-xs btn-outline-danger">제거</button>
+                                            <div className="d-flex gap-1 flex-shrink-0">
+                                                {/* 이력보기 버튼: 상태에 따라 텍스트 변경 */}
+                                                <button onClick={() => fetchAssignHistory(m.assignmentId)} className={`btn btn-xs ${historyViewId === m.assignmentId ? 'btn-info text-white' : 'btn-outline-info'}`}>
+                                                    {historyViewId === m.assignmentId ? "이력 닫기" : "이력 보기"}
+                                                </button>
+                                                <button onClick={() => { setEditingId(m.assignmentId); setEditForm({...m, endDate: m.endDate || ""}); setHistoryViewId(null); }} className="btn btn-xs btn-outline-primary">정보 수정</button>
+                                                <button onClick={() => handleDelete(m.assignmentId)} className="btn btn-xs btn-outline-danger">인원 삭제</button>
                                             </div>
                                         </div>
+
+                                        {/* 수정 폼 */}
                                         {editingId === m.assignmentId && (
-                                            <div className="mt-2 p-2 bg-light rounded border">
+                                            <div className="mt-2 p-2 bg-white rounded border border-primary shadow-sm">
                                                 <div className="row g-1 mb-2">
-                                                    <div className="col-6"><label className="x-small text-muted">시작일</label><input type="date" className="form-control form-control-sm" value={editForm.startDate} onChange={e=>setEditForm({...editForm, startDate:e.target.value})} /></div>
-                                                    <div className="col-6"><label className="x-small text-muted">종료일</label><input type="date" className="form-control form-control-sm" value={editForm.endDate || ""} onChange={e=>setEditForm({...editForm, endDate:e.target.value})} /></div>
+                                                    <div className="col-6"><label className="x-small text-muted fw-bold">시작일</label><input type="date" className="form-control form-control-sm" value={editForm.startDate} onChange={e=>setEditForm({...editForm, startDate:e.target.value})} /></div>
+                                                    <div className="col-6"><label className="x-small text-muted fw-bold">종료일</label><input type="date" className="form-control form-control-sm" value={editForm.endDate || ""} onChange={e=>setEditForm({...editForm, endDate:e.target.value})} /></div>
                                                 </div>
                                                 <div className="d-flex gap-1">
-                                                    <button className="btn btn-xs btn-success flex-grow-1" onClick={handleUpdate}>저장</button>
-                                                    <button className="btn btn-xs btn-light border flex-grow-1" onClick={()=>setEditingId(null)}>취소</button>
+                                                    <button className="btn btn-xs btn-success flex-grow-1 fw-bold" onClick={handleUpdate}>수정 완료</button>
+                                                    <button className="btn btn-xs btn-light border flex-grow-1" onClick={()=>setEditingId(null)}>수정 취소</button>
                                                 </div>
+                                            </div>
+                                        )}
+
+                                        {/* ⭐ 이력 상세 보기 영역 추가 ⭐ */}
+                                        {historyViewId === m.assignmentId && (
+                                            <div className="mt-2 p-2 bg-light border-start border-4 border-info rounded shadow-sm">
+                                                <div className="fw-bold x-small mb-2 text-info">최근 변경 이력</div>
+                                                {assignHistory.length > 0 ? (
+                                                    assignHistory.map((h, idx) => (
+                                                        <div key={idx} className="bg-white border p-1 rounded mb-1 shadow-xs" style={{fontSize: '0.7rem'}}>
+                                                            <div className="d-flex justify-content-between text-muted">
+                                                                <span>{h.fieldName || "상태"} 변경</span>
+                                                                <span>{h.createdAt?.split('T')[0]}</span>
+                                                            </div>
+                                                            <div className="text-dark">
+                                                                <span className="text-muted">{h.beforeValue || "최초"}</span> → <strong>{h.afterValue}</strong>
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                ) : <div className="x-small text-muted p-2">기록된 이력이 없습니다.</div>}
                                             </div>
                                         )}
                                     </div>
@@ -232,19 +293,13 @@ const OutsourcingAssignmentManager = () => {
                             </div>
                         </div>
 
-                        {/* 가용 인원 리스트 (버튼 탭 UI + 팀장 배지 적용) */}
-                        <div className="col-md-6 h-100 d-flex flex-column" style={{backgroundColor: "#FFFDEF"}}>
+                        <div className="col-md-6 h-100 d-flex flex-column">
                             <div className="p-2 border-bottom bg-white d-flex justify-content-between align-items-center">
-                                <span className="fw-bold small">배정 가능 인원</span>
-                                <div className="btn-group btn-group-sm shadow-sm" style={{ height: '28px' }}>
+                                <span className="fw-bold small text-secondary">가용 인원 목록</span>
+                                <div className="btn-group btn-group-sm">
                                     {["ALL", "LEADER", "EMP"].map(role => (
-                                        <button
-                                            key={role}
-                                            className={`btn btn-xs px-3 ${roleFilter === role ? 'btn-dark' : 'btn-outline-dark'}`}
-                                            onClick={() => setRoleFilter(role)}
-                                            style={{ fontSize: '0.65rem', fontWeight: 'bold' }}
-                                        >
-                                            {role === "ALL" ? "전체" : role === "LEADER" ? "팀장" : "사원"}
+                                        <button key={role} className={`btn btn-xs ${roleFilter === role ? 'btn-dark' : 'btn-outline-dark'}`} onClick={() => setRoleFilter(role)}>
+                                            {role === "ALL" ? "전체 인원" : role === "LEADER" ? "팀장만" : "사원만"}
                                         </button>
                                     ))}
                                 </div>
@@ -256,33 +311,20 @@ const OutsourcingAssignmentManager = () => {
                                         <div key={e.empId} className="p-2 px-3 border rounded bg-white mb-2 d-flex justify-content-between align-items-center shadow-sm">
                                             <div className="small">
                                                 <div className="fw-bold d-flex align-items-center gap-2">
-                                                    {e.empName}
-                                                    {/* 가용 인원 쪽 팀장 배지 적용 완료 */}
-                                                    {e.empRole === 'LEADER' && (
-                                                        <span className="badge bg-dark" style={{ fontSize: '0.6rem', padding: '2px 5px' }}>팀장</span>
-                                                    )}
+                                                    {e.empName} {e.empRole === 'LEADER' && <span className="badge bg-dark" style={{fontSize: '0.6rem'}}>팀장</span>}
                                                 </div>
-                                                <div className="text-muted" style={{ fontSize: '0.7rem' }}>{e.empId} | {e.empRole}</div>
+                                                <div className="text-muted" style={{fontSize: '0.65rem'}}>{e.empId}</div>
                                             </div>
-                                            <button
-                                                onClick={() => handleAssign(e)}
-                                                className="btn btn-sm btn-primary py-0 px-3 shadow-sm"
-                                                style={{ borderRadius: '20px', fontSize: '0.75rem', height: '24px' }}
-                                            >
-                                                배정
-                                            </button>
+                                            <button onClick={() => handleAssign(e)} className="btn btn-sm btn-primary py-0 px-3 shadow-sm fw-bold" style={{ borderRadius: '20px', fontSize: '0.7rem', height: '22px' }}>인력 배정하기</button>
                                         </div>
                                     ))}
-                                {availableEmps.filter(e => roleFilter === "ALL" || e.empRole === roleFilter).length === 0 && (
-                                    <div className="text-center py-5 text-muted small">해당 직급의 가용 인원이 없습니다.</div>
-                                )}
                             </div>
                         </div>
                     </div>
                 ) : (
                     <div className="flex-grow-1 d-flex flex-column align-items-center justify-content-center text-muted">
-                        <i className="bi bi-folder2-open mb-2" style={{fontSize: '2rem'}}></i>
-                        <p>프로젝트를 선택해 주세요.</p>
+                        <i className="bi bi-arrow-left-circle mb-3 fs-1 opacity-25"></i>
+                        <p className="fw-bold">왼쪽 리스트에서 프로젝트를 선택해 주세요.</p>
                     </div>
                 )}
             </div>

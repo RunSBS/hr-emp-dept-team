@@ -49,9 +49,6 @@ const DeptList = ({ onSelectDept, refreshTrigger }) => {
         <div className="card border-0 shadow-sm h-100">
             <div className="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                 <h6 className="mb-0 fw-bold"><i className="bi bi-diagram-3 me-2"></i>조직도 현황</h6>
-                <button className="btn btn-xs btn-outline-primary" onClick={() => onSelectDept({ isNew: true })}>
-                    <i className="bi bi-plus-lg"></i> 추가
-                </button>
             </div>
             <div className="card-body overflow-auto" style={{ maxHeight: "70vh" }}>
                 {rawList.length > 0 ? renderNodes(buildTree(rawList)) : (
