@@ -20,6 +20,17 @@ const Candidate = () => {
   });
   const [myNominations, setMyNominations] = useState([]);
 
+  // AI 추천 관련
+  const [aiRecommendations, setAiRecommendations] = useState([]);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiStarted, setAiStarted] = useState(false);  // AI 추천 시작 여부
+  const [selectedRecommendation, setSelectedRecommendation] = useState(null);
+  const [selectedReward, setSelectedReward] = useState(null);
+  const [aiFormData, setAiFormData] = useState({
+    rewardAmount: '',
+    reason: ''
+  });
+
   useEffect(() => {
     checkPermissionAndLoadData();
   }, []);
@@ -61,11 +72,6 @@ const Candidate = () => {
   };
 
   const handleSelectNominationType = async (type) => {
-    if (type === 'AI') {
-      alert('AI 추천 기능은 준비 중입니다.');
-      return;
-    }
-
     setNominationType(type);
 
     if (type === 'MANUAL') {
@@ -82,7 +88,31 @@ const Candidate = () => {
         console.error('[포상 추천] 데이터 조회 실패:', error);
         alert('데이터 조회에 실패했습니다.');
       }
+    } else if (type === 'AI') {
+      // AI 추천 화면으로 이동 (바로 추천 시작하지 않음)
+      setAiStarted(false);
+      setAiRecommendations([]);
     }
+  };
+
+  const fetchAiRecommendations = async () => {
+    try {
+      setAiLoading(true);
+      setAiStarted(true);
+      const recommendations = await candidateApi.getAiRecommendations();
+      setAiRecommendations(Array.isArray(recommendations) ? recommendations : []);
+      console.log('[AI 추천] 추천 후보 수:', recommendations.length);
+    } catch (error) {
+      console.error('[AI 추천] 조회 실패:', error);
+      alert('AI 추천 조회에 실패했습니다.');
+      setAiRecommendations([]);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const handleStartAiRecommendation = () => {
+    fetchAiRecommendations();
   };
 
   const handleInputChange = (e) => {
@@ -151,6 +181,92 @@ const Candidate = () => {
       rewardAmount: '',
       reason: ''
     });
+    setSelectedRecommendation(null);
+    setSelectedReward(null);
+    setAiFormData({
+      rewardAmount: '',
+      reason: ''
+    });
+  };
+
+  // AI 추천 관련 핸들러
+  const handleSelectRecommendation = (recommendation) => {
+    setSelectedRecommendation(recommendation);
+    setSelectedReward(null);
+    setAiFormData({
+      rewardAmount: '',
+      reason: recommendation.overallRecommendReason || ''
+    });
+  };
+
+  const handleSelectReward = (reward) => {
+    setSelectedReward(reward);
+    setAiFormData(prev => ({
+      ...prev,
+      reason: `[AI 추천] ${reward.matchReason}\n\n${selectedRecommendation.overallRecommendReason || ''}`
+    }));
+  };
+
+  const handleAiFormChange = (e) => {
+    const { name, value } = e.target;
+    setAiFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleAiSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!selectedRecommendation || !selectedReward) {
+      alert('추천 대상과 포상 항목을 선택해주세요.');
+      return;
+    }
+
+    if (!aiFormData.rewardAmount || aiFormData.rewardAmount <= 0) {
+      alert('지급 값을 올바르게 입력해주세요.');
+      return;
+    }
+
+    if (!aiFormData.reason || !aiFormData.reason.trim()) {
+      alert('추천 사유를 입력해주세요.');
+      return;
+    }
+
+    try {
+      await candidateApi.nominateFromAi({
+        nomineeId: selectedRecommendation.empId,
+        policyId: selectedReward.policyId,
+        rewardAmount: parseInt(aiFormData.rewardAmount),
+        reason: aiFormData.reason
+      });
+
+      alert('AI 기반 포상 추천이 성공적으로 등록되었습니다.');
+
+      // 상태 초기화
+      setSelectedRecommendation(null);
+      setSelectedReward(null);
+      setAiFormData({
+        rewardAmount: '',
+        reason: ''
+      });
+
+      // 추천 목록 새로고침
+      await fetchMyNominations();
+      await fetchAiRecommendations();
+    } catch (error) {
+      console.error('[AI 추천] 등록 실패:', error);
+      alert('추천 등록에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  const handleBackToAiList = () => {
+    setSelectedRecommendation(null);
+    setSelectedReward(null);
+    setAiFormData({
+      rewardAmount: '',
+      reason: ''
+    });
   };
 
   const formatDate = (dateString) => {
@@ -173,6 +289,26 @@ const Candidate = () => {
     };
     const statusInfo = statusMap[status] || { label: status, className: '' };
     return <span className={`status-badge ${statusInfo.className}`}>{statusInfo.label}</span>;
+  };
+
+  const getScoreColor = (score) => {
+    if (score >= 90) return 'score-excellent';
+    if (score >= 85) return 'score-good';
+    if (score >= 80) return 'score-average';
+    return 'score-below';
+  };
+
+  const getMatchScoreBar = (score) => {
+    let colorClass = 'match-low';
+    if (score >= 80) colorClass = 'match-high';
+    else if (score >= 60) colorClass = 'match-medium';
+
+    return (
+      <div className="match-score-bar">
+        <div className={`match-score-fill ${colorClass}`} style={{ width: `${score}%` }}></div>
+        <span className="match-score-text">{score}%</span>
+      </div>
+    );
   };
 
   if (loading) {
@@ -209,7 +345,7 @@ const Candidate = () => {
               className="type-button manual-button"
               onClick={() => handleSelectNominationType('MANUAL')}
             >
-              <div className="button-icon">👍</div>
+              <div className="button-icon">✋</div>
               <div className="button-title">수동 추천</div>
               <div className="button-description">직접 사원을 선택하여 추천합니다</div>
             </button>
@@ -219,7 +355,7 @@ const Candidate = () => {
             >
               <div className="button-icon">🎰</div>
               <div className="button-title">AI 추천</div>
-              <div className="button-description">AI가 최적의 후보를 추천합니다 (준비 중)</div>
+              <div className="button-description">평가 점수와 코멘트 기반 AI 추천</div>
             </button>
           </div>
         </div>
@@ -233,6 +369,7 @@ const Candidate = () => {
                   <tr>
                     <th>추천 대상</th>
                     <th>포상 정책</th>
+                    <th>추천 방식</th>
                     <th>추천 사유</th>
                     <th>상태</th>
                     <th>추천일시</th>
@@ -243,6 +380,11 @@ const Candidate = () => {
                     <tr key={nomination.candidateId}>
                       <td>{nomination.nomineeName}</td>
                       <td>{nomination.policyName}</td>
+                      <td>
+                        <span className={`nomination-type-badge ${nomination.nominationType === 'AI' ? 'type-ai' : 'type-manual'}`}>
+                          {nomination.nominationType === 'AI' ? '🎰 AI' : '✋ 수동'}
+                        </span>
+                      </td>
                       <td className="reason-cell">{nomination.reason}</td>
                       <td>{getStatusBadge(nomination.status)}</td>
                       <td>{formatDate(nomination.createdAt)}</td>
@@ -363,6 +505,238 @@ const Candidate = () => {
             </div>
           </form>
         </div>
+      </div>
+    );
+  }
+
+  // AI 추천 화면
+  if (nominationType === 'AI') {
+    // AI 추천 상세 화면 (후보 선택 후)
+    if (selectedRecommendation) {
+      return (
+        <div className="candidate-container">
+          <div className="candidate-header">
+            <h1 className="candidate-title">AI 추천 상세</h1>
+            <button className="back-button" onClick={handleBackToAiList}>
+              ← 목록으로
+            </button>
+          </div>
+
+          <div className="ai-detail-container">
+            {/* 직원 정보 카드 */}
+            <div className="ai-employee-card">
+              <div className="employee-info-header">
+                <div className="employee-avatar">
+                  {selectedRecommendation.empName?.charAt(0)}
+                </div>
+                <div className="employee-basic-info">
+                  <h2>{selectedRecommendation.empName}</h2>
+                  <p>{selectedRecommendation.deptName} / {selectedRecommendation.empRole}</p>
+                </div>
+                <div className={`employee-score ${getScoreColor(selectedRecommendation.avgScore)}`}>
+                  <span className="score-label">평균 점수</span>
+                  <span className="score-value">{selectedRecommendation.avgScore}</span>
+                </div>
+              </div>
+
+              <div className="ai-reason-box">
+                <h4>AI 분석 결과</h4>
+                <p>{selectedRecommendation.overallRecommendReason}</p>
+              </div>
+
+              {selectedRecommendation.latestComment && (
+                <div className="latest-comment-box">
+                  <h4>최근 평가 코멘트</h4>
+                  <p>"{selectedRecommendation.latestComment}"</p>
+                </div>
+              )}
+
+              {selectedRecommendation.newRewardSuggestion && (
+                <div className="new-reward-suggestion">
+                  <h4>💡 새로운 포상 제안</h4>
+                  <p>{selectedRecommendation.newRewardSuggestion}</p>
+                </div>
+              )}
+            </div>
+
+            {/* 추천 포상 목록 */}
+            <div className="ai-rewards-section">
+              <h3>추천 포상 항목</h3>
+              <div className="ai-rewards-list">
+                {selectedRecommendation.recommendedRewards?.map((reward, index) => (
+                  <div
+                    key={reward.policyId}
+                    className={`ai-reward-card ${selectedReward?.policyId === reward.policyId ? 'selected' : ''}`}
+                    onClick={() => handleSelectReward(reward)}
+                  >
+                    <div className="reward-rank">#{index + 1}</div>
+                    <div className="reward-info">
+                      <h4>{reward.policyName}</h4>
+                      <p className="reward-type">{reward.rewardType}</p>
+                      <p className="reward-reason">{reward.matchReason}</p>
+                      {reward.matchedKeywords?.length > 0 && (
+                        <div className="matched-keywords">
+                          {reward.matchedKeywords.map((keyword, idx) => (
+                            <span key={idx} className="keyword-tag">{keyword}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="reward-match-score">
+                      <span className="match-label">매칭도</span>
+                      {getMatchScoreBar(reward.matchScore)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 추천 등록 폼 */}
+            {selectedReward && (
+              <div className="ai-nomination-form">
+                <h3>포상 추천 등록</h3>
+                <form onSubmit={handleAiSubmit}>
+                  <div className="selected-info">
+                    <p><strong>추천 대상:</strong> {selectedRecommendation.empName}</p>
+                    <p><strong>선택 포상:</strong> {selectedReward.policyName} ({selectedReward.rewardType})</p>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">지급 값 *</label>
+                    <input
+                      type="number"
+                      name="rewardAmount"
+                      value={aiFormData.rewardAmount}
+                      onChange={handleAiFormChange}
+                      className="form-select"
+                      min="0"
+                      placeholder="지급할 금액 또는 일수를 입력하세요"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">추천 사유 *</label>
+                    <textarea
+                      name="reason"
+                      value={aiFormData.reason}
+                      onChange={handleAiFormChange}
+                      className="form-textarea"
+                      rows="5"
+                      maxLength="500"
+                      placeholder="AI가 생성한 사유를 수정하거나 추가 내용을 입력하세요"
+                      required
+                    />
+                    <div className="character-count">
+                      {aiFormData.reason.length} / 500
+                    </div>
+                  </div>
+
+                  <div className="form-actions">
+                    <button type="submit" className="submit-button ai-submit">
+                      🤖 AI 추천으로 등록
+                    </button>
+                    <button type="button" className="cancel-button" onClick={handleBackToAiList}>
+                      취소
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // AI 추천 목록 화면
+    return (
+      <div className="candidate-container">
+        <div className="candidate-header">
+          <h1 className="candidate-title">AI 포상 추천</h1>
+          <button className="back-button" onClick={handleBackToSelection}>
+            ← 뒤로 가기
+          </button>
+        </div>
+
+        <div className="ai-info-banner">
+          <div className="info-icon">💡</div>
+          <div className="info-content">
+            <h4>AI 추천 시스템</h4>
+            <p>평가 점수와 코멘트를 분석하여 포상 후보를 자동으로 추천합니다. 추천 결과를 검토하고 적합한 포상을 선택해주세요.</p>
+          </div>
+        </div>
+
+        {aiLoading ? (
+          <div className="ai-loading">
+            <div className="loading-spinner"></div>
+            <p>AI가 추천 후보를 분석하고 있습니다...</p>
+          </div>
+        ) : !aiStarted ? (
+          <div className="ai-start-section">
+            <div className="ai-start-icon">🎰</div>
+            <h3>AI 추천 시작</h3>
+            <p>평가 점수와 코멘트를 분석하여 포상 후보를 추천</p>
+            <button className="ai-start-button" onClick={handleStartAiRecommendation}>
+              추천 시작
+            </button>
+          </div>
+        ) : aiRecommendations.length === 0 ? (
+          <div className="no-recommendations">
+            <div className="no-data-icon">📊</div>
+            <h3>추천 가능한 후보가 없습니다</h3>
+            <p>평가 데이터가 있는 직원이 없거나, 추천 기준을 충족하는 직원이 없습니다.</p>
+          </div>
+        ) : (
+          <div className="ai-recommendations-grid">
+            {aiRecommendations.map((rec) => (
+              <div
+                key={rec.empId}
+                className="ai-recommendation-card"
+                onClick={() => handleSelectRecommendation(rec)}
+              >
+                <div className="card-header">
+                  <div className="employee-avatar">{rec.empName?.charAt(0)}</div>
+                  <div className="employee-info">
+                    <h3>{rec.empName}</h3>
+                    <p>{rec.deptName} / {rec.empRole}</p>
+                  </div>
+                  <div className={`score-badge ${getScoreColor(rec.avgScore)}`}>
+                    {rec.avgScore}점
+                  </div>
+                </div>
+
+                <div className="card-body">
+                  <div className="recommended-rewards-preview">
+                    <h4>추천 포상</h4>
+                    <ul>
+                      {rec.recommendedRewards?.slice(0, 2).map((reward) => (
+                        <li key={reward.policyId}>
+                          <span className="reward-name">{reward.policyName}</span>
+                          <span className="reward-match">{reward.matchScore}%</span>
+                        </li>
+                      ))}
+                      {rec.recommendedRewards?.length > 2 && (
+                        <li className="more-rewards">+{rec.recommendedRewards.length - 2}개 더</li>
+                      )}
+                    </ul>
+                  </div>
+
+                  {rec.newRewardSuggestion && (
+                    <div className="new-suggestion-badge">
+                      💡 새 포상 제안 있음
+                    </div>
+                  )}
+                </div>
+
+                <div className="card-footer">
+                  <button className="view-detail-button">
+                    상세 보기 →
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }

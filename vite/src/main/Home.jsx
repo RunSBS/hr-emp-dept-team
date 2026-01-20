@@ -203,9 +203,9 @@ const Home = () => {
 
                         </Nav>
                     </Col>
-
+                    {/*xs={10}*/}
                     {/* 메인 콘텐츠 */}
-                    <Col xs={10} className="main-content p-4">
+                    <Col className="main-content p-0">
                         <Outlet />
                     </Col>
                 </Row>

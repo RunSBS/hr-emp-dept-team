@@ -58,4 +58,30 @@ export const candidateApi = {
     });
     return response.data;
   },
+
+  // ==================== AI 추천 API ====================
+
+  // AI 추천 후보 목록 조회
+  getAiRecommendations: async () => {
+    const response = await axios.get(`${API_BASE_URL}/ai-recommendations`, {
+      withCredentials: true,
+    });
+    return response.data;
+  },
+
+  // 특정 직원 AI 추천 상세 조회
+  getAiRecommendationDetail: async (empId) => {
+    const response = await axios.get(`${API_BASE_URL}/ai-recommendations/${empId}`, {
+      withCredentials: true,
+    });
+    return response.data;
+  },
+
+  // AI 추천 기반 포상 후보 등록
+  nominateFromAi: async (nominationData) => {
+    const response = await axios.post(`${API_BASE_URL}/ai-nominate`, nominationData, {
+      withCredentials: true,
+    });
+    return response.data;
+  },
 };

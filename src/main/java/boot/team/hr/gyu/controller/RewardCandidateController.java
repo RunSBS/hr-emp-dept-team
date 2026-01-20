@@ -1,8 +1,10 @@
 package boot.team.hr.gyu.controller;
 
+import boot.team.hr.gyu.dto.AiRecommendationDTO;
 import boot.team.hr.gyu.dto.CurrentUserDTO;
 import boot.team.hr.gyu.dto.NomineeDTO;
 import boot.team.hr.gyu.dto.RewardCandidateDTO;
+import boot.team.hr.gyu.service.AiRecommendationService;
 import boot.team.hr.gyu.service.RewardCandidateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,6 +20,7 @@ import java.util.List;
 public class RewardCandidateController {
 
     private final RewardCandidateService candidateService;
+    private final AiRecommendationService aiRecommendationService;
 
     /**
      * 현재 로그인 사용자 정보 조회
@@ -135,5 +139,95 @@ public class RewardCandidateController {
         String email = authentication.getName();
         List<RewardCandidateDTO> rewards = candidateService.getMyApprovedRewards(email);
         return ResponseEntity.ok(rewards);
+    }
+
+    // ==================== AI 추천 API ====================
+
+    /**
+     * AI 추천 후보 목록 조회
+     */
+    @GetMapping("/ai-recommendations")
+    public ResponseEntity<List<AiRecommendationDTO>> getAiRecommendations(Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            System.out.println("[AI 추천] 조회 실패 - 인증 정보 없음");
+            return ResponseEntity.status(401).build();
+        }
+
+        String email = authentication.getName();
+        if (!candidateService.hasNominationPermission(email)) {
+            System.out.println("[AI 추천] 조회 실패 - 권한 없음");
+            return ResponseEntity.status(403).build();
+        }
+
+        try {
+            List<AiRecommendationDTO> recommendations = aiRecommendationService.getAiRecommendations(email);
+            return ResponseEntity.ok(recommendations);
+        } catch (Exception e) {
+            System.out.println("[AI 추천] 조회 실패 - " + e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * 특정 직원 AI 추천 상세 조회
+     */
+    @GetMapping("/ai-recommendations/{empId}")
+    public ResponseEntity<AiRecommendationDTO> getRecommendationForEmployee(
+            Authentication authentication,
+            @PathVariable String empId) {
+        if (authentication == null || authentication.getName() == null) {
+            System.out.println("[AI 추천] 상세 조회 실패 - 인증 정보 없음");
+            return ResponseEntity.status(401).build();
+        }
+
+        String email = authentication.getName();
+        if (!candidateService.hasNominationPermission(email)) {
+            System.out.println("[AI 추천] 상세 조회 실패 - 권한 없음");
+            return ResponseEntity.status(403).build();
+        }
+
+        try {
+            AiRecommendationDTO recommendation = aiRecommendationService.getRecommendationForEmployee(empId);
+            if (recommendation == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(recommendation);
+        } catch (Exception e) {
+            System.out.println("[AI 추천] 상세 조회 실패 - " + e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * AI 추천 기반 포상 후보 등록
+     */
+    @PostMapping("/ai-nominate")
+    public ResponseEntity<Long> nominateFromAi(
+            Authentication authentication,
+            @RequestBody Map<String, Object> request) {
+        if (authentication == null || authentication.getName() == null) {
+            System.out.println("[AI 추천] 등록 실패 - 인증 정보 없음");
+            return ResponseEntity.status(401).build();
+        }
+
+        String email = authentication.getName();
+        if (!candidateService.hasNominationPermission(email)) {
+            System.out.println("[AI 추천] 등록 실패 - 권한 없음");
+            return ResponseEntity.status(403).build();
+        }
+
+        try {
+            String nomineeId = (String) request.get("nomineeId");
+            Long policyId = Long.valueOf(request.get("policyId").toString());
+            Long rewardAmount = Long.valueOf(request.get("rewardAmount").toString());
+            String reason = (String) request.get("reason");
+
+            Long candidateId = aiRecommendationService.nominateFromAiRecommendation(
+                    email, nomineeId, policyId, rewardAmount, reason);
+            return ResponseEntity.ok(candidateId);
+        } catch (Exception e) {
+            System.out.println("[AI 추천] 등록 실패 - " + e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
