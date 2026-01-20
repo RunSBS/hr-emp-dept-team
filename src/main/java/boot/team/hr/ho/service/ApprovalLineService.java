@@ -1,6 +1,6 @@
 package boot.team.hr.ho.service;
 
-import boot.team.hr.ho.dto.ApprovalType;
+
 import boot.team.hr.ho.entity.ApprovalLine;
 import boot.team.hr.ho.entity.ApprovalLinePolicy;
 import boot.team.hr.ho.repository.ApprovalLinePolicyRepository;
