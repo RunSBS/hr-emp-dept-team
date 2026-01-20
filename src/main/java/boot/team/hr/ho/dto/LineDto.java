@@ -15,4 +15,5 @@ public class LineDto {
     private Integer stepOrder;
     private boolean current;
     private LocalDateTime actionAt;
+    private String empName;
 }

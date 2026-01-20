@@ -26,6 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Account not found"));
 
         String finalRole;
+        String empId = null;
 
         if ("ADMIN".equals(account.getRole())) {
             finalRole = "ADMIN";
@@ -35,11 +36,12 @@ public class CustomUserDetailsService implements UserDetailsService {
                     .orElseThrow(() -> new UsernameNotFoundException("Emp not found"));
 
             finalRole = emp.getEmpRole(); // Emp.empRole 사용
+            empId = emp.getEmpId();
         }
         else {
             throw new UsernameNotFoundException("Invalid role");
         }
 
-        return new CustomUserDetails(account, finalRole);
+        return new CustomUserDetails(account, finalRole, empId);
     }
 }

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Card, Badge, Button, ListGroup } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../main/AuthContext";
 
 const Detail = () => {
     const { approvalId } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
+
     const [detail, setDetail] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -13,6 +16,10 @@ const Detail = () => {
             .then(res => res.json())
             .then(data => {
                 setDetail(data);
+                setLoading(false);
+            })
+            .catch(() => {
+                setDetail(null);
                 setLoading(false);
             });
     }, [approvalId]);
@@ -27,14 +34,28 @@ const Detail = () => {
         }
     };
 
+    /* ==========================
+       권한 판단 (정상 구조)
+    ========================== */
+    const loginEmpId = user?.empId;          // 로그인 사용자
+    const requestEmpId = detail?.empId;      // 기안자
+
+    const currentLine = detail?.lines?.find(line => line.current);
+    const isCurrentApprover = currentLine?.empId === loginEmpId;
+    const isRequester = requestEmpId === loginEmpId;
+
+    /* ==========================
+       액션 핸들러
+    ========================== */
     const handleApprove = async () => {
-        // 현재 결재자 empId 가져오기
-        const currentEmpId = detail.lines.find(line => line.current)?.empId || "test"; // 없으면 임의값
         const res = await fetch(`/back/ho/approvals/${approvalId}/approve`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify({ empId: currentEmpId, comment: "테스트 승인" })
+            body: JSON.stringify({
+                empId: loginEmpId,
+                comment: "승인 처리"
+            })
         });
 
         if (res.ok) {
@@ -46,23 +67,6 @@ const Detail = () => {
         }
     };
 
-    /*
-    const handleApprove = async () => {
-        const res = await fetch(`/back/ho/approvals/${approvalId}/approve`, {
-            method: "POST",
-            credentials: "include"
-        });
-
-        if (res.ok) {
-            alert("승인되었습니다.");
-            navigate("/main/approval/pending");
-        } else {
-            alert("승인 실패: 권한이 없거나 이미 처리된 문서입니다.");
-        }
-    };
-
-     */
-
     const handleReject = async () => {
         const comment = prompt("반려 사유를 입력하세요");
         if (!comment) return;
@@ -71,7 +75,10 @@ const Detail = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify({ comment })
+            body: JSON.stringify({
+                empId: loginEmpId,  // ✅ 여기에 추가
+                comment
+            })
         });
 
         if (res.ok) {
@@ -82,6 +89,34 @@ const Detail = () => {
         }
     };
 
+
+    const handleCancel = async () => {
+        const ok = window.confirm("결재를 취소하시겠습니까?");
+        if (!ok) return;
+
+        const res = await fetch(`/back/ho/approvals/${approvalId}/cancel`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                empId: loginEmpId,          // ✅ 반드시 필요
+                comment: "기안자 취소"
+            })
+        });
+
+        if (res.ok) {
+            alert("결재가 취소되었습니다.");
+            navigate("/main/approval/pending");
+        } else {
+            const text = await res.text();
+            alert("취소 실패: " + text);
+        }
+    };
+
+
+    /* ==========================
+       Render
+    ========================== */
     if (loading) return <div>로딩중...</div>;
     if (!detail) return <div>문서를 찾을 수 없습니다.</div>;
 
@@ -98,20 +133,43 @@ const Detail = () => {
                 <ListGroup className="mb-3">
                     {detail.lines.map(line => (
                         <ListGroup.Item key={line.lineId}>
-                            {line.stepOrder}차 결재자 : {line.empId}
-                            {line.current && " (현재 결재자)"}
+                            {line.stepOrder}차 결재자 : {line.empName}
+                            {line.current && <strong> (현재 결재자)</strong>}
                         </ListGroup.Item>
                     ))}
                 </ListGroup>
 
                 {detail.status === "WAIT" && (
                     <div>
-                        <Button variant="success" className="me-2" onClick={handleApprove}>
-                            승인
-                        </Button>
-                        <Button variant="danger" onClick={handleReject}>
-                            반려
-                        </Button>
+                        {/* 승인 / 반려 → 현재 결재자만 */}
+                        {isCurrentApprover && (
+                            <>
+                                <Button
+                                    variant="success"
+                                    className="me-2"
+                                    onClick={handleApprove}
+                                >
+                                    승인
+                                </Button>
+                                <Button
+                                    variant="danger"
+                                    className="me-2"
+                                    onClick={handleReject}
+                                >
+                                    반려
+                                </Button>
+                            </>
+                        )}
+
+                        {/* 취소 → 기안자만 */}
+                        {isRequester && (
+                            <Button
+                                variant="secondary"
+                                onClick={handleCancel}
+                            >
+                                취소
+                            </Button>
+                        )}
                     </div>
                 )}
             </Card.Body>

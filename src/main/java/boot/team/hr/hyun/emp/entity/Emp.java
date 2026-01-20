@@ -25,7 +25,7 @@ public class Emp {
     @Column(name = "emp_role")
     private String empRole;
 
-    private Integer managerId;
+    private String managerId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

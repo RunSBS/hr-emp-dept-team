@@ -19,64 +19,18 @@ public class ApprovalServiceImpl implements ApprovalService {
     private final ApprovalLineRepository approvalLineRepository;
     private final ApprovalFileRepository approvalFileRepository;
     private final ApprovalLogRepository approvalLogRepository;
+    private final ApprovalLineService approvalLineService;
+
+    // =============================
+    // 1. 결재 신청
     @Override
     public ApprovalResponseDto createApproval(ApprovalRequestDto request) {
-        // 테스트용 empId 기본값
-        String empId = request.getEmpId() != null ? request.getEmpId() : "1234";
 
-        // 1) ApprovalDoc 생성
-        ApprovalDoc doc = ApprovalDoc.create(
-                empId,
-                request.getTypeId() != null ? request.getTypeId() : 1L,
-                request.getTitle() != null ? request.getTitle() : "테스트 문서",
-                request.getContent() != null ? request.getContent() : ""
-        );
-        approvalDocRepository.save(doc);
-
-        // 2) 결재선 생성 (null-safe)
-        String defaultApprover = "1234"; // 테스트용
-        List<ApprovalLine> lines = List.of(
-                ApprovalLine.create(doc.getApprovalId(),
-                        request.getFirstApproverId() != null ? request.getFirstApproverId() : defaultApprover,
-                        1,
-                        true),
-                ApprovalLine.create(doc.getApprovalId(),
-                        request.getSecondApproverId() != null ? request.getSecondApproverId() : defaultApprover,
-                        2,
-                        false),
-                ApprovalLine.create(doc.getApprovalId(),
-                        request.getThirdApproverId() != null ? request.getThirdApproverId() : defaultApprover,
-                        3,
-                        false)
-        );
-
-        approvalLineRepository.saveAll(lines);
-
-        // 3) 첨부파일 처리
-        if (request.getFiles() != null) {
-            List<ApprovalFile> files = request.getFiles().stream()
-                    .map(f -> ApprovalFile.create(doc.getApprovalId(),
-                            f.getFileName(),
-                            f.getFilePaths(),
-                            f.getFileSize()))
-                    .collect(Collectors.toList());
-            approvalFileRepository.saveAll(files);
+        // 신청자 검증
+        if (request.getEmpId() == null) {
+            throw new IllegalArgumentException("결재 신청자(empId)는 필수입니다.");
         }
 
-        // 4) 신청 로그
-        ApprovalLog log = ApprovalLog.create(doc.getApprovalId(), empId, "REQUEST", "결재 신청");
-        approvalLogRepository.save(log);
-
-        return mapToResponseDto(doc);
-    }
-
-    // -----------------------------
-    // 1. 결재 신청
-    /*
-    @Override
-    public ApprovalResponseDto createApproval(ApprovalRequestDto request) {
-
-        // 1) ApprovalDoc 생성 및 저장
         ApprovalDoc doc = ApprovalDoc.create(
                 request.getEmpId(),
                 request.getTypeId(),
@@ -85,65 +39,51 @@ public class ApprovalServiceImpl implements ApprovalService {
         );
         approvalDocRepository.save(doc);
 
-        // 2) 결재선 생성
-        List<ApprovalLine> lines = List.of(
-                ApprovalLine.create(
-                        doc.getApprovalId(),
-                        request.getFirstApproverId(),
-                        1,
-                        true
-                ),
-                ApprovalLine.create(
-                        doc.getApprovalId(),
-                        request.getSecondApproverId(),
-                        2,
-                        false
-                ),
-                ApprovalLine.create(
-                        doc.getApprovalId(),
-                        request.getThirdApproverId(),
-                        3,
-                        false
-                )
+        approvalLineService.createApprovalLines(
+                doc.getApprovalId(),
+                request.getEmpId()
         );
-        approvalLineRepository.saveAll(lines);
 
-        // 3) 첨부파일 저장
-        if (request.getFiles() != null) {
-            List<ApprovalFile> files = request.getFiles().stream().map(f -> ApprovalFile.create(
+
+        // 첨부파일
+        if (request.getFiles() != null && !request.getFiles().isEmpty()) {
+            List<ApprovalFile> files = request.getFiles().stream()
+                    .map(f -> ApprovalFile.create(
                             doc.getApprovalId(),
                             f.getFileName(),
                             f.getFilePaths(),
-                            f.getFileSize())).collect(Collectors.toList());
+                            f.getFileSize()
+                    ))
+                    .collect(Collectors.toList());
+
             approvalFileRepository.saveAll(files);
         }
 
-        // 4) 신청 로그 기록
-        ApprovalLog log = ApprovalLog.create(
-                doc.getApprovalId(),
-                request.getEmpId(),
-                "REQUEST",
-                "결재 신청"
+        // 신청 로그
+        approvalLogRepository.save(
+                ApprovalLog.create(
+                        doc.getApprovalId(),
+                        request.getEmpId(),
+                        "REQUEST",
+                        "결재 신청"
+                )
         );
-        approvalLogRepository.save(log);
 
         return mapToResponseDto(doc);
     }
 
-     */
 
-    // -----------------------------
+    // =============================
     // 2. 결재 상세 조회
     @Override
     @Transactional(readOnly = true)
     public ApprovalResponseDto getApproval(Long approvalId) {
         ApprovalDoc doc = approvalDocRepository.findById(approvalId)
                 .orElseThrow(() -> new IllegalArgumentException("결재 문서를 찾을 수 없습니다."));
-
         return mapToResponseDto(doc);
     }
 
-    // -----------------------------
+    // =============================
     // 3. 결재 승인
     @Override
     public void approveApproval(ApprovalActionDto request) {
@@ -151,20 +91,15 @@ public class ApprovalServiceImpl implements ApprovalService {
         ApprovalDoc doc = approvalDocRepository.findById(request.getApprovalId())
                 .orElseThrow(() -> new IllegalArgumentException("결재 문서를 찾을 수 없습니다."));
 
-        // 1) 현재 결재선 찾기
         ApprovalLine current =
                 approvalLineRepository.findByApprovalIdAndCurrentTrue(doc.getApprovalId());
 
-        //테스트용 권한 제거
-        /*if (!current.getEmpId().equals(request.getEmpId())) {
+        if (!current.getEmpId().equals(request.getEmpId())) {
             throw new IllegalStateException("현재 결재자가 아닙니다.");
         }
 
-         */
-
         current.deactivate();
 
-        // 2) 다음 결재선
         ApprovalLine next =
                 approvalLineRepository.findByApprovalIdAndStepOrder(
                         doc.getApprovalId(),
@@ -174,24 +109,21 @@ public class ApprovalServiceImpl implements ApprovalService {
         if (next != null) {
             next.activate();
         } else {
-            // 마지막 승인
             doc.approve();
+            approvalDocRepository.saveAndFlush(doc);
         }
 
-
-        // 3) 로그 기록
-        ApprovalLog log = ApprovalLog.create(
-                doc.getApprovalId(),
-                request.getEmpId(),
-                "APPROVED",
-                request.getComment()
+        approvalLogRepository.save(
+                ApprovalLog.create(
+                        doc.getApprovalId(),
+                        request.getEmpId(),
+                        "APPROVED",
+                        request.getComment()
+                )
         );
-        approvalLogRepository.save(log);
-
     }
 
-
-    // -----------------------------
+    // =============================
     // 4. 결재 반려
     @Override
     public void rejectApproval(ApprovalActionDto request) {
@@ -199,7 +131,6 @@ public class ApprovalServiceImpl implements ApprovalService {
         ApprovalDoc doc = approvalDocRepository.findById(request.getApprovalId())
                 .orElseThrow(() -> new IllegalArgumentException("결재 문서를 찾을 수 없습니다."));
 
-        // 1) 현재 결재선
         ApprovalLine current =
                 approvalLineRepository.findByApprovalIdAndCurrentTrue(doc.getApprovalId());
 
@@ -207,24 +138,20 @@ public class ApprovalServiceImpl implements ApprovalService {
             throw new IllegalStateException("현재 결재자가 아닙니다.");
         }
 
-        // 2) 현재 결재선 종료
         current.deactivate();
-
-        // 3) 문서 상태 반려
         doc.reject();
 
-        // 4) 로그 기록
-        ApprovalLog log = ApprovalLog.create(
-                doc.getApprovalId(),
-                request.getEmpId(),
-                "REJECTED",
-                request.getComment()
+        approvalLogRepository.save(
+                ApprovalLog.create(
+                        doc.getApprovalId(),
+                        request.getEmpId(),
+                        "REJECTED",
+                        request.getComment()
+                )
         );
-        approvalLogRepository.save(log);
     }
 
-
-    // -----------------------------
+    // =============================
     // 5. 결재 취소
     @Override
     public void cancelApproval(ApprovalActionDto request) {
@@ -232,23 +159,17 @@ public class ApprovalServiceImpl implements ApprovalService {
         ApprovalDoc doc = approvalDocRepository.findById(request.getApprovalId())
                 .orElseThrow(() -> new IllegalArgumentException("결재 문서를 찾을 수 없습니다."));
 
-        // 1) 신청자 본인인지 검증
         if (!doc.getEmpId().equals(request.getEmpId())) {
             throw new IllegalStateException("신청자만 결재를 취소할 수 있습니다.");
         }
 
-        // 2) 이미 승인된 결재선이 있는지 확인
-        boolean approvedExists =
-                approvalLineRepository.existsByApprovalIdAndActionAtIsNotNull(doc.getApprovalId());
-
-        if (approvedExists) {
-            throw new IllegalStateException("이미 승인된 결재가 있어 취소할 수 없습니다.");
+        if (doc.getStatus() != ApprovalStatus.WAIT) {
+            throw new IllegalStateException("이미 처리된 결재는 취소할 수 없습니다.");
         }
 
-        // 3) 문서 취소
+
         doc.cancel();
 
-        // 4) 현재 결재선이 있다면 비활성화
         ApprovalLine current =
                 approvalLineRepository.findByApprovalIdAndCurrentTrue(doc.getApprovalId());
 
@@ -256,122 +177,166 @@ public class ApprovalServiceImpl implements ApprovalService {
             current.deactivate();
         }
 
-        // 5) 로그 기록
-        ApprovalLog log = ApprovalLog.create(
-                doc.getApprovalId(),
-                request.getEmpId(),
-                "CANCELLED",
-                request.getComment()
+        approvalLogRepository.save(
+                ApprovalLog.create(
+                        doc.getApprovalId(),
+                        request.getEmpId(),
+                        "CANCELLED",
+                        request.getComment()
+                )
         );
-        approvalLogRepository.save(log);
     }
 
 
-    // -----------------------------
-    // 6. 사원별 결재 목록 조회
-    @Override
-    @Transactional(readOnly = true)
-    public List<ApprovalResponseDto> getApprovalsByEmp(String empId) {
-        List<ApprovalDoc> docs = approvalDocRepository.findByEmpId(empId);
-        return docs.stream()
-                .map(this::mapToResponseDto)
-                .collect(Collectors.toList());
-    }
 
-    // 7. 결재 이력 (내가 올린 문서 중 완료/반려/취소)
+    // =============================
+    // 7. 결재 이력
     @Override
     @Transactional(readOnly = true)
     public List<ApprovalResponseDto> getApprovalHistory(String empId) {
+        int page = 0;   // 기본 페이지
+        int size = 10;  // 기본 사이즈 (프론트에서 10개씩 보는 구조)
 
-        List<ApprovalDoc> docs =
-                approvalDocRepository.findByEmpIdAndStatusIn(
-                        empId,
-                        List.of(
-                                ApprovalStatus.APPROVED,
-                                ApprovalStatus.REJECTED,
-                                ApprovalStatus.CANCELLED
-                        )
-                );
-
-        return docs.stream()
-                .map(this::mapToResponseDto)
-                .collect(Collectors.toList());
+        return getApprovalHistory(empId, page, size);
     }
 
 
-    // -----------------------------
-    // 8. 내가 결재해야 할 문서 (현재 결재자)
+    @Override
+    @Transactional(readOnly = true)
+    public List<ApprovalResponseDto> getApprovalHistory(
+            String empId, int page, int size
+    ) {
+        // 1. 내가 기안한 문서
+        List<ApprovalResponseDto> requesterDocs =
+                approvalDocRepository.findByEmpIdAndStatusIn(
+                                empId,
+                                List.of(
+                                        ApprovalStatus.APPROVED,
+                                        ApprovalStatus.REJECTED,
+                                        ApprovalStatus.CANCELLED
+                                )
+                        ).stream()
+                        .map(this::mapToResponseDto)
+                        .collect(Collectors.toList());
+
+        // 2. 내가 결재한 문서
+        List<ApprovalResponseDto> approverDocs =
+                approvalLineRepository.findByEmpId(empId)
+                        .stream()
+                        .map(line ->
+                                approvalDocRepository.findById(line.getApprovalId()).orElse(null)
+                        )
+                        .filter(doc ->
+                                doc != null &&
+                                        !doc.getEmpId().equals(empId) &&
+                                        doc.getStatus() != ApprovalStatus.WAIT
+                        )
+                        .map(this::mapToResponseDto)
+                        .collect(Collectors.toList());
+
+        requesterDocs.addAll(approverDocs);
+
+        return slice(requesterDocs, page, size);
+    }
+
+
+    // =============================
+    // 8. 내가 결재해야 할 문서
     @Override
     @Transactional(readOnly = true)
     public List<ApprovalResponseDto> getPendingToApprove(String empId) {
+        int page = 0;
+        int size = 10;
 
-        List<ApprovalLine> lines =
-                approvalLineRepository.findByEmpIdAndCurrentTrue(empId);
+        return getPendingToApprove(empId, page, size);
+    }
 
-        return lines.stream()
-                .map(line ->
-                        approvalDocRepository.findById(line.getApprovalId())
-                                .orElseThrow()
-                )
-                .map(this::mapToResponseDto)
-                .collect(Collectors.toList());
+    @Override
+    @Transactional(readOnly = true)
+    public List<ApprovalResponseDto> getPendingToApprove(
+            String empId, int page, int size
+    ) {
+        List<ApprovalResponseDto> list =
+                approvalLineRepository.findByEmpIdAndCurrentTrue(empId)
+                        .stream()
+                        .map(line ->
+                                approvalDocRepository.findById(line.getApprovalId()).orElse(null)
+                        )
+                        .filter(doc -> doc != null)
+                        .map(this::mapToResponseDto)
+                        .collect(Collectors.toList());
+
+        return slice(list, page, size);
     }
 
 
-    // -----------------------------
+    // =============================
     // 9. 내가 올린 문서 중 대기중
     @Override
     @Transactional(readOnly = true)
     public List<ApprovalResponseDto> getPendingRequested(String empId) {
+        int page = 0;
+        int size = 10;
 
-        List<ApprovalDoc> docs =
-                approvalDocRepository.findByEmpIdAndStatus(
-                        empId,
-                        ApprovalStatus.WAIT
-                );
+        return getPendingRequested(empId, page, size);
+    }
 
-        return docs.stream()
-                .map(this::mapToResponseDto)
-                .collect(Collectors.toList());
+    @Override
+    @Transactional(readOnly = true)
+    public List<ApprovalResponseDto> getPendingRequested(
+            String empId, int page, int size
+    ) {
+        List<ApprovalResponseDto> list =
+                approvalDocRepository.findByEmpIdAndStatus(empId, ApprovalStatus.WAIT)
+                        .stream()
+                        .map(this::mapToResponseDto)
+                        .collect(Collectors.toList());
+
+        return slice(list, page, size);
     }
 
 
-    // -----------------------------
-    // DTO 변환 공용 메서드
+    // =============================
+    // DTO 매핑
     private ApprovalResponseDto mapToResponseDto(ApprovalDoc doc) {
-        List<LineDto> lines = approvalLineRepository.findByApprovalIdOrderByStepOrder(doc.getApprovalId())
-                .stream()
-                .map(l -> {
-                    LineDto dto = new LineDto();
-                    dto.setLineId(l.getLineId());
-                    dto.setEmpId(l.getEmpId());
-                    dto.setStepOrder(l.getStepOrder());
-                    dto.setCurrent(l.isCurrent());
-                    dto.setActionAt(l.getActionAt());
-                    return dto;
-                }).collect(Collectors.toList());
 
-        List<FileDto> files = approvalFileRepository.findByApprovalId(doc.getApprovalId())
-                .stream()
-                .map(f -> {
-                    FileDto dto = new FileDto();
-                    dto.setFileName(f.getFileName());
-                    dto.setFilePaths(f.getFilePaths());
-                    dto.setFileSize(f.getFileSize());
-                    return dto;
-                }).collect(Collectors.toList());
+        List<LineDto> lines =
+                approvalLineRepository.findByApprovalIdOrderByStepOrder(doc.getApprovalId())
+                        .stream()
+                        .map(l -> {
+                            LineDto dto = new LineDto();
+                            dto.setLineId(l.getLineId());
+                            dto.setEmpId(l.getEmpId());
+                            dto.setEmpName(l.getEmpName());
+                            dto.setStepOrder(l.getStepOrder());
+                            dto.setCurrent(l.isCurrent());
+                            dto.setActionAt(l.getActionAt());
+                            return dto;
+                        }).collect(Collectors.toList());
 
-        List<LogDto> logs = approvalLogRepository.findByApprovalIdOrderByLogId(doc.getApprovalId())
-                .stream()
-                .map(l -> {
-                    LogDto dto = new LogDto();
-                    dto.setLogId(l.getLogId());
-                    dto.setEmpId(l.getEmpId());
-                    dto.setAction(l.getAction());
-                    dto.setComment(l.getComment());
-                    dto.setCreatedAt(l.getCreatedAt());
-                    return dto;
-                }).collect(Collectors.toList());
+        List<FileDto> files =
+                approvalFileRepository.findByApprovalId(doc.getApprovalId())
+                        .stream()
+                        .map(f -> {
+                            FileDto dto = new FileDto();
+                            dto.setFileName(f.getFileName());
+                            dto.setFilePaths(f.getFilePaths());
+                            dto.setFileSize(f.getFileSize());
+                            return dto;
+                        }).collect(Collectors.toList());
+
+        List<LogDto> logs =
+                approvalLogRepository.findByApprovalIdOrderByLogId(doc.getApprovalId())
+                        .stream()
+                        .map(l -> {
+                            LogDto dto = new LogDto();
+                            dto.setLogId(l.getLogId());
+                            dto.setEmpId(l.getEmpId());
+                            dto.setAction(l.getAction());
+                            dto.setComment(l.getComment());
+                            dto.setCreatedAt(l.getCreatedAt());
+                            return dto;
+                        }).collect(Collectors.toList());
 
         ApprovalResponseDto response = new ApprovalResponseDto();
         response.setApprovalId(doc.getApprovalId());
@@ -388,4 +353,14 @@ public class ApprovalServiceImpl implements ApprovalService {
 
         return response;
     }
+
+    private <T> List<T> slice(List<T> list, int page, int size) {
+        int start = page * size;
+        if (start >= list.size()) {
+            return List.of();
+        }
+        int end = Math.min(start + size, list.size());
+        return list.subList(start, end);
+    }
+
 }

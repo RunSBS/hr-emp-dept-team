@@ -6,7 +6,6 @@ import boot.team.hr.min.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -43,7 +42,8 @@ public class AccountController {
         return Map.of(
                 "authenticated", true,
                 "email", user.getUsername(),
-                "role", user.getFinalRole()
+                "role", user.getFinalRole(),
+                "empId", user.getEmpId() != null ? user.getEmpId() : "N/A"
         );
     }
 

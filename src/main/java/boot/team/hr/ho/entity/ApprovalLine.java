@@ -12,31 +12,28 @@ import java.time.LocalDateTime;
 public class ApprovalLine {
 
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "approval_line_seq"
-    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "approval_line_seq")
     @SequenceGenerator(
             name = "approval_line_seq",
             sequenceName = "SEQ_APPROVAL_LINE",
             allocationSize = 1
     )
-    @Column(name = "LINE_ID")
     private Long lineId;
 
-    @Column(name = "APPROVAL_ID", nullable = false)
+    @Column(nullable = false)
     private Long approvalId;
 
-    @Column(name = "EMP_ID", nullable = false)
+    @Column(nullable = false)
     private String empId;
 
-    @Column(name = "STEP_ORDER", nullable = false)
+    private String empName;
+
+    @Column(nullable = false)
     private Integer stepOrder;
 
     @Column(name = "IS_CURRENT", nullable = false)
     private boolean current;
 
-    @Column(name = "ACTION_AT")
     private LocalDateTime actionAt;
 
     public boolean isCurrent() {
@@ -52,14 +49,20 @@ public class ApprovalLine {
         this.actionAt = LocalDateTime.now();
     }
 
-    public static ApprovalLine create(Long approvalId, String empId, Integer stepOrder, boolean isCurrent) {
+    public static ApprovalLine create(
+            Long approvalId,
+            String empId,
+            String empName,
+            Integer stepOrder,
+            boolean isCurrent
+    ) {
         ApprovalLine line = new ApprovalLine();
         line.approvalId = approvalId;
         line.empId = empId;
+        line.empName = empName;
         line.stepOrder = stepOrder;
         line.current = isCurrent;
-        line.actionAt = isCurrent ? null : LocalDateTime.now(); // 이미 지나간 경우 actionAt 기록
+        line.actionAt = null;
         return line;
     }
-
 }
