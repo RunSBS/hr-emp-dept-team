@@ -41,7 +41,8 @@ public class ApprovalServiceImpl implements ApprovalService {
 
         approvalLineService.createApprovalLines(
                 doc.getApprovalId(),
-                request.getEmpId()
+                request.getEmpId(),
+                request.getTypeId()
         );
 
 
