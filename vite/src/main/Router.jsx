@@ -23,7 +23,6 @@ import ProjectManage from "../features/schedule/pages/ProjectManage.jsx";
 import Meeting from "../features/schedule/pages/Meeting.jsx";
 import Attendance from "../features/work/pages/employee/Attendance.jsx";
 import LeaveRequest from "../features/work/pages/employee/LeaveRequest.jsx";
-import LeaveStatus from "../features/work/pages/employee/LeaveStatus.jsx";
 import AnnualUsage from "../features/work/pages/employee/AnnualUsage.jsx";
 import WorkPolicy from "../features/work/pages/employee/WorkPolicy.jsx";
 import AdminAttendance from "../features/work/pages/admin/AdminAttendance.jsx";
@@ -66,13 +65,12 @@ function Router() {
                     {/* 개인 근태 */}
                     <Route path="employee/attendance" element={<Attendance />} />
                     <Route path="employee/request" element={<LeaveRequest />} />
-                    <Route path="employee/status" element={<LeaveStatus />} />
                     <Route path="employee/usage" element={<AnnualUsage />} />
-                    <Route path="employee/policy" element={<WorkPolicy />} />
+                    <Route path="employee/workpolicy" element={<WorkPolicy />} />
 
                     {/* 관리자 근태 */}
                     <Route path="admin/attendance" element={<AdminAttendance />} />
-                    <Route path="admin/policy" element={<AdminWorkPolicy />} />
+                    <Route path="admin/adminworkpolicy" element={<AdminWorkPolicy />} />
                     <Route path="admin/leaveapproval" element={<LeaveApproval />} />
                     <Route path="admin/annualleave" element={<AnnualLeave />} />
                 </Route>
@@ -84,8 +82,8 @@ function Router() {
                     <Route path="employee/salarypolicy" element={<SalaryPolicy />} />
 
                     {/* 관리자 급여 */}
-                    <Route path="admin/salary" element={<AdminSalary />} />
-                    <Route path="admin/salarypolicy" element={<AdminSalaryPolicy />} />
+                    <Route path="admin/adminsalary" element={<AdminSalary />} />
+                    <Route path="admin/adminsalarypolicy" element={<AdminSalaryPolicy />} />
                 </Route>
 
                 <Route path="schedule">

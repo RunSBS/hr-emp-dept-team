@@ -1,5 +1,6 @@
 package boot.team.hr.min.account.security;
 
+import boot.team.hr.hyun.emp.entity.Emp;
 import boot.team.hr.min.account.entity.Account;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
