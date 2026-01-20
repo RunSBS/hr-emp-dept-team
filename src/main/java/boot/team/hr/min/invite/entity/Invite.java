@@ -1,5 +1,6 @@
 package boot.team.hr.min.invite.entity;
 
+import boot.team.hr.hyun.emp.entity.Emp;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +23,9 @@ public class Invite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="emp_id",nullable = false, length = 30)
-    private String empId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "emp_id", nullable = false)
+    private Emp emp;
 
     @Column(nullable = false, length = 255, unique = true)
     private String email;
@@ -38,8 +40,8 @@ public class Invite {
     private LocalDateTime completedAt;
 
     // 초대 생성
-    public Invite(String empId, String email) {
-        this.empId = empId;
+    public Invite(Emp emp, String email) {
+        this.emp = emp;
         this.email = email;
         this.status = "PENDING";
         this.createdAt = LocalDateTime.now();

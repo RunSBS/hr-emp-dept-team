@@ -1,40 +1,43 @@
 import { useState } from "react";
-import DeptSelectAll from "../components/dept/DeptSelectAll.jsx";
-import DeptInsert from "../components/dept/DeptInsert.jsx";
-import DeptUpdate from "../components/dept/DeptUpdate.jsx";
-import DeptDelete from "../components/dept/DeptDelete.jsx";
+import DeptList from "../components/dept/DeptList";
+import DeptDetail from "../components/dept/DeptDetail";
 
 const Dept = () => {
-    // 1. 처음 들어왔을 때 부서 조회가 바로 보이도록 초기값 설정
-    const [page, setPage] = useState("deptSelectAll");
+    const [selectedDept, setSelectedDept] = useState(null); // 선택된 부서 정보
+    const [refreshKey, setRefreshKey] = useState(0);       // 리스트 갱신 트리거
+
+    // 등록/수정/삭제 후 실행될 콜백
+    const handleSuccess = () => {
+        setRefreshKey(prev => prev + 1);
+        setSelectedDept(null);
+    };
 
     return (
-        <>
-            {/* 컴포넌트 출력 영역 */}
-            {page === "deptSelectAll" && <DeptSelectAll />}
-            {page === "deptInsert" && <DeptInsert />}
-            {page === "deptUpdate" && <DeptUpdate />}
-            {page === "deptDelete" && <DeptDelete />}
-
-            {/* 버튼 메뉴 영역: 현재 페이지(page)가 아닌 것만 렌더링 */}
-            <div style={{ marginTop: "20px" }}>
-                {page !== "deptSelectAll" && (
-                    <button onClick={() => setPage("deptSelectAll")}>부서 조회</button>
-                )}
-
-                {page !== "deptInsert" && (
-                    <button onClick={() => setPage("deptInsert")}>부서 등록</button>
-                )}
-
-                {page !== "deptUpdate" && (
-                    <button onClick={() => setPage("deptUpdate")}>부서 수정</button>
-                )}
-
-                {page !== "deptDelete" && (
-                    <button onClick={() => setPage("deptDelete")}>부서 삭제</button>
-                )}
+        <div style={{padding: "20px"}}>
+            <h2>부서 관리</h2>
+            <div style={{ display: "flex", height: "calc(100vh - 100px)", gap: "20px"}}>
+                {/* 1. 좌측 부서 트리 영역 */}
+                <div style={{ width: "350px", display: "flex", flexDirection: "column", border: "1px solid #eee", borderRadius: "8px", padding: "15px", backgroundColor: "#f9f9f9" }}>
+                    <button
+                        onClick={() => setSelectedDept({ isNew: true })}
+                        style={{ marginBottom: "15px", padding: "10px", backgroundColor: "#007bff", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" }}
+                    >
+                        + 새 부서 등록
+                    </button>
+                    <div style={{ overflowY: "auto", flex: 1 }}>
+                        <DeptList key={refreshKey} onSelectDept={setSelectedDept} />
+                    </div>
+                </div>
+    
+                {/* 2. 우측 상세 설정 영역 */}
+                <div style={{ flex: 1, border: "1px solid #eee", borderRadius: "8px", padding: "20px" }}>
+                    <DeptDetail
+                        selectedDept={selectedDept}
+                        onSuccess={handleSuccess}
+                    />
+                </div>
             </div>
-        </>
+        </div>
     );
 };
 

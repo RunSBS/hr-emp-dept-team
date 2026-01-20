@@ -2,8 +2,11 @@ package boot.team.hr.min.project.service;
 
 import boot.team.hr.min.project.dto.ProjectDto;
 import boot.team.hr.min.project.entitiy.Project;
+import boot.team.hr.min.project.repository.ProjectMemberRepository;
 import boot.team.hr.min.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +17,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository repository;
+    private final ProjectMemberRepository projectMemberRepository;
+
 
     //c
     @Transactional
@@ -61,4 +66,27 @@ public class ProjectService {
     public void delete(Long id){
         repository.deleteById(id);
     }
+    //page
+    @Transactional(readOnly = true)
+    public Page<ProjectDto> findPage(Pageable pageable, String keyword) {
+
+        Page<Project> page;
+        if (keyword == null || keyword.trim().isEmpty()) {
+            page = repository.findAll(pageable);
+        }
+        else {
+            page = repository.findByNameContainingIgnoreCase(keyword, pageable);
+        }
+
+        return page.map(ProjectDto::from);
+    }
+    @Transactional(readOnly = true)
+    public Page<ProjectDto> findMyProjects(
+            String empId,
+            String keyword,
+            Pageable pageable
+    ) {
+        return projectMemberRepository.findMyProjects(empId, keyword, pageable);
+    }
+
 }

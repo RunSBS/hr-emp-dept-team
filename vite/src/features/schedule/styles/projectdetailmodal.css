@@ -1,0 +1,323 @@
+.project-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.project-modal {
+    background: #fafafa;
+    width: 1200px;
+    height: 80vh;
+    max-height: 90vh;
+    border-radius: 10px;
+    padding: 28px;
+    border: 1px solid #e5e5e5;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 스크롤은 내부에서 관리 */
+    transform: translateX(30px);
+}
+
+.project-modal.edit {
+    width: 520px;
+}
+
+.project-header {
+    border-bottom: 1px solid #e6e6e6;
+    padding-bottom: 12px;
+    margin-bottom: 12px; /* 불필요 여백 줄임 */
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    margin-bottom: 8px; /* title과 붙도록 조정 */
+}
+
+.phase-detail {
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    padding: 20px;
+    border-radius: 8px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+}
+.phase-body {
+    flex: 0 0 55%; /* 전체의 75% 차지 */
+    min-height: 200px;
+    max-height: 80%; /* 최대 80% */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 1.2rem;
+}
+.phase-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+
+
+.phase-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.85rem;
+
+}
+
+.phase-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.phase-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    font-size: 0.85rem;
+
+}
+
+.deliver-section {
+    border-top: 1px dashed #ddd;
+    padding-top: 12px;
+    flex: 1; /* 나머지 영역 사용 */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+}
+
+.deliver-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.deliver-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 0.9rem;
+}
+
+.deliver-upload {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+input {
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.form-block {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    padding: 4px 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+
+}
+
+.btn-text:hover {
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+
+.modal-btn-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.close-btn {
+    margin-top: 20px;
+}
+
+/* 산출물/단계 추가 모달 공통 */
+.project-modal.edit {
+    width: 520px;
+}
+
+.project-modal.edit .modal-title {
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.project-modal.edit .form-block {
+    grid-template-columns: 80px 1fr;
+}
+.deliver-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.deliver-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dotted #aaa; /* 점선 */
+    padding: 8px 0;
+    line-height: 1.5; /* 텍스트 중앙 정렬용 */
+}
+
+.deliver-name {
+    flex-shrink: 0; /* 이름은 줄어들지 않음 */
+    font-weight: bold;
+}
+
+.deliver-meta {
+    display: flex;
+    gap: 12px; /* 항목 간 간격 */
+    align-items: center;
+    flex-grow: 1;
+    justify-content: flex-end; /* 오른쪽 정렬 */
+}
+
+.deliver-desc {
+    max-width: 200px; /* 필요에 따라 조정 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 길면 ... 처리 */
+}
+
+.deliver-date {
+    flex-shrink: 0;
+}
+
+.deliver-meta button {
+    flex-shrink: 0;
+}
+.project-modal textarea {
+    width: 100%;
+    height: 35vh;
+    resize: vertical;  /* 사용자가 세로로만 조절 가능 */
+    padding: 6px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+.project-modal.edit.add-deliver {
+    max-height: 250px; /* 모달 높이 제한 */
+    padding: 15px 20px; /* 내부 여백 조정 */
+    overflow-y: auto; /* 내용이 많으면 스크롤 가능 */
+    width: 500px; /* 필요시 가로 크기도 조정 */
+}
+.phase-desc {
+    white-space: pre-wrap; /* 줄바꿈과 공백 유지 */
+    word-break: break-word; /* 너무 긴 단어도 줄바꿈 */
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.section-left {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.phase-status {
+    background-color: #f5e6c8; /* 베이지색 */
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.method{
+    background-color: #f5e6c8; /* 베이지색 */
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+.phase-navigation {
+    display: flex;
+    align-items: center;       /* 수직 중앙 정렬 */
+    justify-content: center;
+    gap: 0.5rem;               /* 버튼-텍스트 간격 */
+}
+
+.phase-navigation button,
+.phase-navigation span {
+    line-height: 1.5;          /* 공통 line-height */
+    height: 2rem;              /* 버튼과 텍스트 높이 통일 */
+    display: flex;
+    align-items: center;       /* flex로 텍스트 수직 중앙 */
+    padding: 0 0.5rem;         /* 버튼 안쪽 여백 */
+}
+.phase-status {
+    font-weight: bold;
+}
+
+.phase-status.not-started { color: black;background: lightgray }
+.phase-status.in-progress { color: black } /* 베이지색 */
+.phase-status.completed { color: black;background: greenyellow }
+
+.image-preview-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.image-preview-modal {
+    position: relative;
+    max-width: 80%;
+    max-height: 80%;
+    background: #fff; /* 배경 흰색 추가하면 이미지 주변 공간 생김 */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.image-preview-modal img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.close-btn {
+    position: absolute;
+    top: 0;      /* 위쪽 모서리 */
+    right: 0;    /* 오른쪽 모서리 */
+    background: rgba(255,255,255,0.8); /* 반투명 배경 */
+    border: none;
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 0 0 0 8px; /* 살짝 둥글게 */
+}

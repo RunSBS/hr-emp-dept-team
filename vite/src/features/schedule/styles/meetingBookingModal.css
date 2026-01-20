@@ -1,0 +1,99 @@
+/* ===== 전체 시간표 ===== */
+.timetable {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+/* ===== 시간 블럭 ===== */
+.time-block {
+    width: 56px;
+    height: 48px;
+    line-height: 48px;
+    text-align: center;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+    transition: all 0.15s ease;
+}
+
+/* hover */
+.time-block:hover {
+    background-color: #f0f8ff;
+}
+
+/* 예약된 시간 */
+.time-block.booked {
+    background-color: gray;
+    color: #fff;
+    cursor: not-allowed;
+    border-color: gray;
+}
+
+
+.time-block.selecting {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+}
+
+/* 선택 완료된 범위 */
+.time-block.selected {
+    background-color: #d1e7dd;
+    border-color: #198754;
+    color: #000;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    background-color: rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    z-index: 2001;
+
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 420px;
+    max-width: 90%;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+/* 작은 모달 배경 */
+.mini-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 작은 모달 */
+.mini-modal {
+    background: #fff;
+    padding: 16px;
+    border-radius: 8px;
+    width: 320px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.modal-actions {
+    display: flex;
+    justify-content: flex-end; /* 👉 오른쪽 정렬 */
+    gap: 8px;
+    margin-top: 12px;
+}

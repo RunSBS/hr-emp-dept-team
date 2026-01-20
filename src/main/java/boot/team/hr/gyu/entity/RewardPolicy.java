@@ -29,9 +29,6 @@ public class RewardPolicy {
     @Column(name = "REWARD_TYPE", nullable = false, length = 50)
     private String rewardType;
 
-    @Column(name = "REWARD_AMOUNT", nullable = false)
-    private Long rewardAmount;
-
     @Column(name = "DESCRIPTION", length = 255)
     private String description;
 

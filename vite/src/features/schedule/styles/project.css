@@ -1,0 +1,94 @@
+/* 🔹 페이지 전체 배경 */
+.page-wrapper {
+    background-color: #f4f6f8;   /* 옅은 회색 */
+    min-height: 100vh;
+    padding: 30px;
+}
+
+/* 🔹 실제 콘텐츠 흰색 영역 */
+.content-wrapper {
+    background-color: #ffffff;
+    border-radius: 10px;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.1),
+            0 8px 24px rgba(0, 0, 0, 0.1);
+
+    padding: 24px 28px;
+}
+
+
+
+.content-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+/* 🔹 카드 영역 */
+.content-body {
+    padding-top: 10px;
+}
+
+/* 기존 검색 UI 조금 정리 */
+.meeting-search-group {
+    display: flex;
+    gap: 10px;
+}
+
+.meeting-search-input {
+    width: 240px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+}
+.section-gap {
+    height: 24px;   /* 사진처럼 숨 쉴 공간 */
+}
+/* FullCalendar 네이비 버튼 스타일 */
+.fc-like-btn {
+    background-color: #2c3e50;   /* 네이비 + 차콜 */
+    border: 1px solid #2c3e50;
+    color: #ffffff;
+    font-weight: 500;
+    border-radius: 4px;
+    padding: 6px 12px;
+    transition: all 0.15s ease-in-out;
+}
+
+/* hover */
+.fc-like-btn:hover {
+    background-color: #233140;
+    border-color: #233140;
+    color: #ffffff;
+}
+
+/* active */
+.fc-like-btn:active {
+    background-color: #1f2a36;
+    border-color: #1f2a36;
+}
+
+/* disabled */
+.fc-like-btn:disabled {
+    background-color: #9aa4af;
+    border-color: #9aa4af;
+    color: #ffffff;
+    cursor: not-allowed;
+}
+.empty-projects {
+    font-size: 20px;
+    color: #6b7280;          /* 연한 회색 */
+    border-radius: 6px;
+}
+.btn.fc-like-btn {
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+    color: #ffffff;
+}
+.btn.fc-like-btn:active {
+    background-color: #1f2a36;
+    border-color: #1f2a36;
+}

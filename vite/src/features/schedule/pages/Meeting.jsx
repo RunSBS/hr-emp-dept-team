@@ -1,5 +1,4 @@
 import MeetingManage from "../components/MeetingManage.jsx";
-import MeetingBooking from "../components/MeetingBooking.jsx"
 import {useAuth} from "../../../main/AuthContext.jsx";
 
 const Meeting = () => {
@@ -8,15 +7,7 @@ const Meeting = () => {
 
     return (
         <>
-            <h1>회의실</h1>
-            {user.role === "ADMIN" ? (
-                <>
-                    <MeetingManage />
-                    <MeetingBooking />
-                </>
-            ) : (
-                <MeetingBooking />
-            )}
+            <MeetingManage />
         </>
     );
 };

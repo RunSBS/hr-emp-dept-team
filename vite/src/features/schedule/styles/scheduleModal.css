@@ -1,0 +1,45 @@
+.dropdown-toggle::after {
+    display: none;
+}
+.more-btn {
+    font-size: 30px;      /* 크기 */
+    font-weight: 700;     /* 두께 */
+    cursor: pointer;
+    line-height: 1;
+}
+.schedule-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* 시간 */
+.schedule-time {
+    min-width: 52px;
+    text-align: right;
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* 초록색 세로 바 */
+.schedule-bar {
+    width: 4px;
+    border-radius: 2px;
+    background-color: #28a745;
+    align-self: stretch;
+}
+
+/* 내용 */
+.schedule-content {
+    flex: 1;
+}
+
+/* 점 3개 버튼 */
+.more-btn:hover {
+    color: #000;
+}
+.schedule-list {
+    max-height: 320px;      /* 1개 ≈ 80px × 4 */
+    overflow-y: auto;
+}

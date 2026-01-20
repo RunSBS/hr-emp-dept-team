@@ -1,0 +1,57 @@
+.account-section {
+    margin-bottom: 16px;
+}
+
+.account-section h5 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Modal 전체 톤 정리 */
+.modal-content {
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+.modal-header {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-footer {
+    border-top: 1px solid #e5e7eb;
+}
+.account-tab {
+    display: flex;
+    gap: 8px;
+}
+
+.account-section h5 {
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-row .label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.info-row .value {
+    font-weight: 500;
+}
+
+.fc-like-btn {
+    background-color: #0b1c3d;
+    border: none;
+}
+
+.fc-like-btn:hover {
+    background-color: #132b5c;
+}

@@ -4,7 +4,7 @@ import { Container, Row, Col, Nav, Navbar, Collapse } from "react-bootstrap";
 import {Link, Outlet, useNavigate} from "react-router-dom";
 import React, {useState} from "react";
 import {useAuth} from "./AuthContext.jsx";
-
+import AccountEditModal from "./components/AccountEditModal.jsx";
 const Home = () => {
 
     const [openInvite,setOpenInvite]=useState(false);
@@ -15,6 +15,8 @@ const Home = () => {
     const [openApproval, setOpenApproval] = useState(false);
     const [openEval, setOpenEval] = useState(false);
     const [openReward, setOpenReward] = useState(false);
+    const [showAccountModal, setShowAccountModal] = useState(false);
+
     const navigate = useNavigate();
 
     const { user,logout } = useAuth();
@@ -38,7 +40,12 @@ const Home = () => {
                         <div className="brand">HR</div>
                     </Navbar.Brand>
                     <Nav className="ms-auto">
-                        <Nav.Link>settings</Nav.Link>
+                        <Nav.Link
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setShowAccountModal(true)}
+                        >
+                            계정
+                        </Nav.Link>
                         <Nav.Link onClick={handleLogout} style={{ cursor: "pointer" }}>Logout</Nav.Link>
                     </Nav>
                 </Container>
@@ -65,7 +72,7 @@ const Home = () => {
                                 </div>
                             </Collapse>
                             {/* 인사 */}
-                            <Nav.Link onClick={() => setOpenHr(!openHr)}>
+                            <Nav.Link as={Link} to="/main/hr/all" onClick={() => setOpenHr(!openHr)}>
                                 인사 {openHr ? "▾" : "▸"}
                             </Nav.Link>
                             <Collapse in={openHr}>
@@ -74,7 +81,7 @@ const Home = () => {
                                         <Nav.Link as={Link} to="/main/hr/all">전체</Nav.Link>
                                         <Nav.Link as={Link} to="/main/hr/dept">부서</Nav.Link>
                                         <Nav.Link as={Link} to="/main/hr/emp">사원</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/hr/dispatch">파견</Nav.Link>
+                                        <Nav.Link as={Link} to="/main/hr/outsourcing">파견</Nav.Link>
                                     </Nav>
                                 </div>
                             </Collapse>
@@ -86,20 +93,17 @@ const Home = () => {
                             <Collapse in={openWork}>
                                 <div>
                                     <Nav className="flex-column ms-3">
-                                        <Nav.Link as={Link} to="/main/work/employee/attendance">출퇴근 기록</Nav.Link>
                                         {/*근태: 일반 사원과 팀장*/}
-                                        {(user?.role === "EMP" || user?.role === "LEADER") && (
+                                        {(user?.role === "EMP" /*|| user?.role === "LEADER"*/) && (
                                             <>
-                                                {/*user가 null인 상태에서 Home이 먼저 렌더링되고 있고,
-                                                    AuthContext에서 “로그인 사용자 조회”가 아직 끝나지 않았어요.*/}
+                                                <Nav.Link as={Link} to="/main/work/employee/attendance">출퇴근 기록</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/employee/request">휴가(연가) 신청</Nav.Link>
-                                                <Nav.Link as={Link} to="/main/work/employee/status">휴가 신청 현황</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/employee/usage">연차 사용 현황</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/employee/workpolicy">근태 정책 조회</Nav.Link>
                                             </>
                                         )}
                                         {/*근태: 근태 관리자 */}
-                                        {user?.role === "HR" && (
+                                        {user?.role === "ATTENDANCE" && (
                                             <>
                                                 <Nav.Link as={Link} to="/main/work/admin/attendance">출퇴근 내역 관리</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/admin/adminworkpolicy">근태 정책 관리</Nav.Link>
@@ -133,10 +137,10 @@ const Home = () => {
                                             </>
                                         )}
                                         {/*급여: 근태 관리자*/}
-                                        {user?.role === "HR" && (
+                                        {user?.role === "ATTENDANCE" && (
                                             <>
-                                                <Nav.Link as={Link} to="/main/salary/employee/adminsalary">급여 관리</Nav.Link>
-                                                <Nav.Link as={Link} to="/main/salary/employee/adminsalarypolicy">급여 정책 관리</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/salary/admin/adminsalary">급여 관리</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/salary/admin/adminsalarypolicy">급여 정책 관리</Nav.Link>
                                             </>
                                         )}
                                     </Nav>
@@ -210,6 +214,10 @@ const Home = () => {
                     </Col>
                 </Row>
             </Container>
+            <AccountEditModal
+                show={showAccountModal}
+                onClose={() => setShowAccountModal(false)}
+            />
         </div>
     );
 };

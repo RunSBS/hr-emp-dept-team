@@ -8,4 +8,7 @@ public class AccountDTO {
 
     private String email;
     private String password;
+    //비밀번호 변경용
+    private String currentPassword;
+    private String newPassword;
 }

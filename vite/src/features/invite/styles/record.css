@@ -1,0 +1,156 @@
+/* ===== 테이블 ===== */
+.record-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.record-table th,
+.record-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+    text-align: left;
+}
+
+.record-table th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+    position: sticky;
+    top: 0;              /* 🔹 스크롤 시 헤더 고정 */
+    z-index: 1;
+}
+
+.record-table tr:hover {
+    background-color: #f3f4f6;
+}
+
+/* ===== 빈 데이터 ===== */
+.empty-row {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+}
+
+/* ===== 소제목 ===== */
+.content-subtitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* ===== 탭 ===== */
+.record-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.record-tab {
+    background: #f3f4f6;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.record-tab.active {
+    background: #f5e6c8; /* 베이지 */
+    font-weight: 600;
+}
+
+/* ===== 테이블 스크롤 ===== */
+.record-table-wrapper {
+    max-height: calc(5 * 44px + 44px); /* 행 5개 + 헤더 */
+    overflow-y: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+/* =========================
+   탭 버튼 영역
+========================= */
+.record-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.record-tab {
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background-color: #f9fafb;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.record-tab:hover {
+    background-color: #f3f4f6;
+}
+
+.record-tab.active {
+    background-color: #1f2937; /* 네이비 */
+    color: #ffffff;
+    border-color: #1f2937;
+}
+
+/* =========================
+   테이블 스크롤 영역
+========================= */
+.record-table-wrapper {
+    max-height: 360px; /* 8개 기준 */
+    overflow-y: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+/* =========================
+   페이지네이션
+========================= */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.pagination button {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background-color: #ffffff;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #f3f4f6;
+}
+
+.pagination button:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+.pagination span {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+}
+
+/* =========================
+   빈 행
+========================= */
+.empty-row {
+    text-align: center;
+    padding: 24px 0;
+    color: #9ca3af;
+    font-size: 14px;
+}

@@ -1,0 +1,96 @@
+/* 1. 모달이 캘린더 레이어에 밀리지 않도록 최상단으로 올림 */
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+.modal {
+    z-index: 1060 !important;
+}
+
+/* 2. 캘린더 내부의 상대적 위치 계산이 모달에 영향을 주지 않도록 설정 */
+.fc {
+    position: relative;
+    z-index: 1; /* 캘린더는 낮게 설정 */
+}
+
+/* 3. 부트스트랩 모달 대화창 강제 중앙 정렬 (치우침 해결) */
+.modal-dialog {
+    margin: 1.75rem auto !important; /* 좌우 마진을 auto로 해서 중앙으로 */
+    left: 0 !important;              /* 혹시 남아있을 left값 초기화 */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+/* 캘린더가 부모의 너비를 절대 넘지 못하도록 고정 */
+.fc {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box; /* 패딩이 너비에 영향을 주지 않도록 */
+}
+
+/* 캘린더 내부 테이블들이 잘리지 않게 설정 */
+.fc-view-harness {
+    width: 100% !important;
+    overflow: hidden; /* 영역 밖으로 나가는 것 방지 */
+}
+/* dot 이벤트 앞의 점 제거 */
+.fc-daygrid-event-dot {
+    display: none !important;
+}
+/* 요일 밑줄 제거 */
+.fc .fc-col-header-cell-cushion {
+    text-decoration: none !important;
+    color: inherit;
+}
+
+/* 날짜 숫자 밑줄 제거 */
+.fc .fc-daygrid-day-number {
+    text-decoration: none !important;
+    color: inherit;
+}
+/* 요일 헤더 배경 회색 */
+.fc .fc-col-header {
+    background-color: #f1f3f5; /* 연한 회색 */
+}
+
+/* 요일 셀 */
+.fc .fc-col-header-cell {
+    background-color: #f1f3f5;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* 요일 텍스트 */
+.fc .fc-col-header-cell-cushion {
+    font-weight: 600;
+    color: #495057;
+}
+
+/* 캘린더 카드 안에서 여백 최소화 */
+.content-wrapper .fc {
+    margin-top: 4px;
+}
+
+/* header 버튼 영역 조금 컴팩트하게 */
+.fc .fc-toolbar {
+    margin-bottom: 8px;
+}
+
+/* 날짜 셀 패딩 줄이기 */
+.fc-daygrid-day-frame {
+    padding: 2px;
+}
+/* 상단 전체 여백 최소화 */
+.fc .fc-header-toolbar {
+    margin: 0px 0 0px 0 !important;
+    padding: 0 !important;
+}
+/* 요일 헤더 전체 높이 줄이기 */
+.fc .fc-col-header-cell {
+    padding: 2px 0 !important;
+}
+/* 캘린더 페이지 전용 */
+.page-wrapper {
+    padding-top: 0px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+}

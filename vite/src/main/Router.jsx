@@ -15,6 +15,7 @@ import Input from "../features/evaluation/pages/Input.jsx";
 import View from "../features/evaluation/pages/View.jsx";
 import Recommend from "../features/evaluation/pages/Recommend.jsx";
 import Policy from "../features/reward/pages/Policy.jsx";
+import RewardHistory from "../features/reward/pages/RewardHistory.jsx";
 import Candidate from "../features/reward/pages/Candidate.jsx";
 import Calender from "../features/schedule/pages/Calender.jsx";
 import Project from "../features/schedule/pages/Project.jsx";
@@ -22,7 +23,6 @@ import ProjectManage from "../features/schedule/pages/ProjectManage.jsx";
 import Meeting from "../features/schedule/pages/Meeting.jsx";
 import Attendance from "../features/work/pages/employee/Attendance.jsx";
 import LeaveRequest from "../features/work/pages/employee/LeaveRequest.jsx";
-import LeaveStatus from "../features/work/pages/employee/LeaveStatus.jsx";
 import AnnualUsage from "../features/work/pages/employee/AnnualUsage.jsx";
 import WorkPolicy from "../features/work/pages/employee/WorkPolicy.jsx";
 import AdminAttendance from "../features/work/pages/admin/AdminAttendance.jsx";
@@ -34,12 +34,13 @@ import ObAllowance from "../features/salary/pages/employee/ObAllowance";
 import SalaryPolicy from "../features/salary/pages/employee/SalaryPolicy";
 import AdminSalary from "../features/salary/pages/admin/AdminSalary";
 import AdminSalaryPolicy from "../features/salary/pages/admin/AdminSalaryPolicy";
-import Dispatch from "../features/hrm/pages/Dispatch.jsx";
+import Dispatch from "../features/hrm/pages/Outsourcing.jsx";
 import EmpSign from "./EmpSign.jsx";
 
 import Record from "../features/invite/Record.jsx";
 import ApprovalLayout from "../features/approval/components/ApprovalLayout.jsx";
 import Detail from "../features/approval/pages/Detail.jsx";
+import Outsourcing from "../features/hrm/pages/Outsourcing.jsx";
 function Router() {
     return (
         <Routes>
@@ -57,20 +58,19 @@ function Router() {
                     <Route path="all"   element={<All />}/>
                     <Route path="dept"  element={<Dept />}/>
                     <Route path="emp"   element={<Emp />}/>
-                    <Route path="dispatch"   element={<Dispatch />}/>
+                    <Route path="outsourcing"   element={<Outsourcing />}/>
                 </Route>
 
                 <Route path="work">
                     {/* 개인 근태 */}
                     <Route path="employee/attendance" element={<Attendance />} />
                     <Route path="employee/request" element={<LeaveRequest />} />
-                    <Route path="employee/status" element={<LeaveStatus />} />
                     <Route path="employee/usage" element={<AnnualUsage />} />
-                    <Route path="employee/policy" element={<WorkPolicy />} />
+                    <Route path="employee/workpolicy" element={<WorkPolicy />} />
 
                     {/* 관리자 근태 */}
                     <Route path="admin/attendance" element={<AdminAttendance />} />
-                    <Route path="admin/policy" element={<AdminWorkPolicy />} />
+                    <Route path="admin/adminworkpolicy" element={<AdminWorkPolicy />} />
                     <Route path="admin/leaveapproval" element={<LeaveApproval />} />
                     <Route path="admin/annualleave" element={<AnnualLeave />} />
                 </Route>
@@ -82,8 +82,8 @@ function Router() {
                     <Route path="employee/salarypolicy" element={<SalaryPolicy />} />
 
                     {/* 관리자 급여 */}
-                    <Route path="admin/salary" element={<AdminSalary />} />
-                    <Route path="admin/salarypolicy" element={<AdminSalaryPolicy />} />
+                    <Route path="admin/adminsalary" element={<AdminSalary />} />
+                    <Route path="admin/adminsalarypolicy" element={<AdminSalaryPolicy />} />
                 </Route>
 
                 <Route path="schedule">
@@ -103,7 +103,7 @@ function Router() {
                 <Route path="reward">
                 <Route path="admin/policy"   element={<Policy />}/>
                 <Route path="admin/candidate"  element={<Candidate />}/>
-                <Route path="history"  element={<History />}/>
+                <Route path="history"  element={<RewardHistory />}/>
                 </Route>
 
                 <Route path="approval" element={<ApprovalLayout />}>

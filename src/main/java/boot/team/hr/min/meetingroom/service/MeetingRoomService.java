@@ -4,6 +4,8 @@ import boot.team.hr.min.meetingroom.dto.MeetingRoomDto;
 import boot.team.hr.min.meetingroom.entity.MeetingRoom;
 import boot.team.hr.min.meetingroom.repository.MeetingRoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,19 @@ public class MeetingRoomService {
                 .stream()
                 .map(MeetingRoomDto::from)
                 .toList();
+    }
+    //page
+    @Transactional(readOnly = true)
+    public Page<MeetingRoomDto> findPage(Pageable pageable,String keyword){
+        Page<MeetingRoom> page;
+
+        if (keyword == null || keyword.isBlank()) {
+            page = repository.findAll(pageable);
+        } else {
+            page = repository.findByNameContaining(keyword, pageable);
+        }
+
+        return page.map(MeetingRoomDto::from);
     }
     //u
     @Transactional
