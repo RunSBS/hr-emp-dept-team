@@ -31,6 +31,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         if ("ADMIN".equals(account.getRole())) {
             finalRole = "ADMIN";
             // empId, empName = null
+
+            // ADMIN 계정이라도 관리자 사번(예: "ADMIN")이나
+            // account와 연동된 특정 사원 정보가 있다면 넣어주는 것이 좋습니다.
+            empId = "SYSTEM_ADMIN";
+            empName = "관리자";
         }
         else if ("EMP".equals(account.getRole())) {
             Emp emp = empRepository.findByEmail(email)

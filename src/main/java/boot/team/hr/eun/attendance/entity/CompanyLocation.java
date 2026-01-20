@@ -17,9 +17,9 @@ public class CompanyLocation {
 
     @Column(name = "COMPANY_NAME")
     private String companyName;
-    @Column(name = "LATITUDE")
+    @Column(columnDefinition = "NUMBER")
     private double latitude;
-    @Column(name = "LONGITUDE")
+    @Column(columnDefinition = "NUMBER")
     private double longitude;
     @Column(name = "ALLOWED_RADIUS_M")
     private int allowedRadiusM; // 허용 반경(m)

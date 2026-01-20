@@ -1,15 +1,15 @@
 package boot.team.hr.hyun.emp.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
-@ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class EmpDto {
     private String empId;   // 사원번호
     private String empName; // 사원 이름
@@ -18,11 +18,13 @@ public class EmpDto {
 
     private String email;
     private String empRole;
+    private LocalDate hireDate;
 
 //    private String managerId; // 직속 상관 ( 규호 )
 
-    @JsonFormat(pattern = "yy년 MM월 dd일 HH시 mm분 ss초",locale = "ko")
+    // 사원의 생성일, 수정일은 입사일 필드가 있어서 화면에 안 보여주기에 사실상 필요없음
+    @JsonFormat(pattern = "yy-MM-dd HH시 mm분")
     private LocalDateTime createdAt;
-    @JsonFormat(pattern = "yy년 MM월 dd일 HH시 mm분 ss초",locale = "ko")
+    @JsonFormat(pattern = "yy-MM-dd HH시 mm분")
     private LocalDateTime updatedAt;
 }

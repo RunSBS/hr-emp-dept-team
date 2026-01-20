@@ -7,8 +7,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "WORK_RECORD")
+@Table(
+        name = "WORK_RECORD",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"EMP_ID", "WORK_DATE"})
+        }
+)
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -19,8 +25,8 @@ public class WorkRecord {
     @SequenceGenerator(name = "work_record_seq", sequenceName = "WORK_RECORD_SEQ", allocationSize = 1)
     private Long workId;
 
-    @Column(name = "emp_id")
-    private Long employeeId;
+    @Column(name = "EMP_ID")
+    private String employeeId;
     private LocalDate workDate;
 
     private LocalDateTime checkIn;

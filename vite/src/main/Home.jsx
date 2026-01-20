@@ -20,7 +20,7 @@ const Home = () => {
     const navigate = useNavigate();
 
     const { user,logout } = useAuth();
-    console.log(user);
+
 
     const handleLogout = async () => {
         try {
@@ -72,7 +72,7 @@ const Home = () => {
                                 </div>
                             </Collapse>
                             {/* 인사 */}
-                            <Nav.Link onClick={() => setOpenHr(!openHr)}>
+                            <Nav.Link as={Link} to="/main/hr/all" onClick={() => setOpenHr(!openHr)}>
                                 인사 {openHr ? "▾" : "▸"}
                             </Nav.Link>
                             <Collapse in={openHr}>
@@ -81,7 +81,7 @@ const Home = () => {
                                         <Nav.Link as={Link} to="/main/hr/all">전체</Nav.Link>
                                         <Nav.Link as={Link} to="/main/hr/dept">부서</Nav.Link>
                                         <Nav.Link as={Link} to="/main/hr/emp">사원</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/hr/dispatch">파견</Nav.Link>
+                                        <Nav.Link as={Link} to="/main/hr/outsourcing">파견</Nav.Link>
                                     </Nav>
                                 </div>
                             </Collapse>
@@ -93,20 +93,17 @@ const Home = () => {
                             <Collapse in={openWork}>
                                 <div>
                                     <Nav className="flex-column ms-3">
-                                        <Nav.Link as={Link} to="/main/work/employee/attendance">출퇴근 기록</Nav.Link>
                                         {/*근태: 일반 사원과 팀장*/}
-                                        {(user?.role === "EMP" || user?.role === "LEADER") && (
+                                        {(user?.role === "EMP" /*|| user?.role === "LEADER"*/) && (
                                             <>
-                                                {/*user가 null인 상태에서 Home이 먼저 렌더링되고 있고,
-                                                    AuthContext에서 “로그인 사용자 조회”가 아직 끝나지 않았어요.*/}
+                                                <Nav.Link as={Link} to="/main/work/employee/attendance">출퇴근 기록</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/employee/request">휴가(연가) 신청</Nav.Link>
-                                                <Nav.Link as={Link} to="/main/work/employee/status">휴가 신청 현황</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/employee/usage">연차 사용 현황</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/employee/workpolicy">근태 정책 조회</Nav.Link>
                                             </>
                                         )}
                                         {/*근태: 근태 관리자 */}
-                                        {user?.role === "HR" && (
+                                        {user?.role === "ATTENDANCE" && (
                                             <>
                                                 <Nav.Link as={Link} to="/main/work/admin/attendance">출퇴근 내역 관리</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/admin/adminworkpolicy">근태 정책 관리</Nav.Link>
@@ -140,10 +137,10 @@ const Home = () => {
                                             </>
                                         )}
                                         {/*급여: 근태 관리자*/}
-                                        {user?.role === "HR" && (
+                                        {user?.role === "ATTENDANCE" && (
                                             <>
-                                                <Nav.Link as={Link} to="/main/salary/employee/adminsalary">급여 관리</Nav.Link>
-                                                <Nav.Link as={Link} to="/main/salary/employee/adminsalarypolicy">급여 정책 관리</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/salary/admin/adminsalary">급여 관리</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/salary/admin/adminsalarypolicy">급여 정책 관리</Nav.Link>
                                             </>
                                         )}
                                     </Nav>
@@ -210,12 +207,7 @@ const Home = () => {
 
                         </Nav>
                     </Col>
-                    {/*김민영이 수정함
-                    기존 디자인 아래거 쓰세요!
-                        <Col xs={10} className="main-content p-4">
-                            <Outlet />
-                        </Col>
-                    */}
+
                     {/* 메인 콘텐츠 */}
                     <Col className="main-content p-0">
                         <Outlet />

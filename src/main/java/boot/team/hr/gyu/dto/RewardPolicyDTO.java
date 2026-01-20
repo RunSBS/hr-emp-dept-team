@@ -17,7 +17,6 @@ public class RewardPolicyDTO {
     private Long policyId;
     private String policyName;
     private String rewardType;
-    private Long rewardAmount;
     private String description;
     private String isActive;
     private LocalDateTime createdAt;

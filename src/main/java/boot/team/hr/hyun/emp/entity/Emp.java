@@ -2,15 +2,17 @@ package boot.team.hr.hyun.emp.entity;
 
 import boot.team.hr.hyun.dept.entity.Dept;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@Builder
 @Setter
+@AllArgsConstructor
 public class Emp {
     @Id
     @Column(name = "emp_id")
@@ -25,7 +27,10 @@ public class Emp {
     @Column(name = "emp_role")
     private String empRole;
 
-    private Integer managerId;
+    @Column(name = "hire_date") // 추가: 입사일
+    private LocalDate hireDate;
+
+    private String managerId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -58,10 +63,11 @@ public class Emp {
     }
 
     // --- 비즈니스 메서드 ---
-    public void update(String empName, String email, String empRole, Dept dept) {
+    public void update(String empName, String email, String empRole, LocalDate hireDate, Dept dept) {
         this.empName = empName;
         this.email = email;
         this.empRole = empRole;
+        this.hireDate = hireDate;
         this.dept = dept;
         // 여기서 직접 updatedAt을 세팅하지 않아도 @PreUpdate가 처리합니다.
     }

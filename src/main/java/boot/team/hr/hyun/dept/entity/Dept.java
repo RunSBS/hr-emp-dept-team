@@ -1,14 +1,15 @@
 package boot.team.hr.hyun.dept.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Dept {
     @Id
     @Column(name = "dept_no")
@@ -25,4 +26,24 @@ public class Dept {
 
     private LocalDateTime createdAt;    //생성일자
     private LocalDateTime updatedAt;    //수정일자
+
+    public void update(String deptName, String deptLoc, Dept parent, Integer treeLevel, Integer siblingOrder) {
+        this.deptName = deptName;
+        this.deptLoc = deptLoc;
+        this.parent = parent;
+        this.treeLevel = treeLevel;
+        this.siblingOrder = siblingOrder;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
 }
