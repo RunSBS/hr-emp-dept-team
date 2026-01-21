@@ -108,11 +108,6 @@ const Record = () => {
                                 <td>{i.empId}</td>
                                 <td>{i.email}</td>
                                 <td
-                                    className={
-                                        i.status === "PENDING"
-                                            ? "status-pending"
-                                            : "status-completed"
-                                    }
                                 >
                                     {i.status}
                                 </td>

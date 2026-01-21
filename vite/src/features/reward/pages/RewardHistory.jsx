@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { candidateApi } from '../api/candidateApi';
 import { policyApi } from '../api/policyApi';
-
+import "../styles/RewardHistory.css"
 
 const RewardHistory = () => {
   const [currentUser, setCurrentUser] = useState(null);

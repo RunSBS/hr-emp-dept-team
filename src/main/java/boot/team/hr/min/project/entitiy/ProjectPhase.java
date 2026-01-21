@@ -24,7 +24,7 @@ public class ProjectPhase {
     @Column(length=50)
     private String name;
 
-    @Column(length=200)
+    @Column(length=1000)
     private String description;
 
     @Column(length=50)
