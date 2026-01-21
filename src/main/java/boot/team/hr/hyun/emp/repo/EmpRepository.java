@@ -11,4 +11,10 @@ public interface EmpRepository extends JpaRepository<Emp,String> {
     List<Emp> findByDept_DeptNo(Integer deptNo);
     Optional<Emp> findByEmpId(String empId);
     List<Emp> findByEmpIdIn(List<String> empIds);
+    Optional<Emp> findFirstByDept_DeptNoAndEmpRole(
+            Integer deptNo,
+            String empRole
+    );
+
+    Optional<Emp> findFirstByEmpRole(String empRole);
 }

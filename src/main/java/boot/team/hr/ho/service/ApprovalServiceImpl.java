@@ -2,7 +2,10 @@ package boot.team.hr.ho.service;
 
 import boot.team.hr.ho.dto.*;
 import boot.team.hr.ho.entity.*;
+import boot.team.hr.ho.entity.ApprovalType;
 import boot.team.hr.ho.repository.*;
+import boot.team.hr.hyun.emp.entity.Emp;
+import boot.team.hr.hyun.emp.repo.EmpRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,14 +22,14 @@ public class ApprovalServiceImpl implements ApprovalService {
     private final ApprovalLineRepository approvalLineRepository;
     private final ApprovalFileRepository approvalFileRepository;
     private final ApprovalLogRepository approvalLogRepository;
-    private final ApprovalLineService approvalLineService;
+    private final ApprovalTypeRepository approvalTypeRepository; // 추가
+    private final ApprovalLineServiceImpl approvalLineService;
+    private final EmpRepository empRepository;
 
     // =============================
     // 1. 결재 신청
     @Override
     public ApprovalResponseDto createApproval(ApprovalRequestDto request) {
-
-        // 신청자 검증
         if (request.getEmpId() == null) {
             throw new IllegalArgumentException("결재 신청자(empId)는 필수입니다.");
         }
@@ -39,14 +42,15 @@ public class ApprovalServiceImpl implements ApprovalService {
         );
         approvalDocRepository.save(doc);
 
+        Emp requester = empRepository.findByEmpId(request.getEmpId())
+                .orElseThrow(() -> new IllegalArgumentException("신청자 없음"));
+
         approvalLineService.createApprovalLines(
                 doc.getApprovalId(),
-                request.getEmpId(),
+                requester,
                 request.getTypeId()
         );
 
-
-        // 첨부파일
         if (request.getFiles() != null && !request.getFiles().isEmpty()) {
             List<ApprovalFile> files = request.getFiles().stream()
                     .map(f -> ApprovalFile.create(
@@ -60,7 +64,6 @@ public class ApprovalServiceImpl implements ApprovalService {
             approvalFileRepository.saveAll(files);
         }
 
-        // 신청 로그
         approvalLogRepository.save(
                 ApprovalLog.create(
                         doc.getApprovalId(),
@@ -72,7 +75,6 @@ public class ApprovalServiceImpl implements ApprovalService {
 
         return mapToResponseDto(doc);
     }
-
 
     // =============================
     // 2. 결재 상세 조회
@@ -88,7 +90,6 @@ public class ApprovalServiceImpl implements ApprovalService {
     // 3. 결재 승인
     @Override
     public void approveApproval(ApprovalActionDto request) {
-
         ApprovalDoc doc = approvalDocRepository.findById(request.getApprovalId())
                 .orElseThrow(() -> new IllegalArgumentException("결재 문서를 찾을 수 없습니다."));
 
@@ -128,7 +129,6 @@ public class ApprovalServiceImpl implements ApprovalService {
     // 4. 결재 반려
     @Override
     public void rejectApproval(ApprovalActionDto request) {
-
         ApprovalDoc doc = approvalDocRepository.findById(request.getApprovalId())
                 .orElseThrow(() -> new IllegalArgumentException("결재 문서를 찾을 수 없습니다."));
 
@@ -156,7 +156,6 @@ public class ApprovalServiceImpl implements ApprovalService {
     // 5. 결재 취소
     @Override
     public void cancelApproval(ApprovalActionDto request) {
-
         ApprovalDoc doc = approvalDocRepository.findById(request.getApprovalId())
                 .orElseThrow(() -> new IllegalArgumentException("결재 문서를 찾을 수 없습니다."));
 
@@ -167,7 +166,6 @@ public class ApprovalServiceImpl implements ApprovalService {
         if (doc.getStatus() != ApprovalStatus.WAIT) {
             throw new IllegalStateException("이미 처리된 결재는 취소할 수 없습니다.");
         }
-
 
         doc.cancel();
 
@@ -188,26 +186,21 @@ public class ApprovalServiceImpl implements ApprovalService {
         );
     }
 
-
-
     // =============================
     // 7. 결재 이력
     @Override
     @Transactional(readOnly = true)
     public List<ApprovalResponseDto> getApprovalHistory(String empId) {
-        int page = 0;   // 기본 페이지
-        int size = 10;  // 기본 사이즈 (프론트에서 10개씩 보는 구조)
-
+        int page = 0;
+        int size = 10;
         return getApprovalHistory(empId, page, size);
     }
-
 
     @Override
     @Transactional(readOnly = true)
     public List<ApprovalResponseDto> getApprovalHistory(
             String empId, int page, int size
     ) {
-        // 1. 내가 기안한 문서
         List<ApprovalResponseDto> requesterDocs =
                 approvalDocRepository.findByEmpIdAndStatusIn(
                                 empId,
@@ -220,7 +213,6 @@ public class ApprovalServiceImpl implements ApprovalService {
                         .map(this::mapToResponseDto)
                         .collect(Collectors.toList());
 
-        // 2. 내가 결재한 문서
         List<ApprovalResponseDto> approverDocs =
                 approvalLineRepository.findByEmpId(empId)
                         .stream()
@@ -240,7 +232,6 @@ public class ApprovalServiceImpl implements ApprovalService {
         return slice(requesterDocs, page, size);
     }
 
-
     // =============================
     // 8. 내가 결재해야 할 문서
     @Override
@@ -248,7 +239,6 @@ public class ApprovalServiceImpl implements ApprovalService {
     public List<ApprovalResponseDto> getPendingToApprove(String empId) {
         int page = 0;
         int size = 10;
-
         return getPendingToApprove(empId, page, size);
     }
 
@@ -270,7 +260,6 @@ public class ApprovalServiceImpl implements ApprovalService {
         return slice(list, page, size);
     }
 
-
     // =============================
     // 9. 내가 올린 문서 중 대기중
     @Override
@@ -278,7 +267,6 @@ public class ApprovalServiceImpl implements ApprovalService {
     public List<ApprovalResponseDto> getPendingRequested(String empId) {
         int page = 0;
         int size = 10;
-
         return getPendingRequested(empId, page, size);
     }
 
@@ -295,7 +283,6 @@ public class ApprovalServiceImpl implements ApprovalService {
 
         return slice(list, page, size);
     }
-
 
     // =============================
     // DTO 매핑
@@ -351,6 +338,15 @@ public class ApprovalServiceImpl implements ApprovalService {
         response.setLines(lines);
         response.setFiles(files);
         response.setLogs(logs);
+
+        // =====================
+        // ApprovalType 정보 추가
+        // =====================
+        ApprovalType type = approvalTypeRepository.findById(doc.getTypeId()).orElse(null);
+        if (type != null) {
+            response.setTypeName(type.getTypeName());
+            response.setTypeDescription(type.getDescription());
+        }
 
         return response;
     }

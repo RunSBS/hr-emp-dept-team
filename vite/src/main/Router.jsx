@@ -41,6 +41,7 @@ import Record from "../features/invite/Record.jsx";
 import ApprovalLayout from "../features/approval/components/ApprovalLayout.jsx";
 import Detail from "../features/approval/pages/Detail.jsx";
 import Outsourcing from "../features/hrm/pages/Outsourcing.jsx";
+import Select from "../features/approval/pages/Select.jsx";
 function Router() {
     return (
         <Routes>
@@ -107,11 +108,13 @@ function Router() {
                 </Route>
 
                 <Route path="approval" element={<ApprovalLayout />}>
-                    <Route path="request" element={<Request />} />
+                    <Route path="select" element={<Select />} />
+                    <Route path="request/:typeId" element={<Request />} />
                     <Route path="pending" element={<Pending />} />
                     <Route path="history" element={<History />} />
                     <Route path="detail/:approvalId" element={<Detail />} />
                 </Route>
+
 
             </Route>
         </Routes>

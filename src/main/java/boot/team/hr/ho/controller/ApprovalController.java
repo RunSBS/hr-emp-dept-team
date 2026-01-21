@@ -1,6 +1,7 @@
 package boot.team.hr.ho.controller;
 
 import boot.team.hr.ho.dto.*;
+import boot.team.hr.ho.repository.ApprovalTypeRepository;
 import boot.team.hr.ho.service.ApprovalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,15 @@ import java.util.List;
 public class ApprovalController {
 
     private final ApprovalService approvalService;
+    private final ApprovalTypeRepository approvalTypeRepository;
+
+    // 0. 결재 유형 조회 (Request.jsx)
+    @GetMapping("/type")
+    public List<ApprovalTypeDto> getApprovalTypes() {
+        return approvalTypeRepository.findAll().stream()
+                .map(t -> new ApprovalTypeDto(t.getTypeId(), t.getTypeName(), t.getDescription()))
+                .toList();
+    }
 
     // -----------------------------
     // 1. 결재 신청 (Request.jsx)
