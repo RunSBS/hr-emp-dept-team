@@ -1,14 +1,16 @@
 package boot.team.hr.hyun.emp.service;
 
-import boot.team.hr.hyun.dept.dto.DeptHistoryDto;
 import boot.team.hr.hyun.dept.entity.Dept;
 import boot.team.hr.hyun.dept.repo.DeptRepository;
 import boot.team.hr.hyun.emp.dto.EmpDto;
 import boot.team.hr.hyun.emp.dto.EmpHistoryDto;
+import boot.team.hr.hyun.emp.dto.EmpSkillDto;
 import boot.team.hr.hyun.emp.entity.Emp;
 import boot.team.hr.hyun.emp.entity.EmpHistory;
+import boot.team.hr.hyun.emp.entity.EmpSkill;
 import boot.team.hr.hyun.emp.repo.EmpHistoryRepository;
 import boot.team.hr.hyun.emp.repo.EmpRepository;
+import boot.team.hr.hyun.emp.repo.EmpSkillRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ public class EmpService {
     private final EmpRepository empRepository;
     private final DeptRepository deptRepository;
     private final EmpHistoryRepository empHistoryRepository;
+    private final EmpSkillRepository empSkillRepository;
 
     @Transactional(readOnly = true)
     public List<EmpDto> selectAll() {
