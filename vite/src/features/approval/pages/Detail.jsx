@@ -24,6 +24,12 @@ const Detail = () => {
             });
     }, [approvalId]);
 
+    useEffect(() => {
+        if (detail) {
+            console.log("detail.files =", detail.files);
+        }
+    }, [detail]);
+
     const renderStatus = (status) => {
         switch (status) {
             case "WAIT": return <Badge bg="warning">대기</Badge>;
@@ -97,9 +103,8 @@ const Detail = () => {
 
             <Card.Body>
                 <Row>
-                    {/* 내용 영역 (왼쪽) */}
+                    {/* 왼쪽 영역 */}
                     <Col md={8}>
-                        {/* 결재 유형 */}
                         <Form.Group className="mb-3">
                             <Form.Label>결재 유형</Form.Label>
                             <Form.Control
@@ -109,7 +114,6 @@ const Detail = () => {
                             />
                         </Form.Group>
 
-                        {/* 내용 */}
                         <Form.Group className="mb-3">
                             <Form.Label>내용</Form.Label>
                             <Form.Control
@@ -119,9 +123,40 @@ const Detail = () => {
                                 style={{ minHeight: "300px", resize: "vertical" }}
                             />
                         </Form.Group>
+
+                        {/*  첨부파일  */}
+                        <Form.Group className="mb-3">
+                            <Form.Label>첨부파일</Form.Label>
+
+                            {Array.isArray(detail.files) && detail.files.length > 0 ? (
+                                <ListGroup>
+                                    {detail.files.map((file, index) => (
+                                        <ListGroup.Item
+                                            key={index}
+                                            className="d-flex justify-content-between align-items-center"
+                                        >
+                                            <span>{file.fileName}</span>
+
+                                            <Button
+                                                size="sm"
+                                                variant="outline-primary"
+                                                href={`/back/ho/approvals/files/download?path=${encodeURIComponent(file.filePaths)}`}
+                                            >
+                                                다운로드
+                                            </Button>
+                                        </ListGroup.Item>
+                                    ))}
+                                </ListGroup>
+                            ) : (
+                                <div className="text-muted">첨부파일 없음</div>
+                            )}
+                        </Form.Group>
+
+
+
                     </Col>
 
-                    {/* 결재선 영역 (오른쪽) */}
+                    {/* 결재선 */}
                     <Col md={4}>
                         <h6>결재선</h6>
                         <ListGroup>
@@ -133,9 +168,7 @@ const Detail = () => {
                                         backgroundColor: line.current ? "#e3f2fd" : "#f8f9fa"
                                     }}
                                 >
-                                    <span>
-                                        {line.stepOrder}차: {line.empName}
-                                    </span>
+                                    <span>{line.stepOrder}차: {line.empName}</span>
                                     {line.current && <strong className="text-primary">현재</strong>}
                                 </ListGroup.Item>
                             ))}
@@ -152,7 +185,9 @@ const Detail = () => {
                                 <Button variant="danger" onClick={handleReject}>반려</Button>
                             </>
                         )}
-                        {isRequester && <Button variant="secondary" onClick={handleCancel}>취소</Button>}
+                        {isRequester && (
+                            <Button variant="secondary" onClick={handleCancel}>취소</Button>
+                        )}
                     </div>
                 )}
             </Card.Body>

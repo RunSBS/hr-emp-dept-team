@@ -9,8 +9,13 @@ import boot.team.hr.hyun.emp.repo.EmpRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,11 +34,10 @@ public class ApprovalServiceImpl implements ApprovalService {
     // =============================
     // 1. 결재 신청
     @Override
-    public ApprovalResponseDto createApproval(ApprovalRequestDto request) {
-        if (request.getEmpId() == null) {
-            throw new IllegalArgumentException("결재 신청자(empId)는 필수입니다.");
-        }
-
+    public ApprovalResponseDto createApproval(
+            ApprovalRequestDto request,
+            List<MultipartFile> multipartFiles
+    ) {
         ApprovalDoc doc = ApprovalDoc.create(
                 request.getEmpId(),
                 request.getTypeId(),
@@ -51,14 +55,13 @@ public class ApprovalServiceImpl implements ApprovalService {
                 request.getTypeId()
         );
 
-        if (request.getFiles() != null && !request.getFiles().isEmpty()) {
-            List<ApprovalFile> files = request.getFiles().stream()
-                    .map(f -> ApprovalFile.create(
-                            doc.getApprovalId(),
-                            f.getFileName(),
-                            f.getFilePaths(),
-                            f.getFileSize()
-                    ))
+        // =========================
+        // 실제 파일 저장
+        // =========================
+        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+            List<ApprovalFile> files = multipartFiles.stream()
+                    .filter(f -> !f.isEmpty())
+                    .map(f -> saveFile(doc.getApprovalId(), f))
                     .collect(Collectors.toList());
 
             approvalFileRepository.saveAll(files);
@@ -75,6 +78,8 @@ public class ApprovalServiceImpl implements ApprovalService {
 
         return mapToResponseDto(doc);
     }
+
+
 
     // =============================
     // 2. 결재 상세 조회
@@ -359,5 +364,28 @@ public class ApprovalServiceImpl implements ApprovalService {
         int end = Math.min(start + size, list.size());
         return list.subList(start, end);
     }
+
+    private ApprovalFile saveFile(Long approvalId, MultipartFile file) {
+        try {
+            String baseDir = "uploads/approvals/" + approvalId;
+            Files.createDirectories(Paths.get(baseDir));
+
+            String storedName =
+                    UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+            Path savePath = Paths.get(baseDir, storedName);
+            file.transferTo(savePath);
+
+            return ApprovalFile.create(
+                    approvalId,
+                    file.getOriginalFilename(),
+                    savePath.toString(),
+                    file.getSize()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("파일 저장 실패", e);
+        }
+    }
+
 
 }

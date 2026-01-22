@@ -1,12 +1,18 @@
 package boot.team.hr.ho.service;
 
 import boot.team.hr.ho.dto.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 public interface ApprovalService {
 
     // 1. 결재 신청
-    ApprovalResponseDto createApproval(ApprovalRequestDto request);
+    ApprovalResponseDto createApproval(
+            ApprovalRequestDto request,
+            List<MultipartFile> files
+    );
+
 
     // 2. 결재 상세 조회
     ApprovalResponseDto getApproval(Long approvalId);

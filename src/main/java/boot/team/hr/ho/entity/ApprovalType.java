@@ -7,6 +7,8 @@ import lombok.*;
 @Entity
 @Table(name = "APPROVAL_TYPE")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ApprovalType {
 
     @Id
