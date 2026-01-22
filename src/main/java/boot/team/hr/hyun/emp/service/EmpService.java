@@ -41,6 +41,7 @@ public class EmpService {
                         .hireDate(emp.getHireDate())
                         // 부서가 아직 없어도 null로 표시
                         .deptNo(emp.getDept() != null ? emp.getDept().getDeptNo() : null)
+                        .deptName(emp.getDept() != null ? emp.getDept().getDeptName() : null)
                         .createdAt(emp.getCreatedAt())
                         .updatedAt(emp.getUpdatedAt())
                         .build();

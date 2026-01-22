@@ -23,7 +23,7 @@ public class EmpController {
     }
 
     @PostMapping("/insert")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public void insertEmp(@RequestBody EmpDto empDto){
         empService.insertEmp(empDto);
     }

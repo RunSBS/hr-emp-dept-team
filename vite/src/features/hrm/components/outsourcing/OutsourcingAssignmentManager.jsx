@@ -45,11 +45,16 @@ const OutsourcingAssignmentManager = () => {
                 axios.get("/back/hyun/emp/selectAll", { withCredentials: true })
             ]);
 
-            const assignData = assignRes.data || [];
-            setAssignments(assignData);
-            setCompanies(compRes.data || []);
-            setAllEmps(empRes.data || []);
+            // ⭐ 핵심: 데이터가 배열인지 반드시 확인하고, 아니면 빈 배열([])을 대입합니다.
+            const assignData = Array.isArray(assignRes.data) ? assignRes.data : [];
+            const compData = Array.isArray(compRes.data) ? compRes.data : [];
+            const empData = Array.isArray(empRes.data) ? empRes.data : [];
 
+            setAssignments(assignData);
+            setCompanies(compData);
+            setAllEmps(empData);
+
+            // 프로젝트 데이터 추출 (assignData가 배열임을 보장받았으므로 안전함)
             const projectsFromDB = assignData.map(a => ({
                 companyId: Number(a.companyId),
                 projectName: a.projectName
@@ -61,9 +66,18 @@ const OutsourcingAssignmentManager = () => {
             setDefinedProjects(uniqueProjects);
 
             const assignedIds = assignData.map(a => a.empId);
-            const pool = (empRes.data || []).filter(e => !assignedIds.includes(e.empId));
+            const pool = empData.filter(e => !assignedIds.includes(e.empId));
             setAvailableEmps(pool.sort((a, b) => (a.empRole === "LEADER" ? -1 : 1)));
-        } catch (e) { console.error("데이터 로딩 실패", e); }
+
+        } catch (e) {
+            console.error("데이터 로딩 실패", e);
+            // 에러 발생 시 모든 상태를 빈 배열로 초기화하여 렌더링 에러를 방지합니다.
+            setAssignments([]);
+            setCompanies([]);
+            setAllEmps([]);
+            setDefinedProjects([]);
+            setAvailableEmps([]);
+        }
     };
 
     const fetchAssignHistory = async (assignId) => {

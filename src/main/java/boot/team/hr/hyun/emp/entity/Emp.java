@@ -1,6 +1,7 @@
 package boot.team.hr.hyun.emp.entity;
 
 import boot.team.hr.hyun.dept.entity.Dept;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,9 +42,11 @@ public class Emp {
 
     // updatable = false를 설정하여 실수로 생성일이 수정되는 것을 방지합니다.
     @Column(name = "created_at", updatable = false)
+    @JsonFormat(pattern = "yy-MM-dd HH시 mm분")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @JsonFormat(pattern = "yy-MM-dd HH시 mm분")
     private LocalDateTime updatedAt;
 
     // --- JPA Lifecycle Events ---

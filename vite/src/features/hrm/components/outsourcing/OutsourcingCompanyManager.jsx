@@ -57,7 +57,7 @@ const OutsourcingCompanyManager = () => {
                     <i className="bi bi-plus-lg me-2"></i>신규 업체 등록
                 </button>
                 <div className="list-group shadow-sm overflow-auto" style={{ maxHeight: "650px" }}>
-                    {companies.map(c => (
+                    {Array.isArray(companies) && companies.map(c => (
                         <button key={c.companyId} onClick={() => handleSelectCompany(c)}
                                 className={`list-group-item list-group-item-action py-3 border-start-0 border-end-0 ${selected?.companyId === c.companyId ? 'active shadow-inset' : ''}`}>
                             <div className="d-flex justify-content-between align-items-center">

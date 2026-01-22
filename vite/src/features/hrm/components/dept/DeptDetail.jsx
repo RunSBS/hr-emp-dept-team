@@ -19,11 +19,14 @@ const DeptDetail = ({ selectedDept, onSuccess }) => {
     useEffect(() => {
         // 모든 부서 목록 로드 (상위 부서 Select Box용)
         axios.get("/back/hyun/dept/selectAll", { withCredentials: true })
-            .then(res => setAllDepts(res.data))
+            .then(res => setAllDepts(res.data || []))
             .catch(err => console.error("부서 목록 로딩 실패", err));
+    }, []);
 
+    useEffect(() => {
         if (selectedDept) {
             if (selectedDept.isNew) {
+                // 신규 등록 시에만 'edit' 탭으로 강제 이동
                 setActiveTab("edit");
                 setForm({
                     deptNo: "",
@@ -36,19 +39,25 @@ const DeptDetail = ({ selectedDept, onSuccess }) => {
                 setDeptEmployees([]);
                 setHistory([]);
             } else {
-                setActiveTab("info");
+                // ⭐ 핵심: setActiveTab("info")를 제거하여 현재 탭 상태를 유지합니다.
                 setForm({
                     ...selectedDept,
                     parentDeptNo: selectedDept.parentDeptNo || ""
                 });
 
+                // 부서 전환 시 이전 데이터 초기화 (잔상 제거)
+                setDeptEmployees([]);
+                setHistory([]);
+
                 // 해당 부서 사원 목록 조회
                 axios.get(`/back/hyun/emp/selectEmpByDeptNo?deptno=${selectedDept.deptNo}`)
-                    .then(res => setDeptEmployees(res.data));
+                    .then(res => setDeptEmployees(res.data || []))
+                    .catch(err => console.error("사원 목록 로딩 실패", err));
 
                 // 변경 이력 조회
                 axios.get(`/back/hyun/dept/selectHistory?deptNo=${selectedDept.deptNo}`)
-                    .then(res => setHistory(res.data));
+                    .then(res => setHistory(res.data || []))
+                    .catch(err => console.error("이력 조회 실패", err));
             }
         }
     }, [selectedDept]);
@@ -109,7 +118,7 @@ const DeptDetail = ({ selectedDept, onSuccess }) => {
     if (!selectedDept) {
         return (
             <div className="card shadow-sm border-0 d-flex align-items-center justify-content-center h-100 text-muted" style={{ minHeight: "400px" }}>
-                <div className="text-center">
+                <div className="text-center animate__animated animate__fadeIn">
                     <i className="bi bi-info-circle mb-3" style={{ fontSize: "2rem" }}></i>
                     <p>좌측 조직도에서 부서를 선택하거나<br/>신규 부서를 등록해 주세요.</p>
                 </div>
@@ -146,7 +155,7 @@ const DeptDetail = ({ selectedDept, onSuccess }) => {
             <div className="card-body p-4">
                 {/* 1. 부서 정보 및 사원 리스트 탭 */}
                 {activeTab === "info" && (
-                    <div>
+                    <div className="animate__animated animate__fadeIn">
                         <div className="row g-3 mb-4">
                             <div className="col-md-4">
                                 <div className="p-3 bg-light rounded shadow-sm text-center">
@@ -169,21 +178,20 @@ const DeptDetail = ({ selectedDept, onSuccess }) => {
                         </div>
 
                         <h6 className="fw-bold mb-3"><i className="bi bi-people-fill me-2 text-secondary"></i>소속 사원 명단</h6>
-                        <div className="table-responsive shadow-sm rounded">
+                        <div className="table-responsive shadow-sm rounded bg-white">
                             <table className="table table-hover mb-0" style={{ fontSize: "14px" }}>
                                 <thead className="table-dark">
                                 <tr><th>사번</th><th>이름</th><th>직급</th><th>입사일</th></tr>
                                 </thead>
                                 <tbody>
-                                {deptEmployees.map(emp => (
-                                    <tr key={emp.empId}>
+                                {deptEmployees.length > 0 ? deptEmployees.map(emp => (
+                                    <tr key={emp.empId} className="align-middle">
                                         <td className="text-muted">{emp.empId}</td>
                                         <td className="fw-bold">{emp.empName}</td>
-                                        <td><span className="badge bg-secondary">{emp.empRole}</span></td>
+                                        <td><span className="badge bg-secondary bg-opacity-10 text-secondary border">{emp.empRole}</span></td>
                                         <td>{emp.hireDate}</td>
                                     </tr>
-                                ))}
-                                {deptEmployees.length === 0 && (
+                                )) : (
                                     <tr><td colSpan="4" className="text-center py-5 text-muted">소속된 사원이 없습니다.</td></tr>
                                 )}
                                 </tbody>
@@ -194,7 +202,7 @@ const DeptDetail = ({ selectedDept, onSuccess }) => {
 
                 {/* 2. 등록 및 수정 폼 탭 */}
                 {activeTab === "edit" && (
-                    <div className="row g-3">
+                    <div className="row g-3 animate__animated animate__fadeIn">
                         <div className="col-md-6">
                             <label className="form-label small fw-bold text-muted">부서 번호</label>
                             <input name="deptNo" type="number" className="form-control bg-light" value={form.deptNo} onChange={handleChange} disabled={!selectedDept.isNew} placeholder="자동 부여 또는 입력" />
@@ -236,14 +244,14 @@ const DeptDetail = ({ selectedDept, onSuccess }) => {
 
                 {/* 3. 변경 이력 탭 */}
                 {activeTab === "history" && (
-                    <div className="table-responsive border rounded shadow-sm">
+                    <div className="table-responsive border rounded shadow-sm animate__animated animate__fadeIn bg-white">
                         <table className="table table-hover mb-0" style={{ fontSize: "13px" }}>
                             <thead className="table-light">
                             <tr><th>변경일시</th><th>항목</th><th>변경 상세</th><th>담당자</th></tr>
                             </thead>
                             <tbody>
-                            {history.map(h => (
-                                <tr key={h.deptHistoryId}>
+                            {history.length > 0 ? history.map(h => (
+                                <tr key={h.deptHistoryId} className="align-middle">
                                     <td className="text-muted">{h.createdAt}</td>
                                     <td className="fw-bold">{h.fieldName}</td>
                                     <td>
@@ -251,10 +259,9 @@ const DeptDetail = ({ selectedDept, onSuccess }) => {
                                         <i className="bi bi-arrow-right text-primary me-2"></i>
                                         <span className="text-primary fw-bold">{h.afterValue}</span>
                                     </td>
-                                    <td>{h.changerName}</td>
+                                    <td><span className="badge rounded-pill bg-light text-dark border fw-normal">{h.changerName}</span></td>
                                 </tr>
-                            ))}
-                            {history.length === 0 && (
+                            )) : (
                                 <tr><td colSpan="4" className="text-center py-5 text-muted">기록된 이력이 없습니다.</td></tr>
                             )}
                             </tbody>

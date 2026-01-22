@@ -1,6 +1,6 @@
 import { useState } from "react";
-import OutsourcingAssignmentManager from "../components/outsourcing/assignment/OutsourcingAssignmentManager.jsx";
-import OutsourcingCompanyManager from "../components/outsourcing/company/OutsourcingCompanyManager.jsx";
+import OutsourcingAssignmentManager from "../components/outsourcing/OutsourcingAssignmentManager.jsx";
+import OutsourcingCompanyManager from "../components/outsourcing/OutsourcingCompanyManager.jsx";
 
 const Outsourcing = () => {
     // 탭 상태값도 가독성을 위해 명확하게 관리 (company -> companies, assignment -> projects)

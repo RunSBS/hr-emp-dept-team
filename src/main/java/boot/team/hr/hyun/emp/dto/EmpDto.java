@@ -15,6 +15,7 @@ public class EmpDto {
     private String empName; // 사원 이름
 
     private Integer deptNo;  // 외래키, Dept 테이블의 deptNo 컬럼과 매핑
+    private String deptName;
 
     private String email;
     private String empRole;
