@@ -5,6 +5,7 @@ import {Link, Outlet, useNavigate} from "react-router-dom";
 import React, {useState} from "react";
 import {useAuth} from "./AuthContext.jsx";
 import AccountEditModal from "./components/AccountEditModal.jsx";
+import ChatWidget from "../features/chatbot/components/ChatWidget.jsx";
 const Home = () => {
 
     const [openInvite,setOpenInvite]=useState(false);
@@ -218,6 +219,7 @@ const Home = () => {
                 show={showAccountModal}
                 onClose={() => setShowAccountModal(false)}
             />
+            <ChatWidget/>
         </div>
     );
 };
