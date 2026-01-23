@@ -22,6 +22,23 @@ const EmpDetail = ({ selectedEmp, onSuccess }) => {
         empRole: ""
     });
 
+    const formatDate = (dateString) => {
+        if (!dateString) return "-";
+
+        // "26-01-23 16시 49분" -> "2026-01-23 16:49" 형식으로 변환
+        let normalizedDate = dateString
+            .replace("시 ", ":")
+            .replace("분", "");
+
+        // "26-"로 시작하는 경우 "2026-"으로 보정 (필요 시)
+        if (normalizedDate.match(/^\d{2}-/)) {
+            normalizedDate = "20" + normalizedDate;
+        }
+
+        const date = new Date(normalizedDate);
+        return isNaN(date.getTime()) ? dateString : date.toLocaleString();
+    };
+
     useEffect(() => {
         axios.get("/back/hyun/dept/selectAll", { withCredentials: true })
             .then(res => setAllDepts(res.data))
@@ -269,19 +286,16 @@ const EmpDetail = ({ selectedEmp, onSuccess }) => {
                             <thead className="table-light">
                             <tr>
                                 <th>변경일</th>
-                                <th>변경자</th> {/* 컬럼 추가 */}
+                                <th>변경자</th>
                                 <th>항목</th>
                                 <th>변경 내용</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {history.length > 0 ? history.map(h => (
+                            {history.length > 0 ? history.map((h) => (
                                 <tr key={h.empHistoryId}>
-                                    <td>{new Date(h.createdAt).toLocaleString()}</td>
-                                    <td className="fw-bold">
-                                        {/* 백엔드 DTO 구조에 따라 changerName 또는 changer.empName 선택 */}
-                                        {h.changerName || (h.changer ? h.changer.empName : "시스템")}
-                                    </td>
+                                    <td>{formatDate(h.createdAt)}</td>
+                                    <td className="fw-bold">{h.changerName || "시스템"}</td>
                                     <td><span className="badge bg-secondary">{h.fieldName}</span></td>
                                     <td>
                                         <span className="text-danger">{h.beforeValue || "없음"}</span>
@@ -290,7 +304,9 @@ const EmpDetail = ({ selectedEmp, onSuccess }) => {
                                     </td>
                                 </tr>
                             )) : (
-                                <tr><td colSpan="4" className="text-center py-5 text-muted">변경 이력이 존재하지 않습니다.</td></tr>
+                                <tr>
+                                    <td colSpan="4" className="text-center py-5 text-muted">변경 이력이 존재하지 않습니다.</td>
+                                </tr>
                             )}
                             </tbody>
                         </table>

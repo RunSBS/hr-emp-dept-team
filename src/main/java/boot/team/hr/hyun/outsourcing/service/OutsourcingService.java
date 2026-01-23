@@ -68,8 +68,8 @@ public class OutsourcingService {
     }
 
     @Transactional
-    public void deleteOutsourcingCompany(String companyName){
-        outsourcingCompanyRepository.deleteByCompanyName(companyName);
+    public void deleteOutsourcingCompany(Long companyId){
+        outsourcingCompanyRepository.deleteById(companyId);
     }
 
     public List<OutsourcingAssignmentDto> selectAllOutsourcingAssignment(){

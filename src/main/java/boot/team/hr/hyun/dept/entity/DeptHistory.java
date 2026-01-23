@@ -1,17 +1,16 @@
 package boot.team.hr.hyun.dept.entity;
 
+import boot.team.hr.hyun.common.BaseTimeEntity;
 import boot.team.hr.hyun.emp.entity.Emp;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor
-public class DeptHistory {
+public class DeptHistory extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long deptHistoryId;
@@ -36,12 +35,4 @@ public class DeptHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "changer_id", referencedColumnName = "emp_id")
     private Emp changer;
-
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
 }

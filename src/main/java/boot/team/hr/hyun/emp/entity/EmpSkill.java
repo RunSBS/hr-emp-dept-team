@@ -1,9 +1,8 @@
 package boot.team.hr.hyun.emp.entity;
 
+import boot.team.hr.hyun.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "EMP_SKILL")
@@ -11,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class EmpSkill {
+public class EmpSkill extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long skillId;
@@ -28,20 +27,6 @@ public class EmpSkill {
 
     @Column(name = "skill_level") // 숙련도 (상, 중, 하 등)
     private String skillLevel;
-
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    public void prePersist(){
-        this.createdAt = LocalDateTime.now();
-    }
-    @PreUpdate
-    public void preUpdate(){
-        this.updatedAt = LocalDateTime.now();
-    }
 
     public void update(String skillName, Integer years, String skillLevel){
         this.skillName = skillName;

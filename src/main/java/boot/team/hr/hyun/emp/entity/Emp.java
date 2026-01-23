@@ -1,12 +1,11 @@
 package boot.team.hr.hyun.emp.entity;
 
+import boot.team.hr.hyun.common.BaseTimeEntity;
 import boot.team.hr.hyun.dept.entity.Dept;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @Setter
 @AllArgsConstructor
-public class Emp {
+public class Emp extends BaseTimeEntity {
     @Id
     @Column(name = "emp_id")
     private String empId;
@@ -39,31 +38,6 @@ public class Emp {
             referencedColumnName = "dept_no"
     )
     private Dept dept;
-
-    // updatable = false를 설정하여 실수로 생성일이 수정되는 것을 방지합니다.
-    @Column(name = "created_at", updatable = false)
-    @JsonFormat(pattern = "yy-MM-dd HH시 mm분")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    @JsonFormat(pattern = "yy-MM-dd HH시 mm분")
-    private LocalDateTime updatedAt;
-
-    // --- JPA Lifecycle Events ---
-
-    @PrePersist
-    public void prePersist() {
-        // 엔티티가 처음 저장(INSERT)될 때 실행
-        LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        // 엔티티가 수정(UPDATE)될 때 실행
-        this.updatedAt = LocalDateTime.now();
-    }
 
     // --- 비즈니스 메서드 ---
     public void update(String empName, String email, String empRole, LocalDate hireDate, Dept dept) {

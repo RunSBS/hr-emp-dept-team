@@ -46,7 +46,7 @@ public class OutsourcingController {
 
     @DeleteMapping("/deleteCompany")
     public void deleteOutsourcingCompany(@RequestBody OutsourcingCompanyDto outsourcingCompanyDto){
-        outsourcingService.deleteOutsourcingCompany(outsourcingCompanyDto.getCompanyName());
+        outsourcingService.deleteOutsourcingCompany(outsourcingCompanyDto.getCompanyId());
     }
 
     // 업체별 변경 이력 조회

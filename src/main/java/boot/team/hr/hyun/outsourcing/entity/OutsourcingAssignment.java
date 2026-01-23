@@ -1,11 +1,11 @@
 package boot.team.hr.hyun.outsourcing.entity;
 
+import boot.team.hr.hyun.common.BaseTimeEntity;
 import boot.team.hr.hyun.emp.entity.Emp;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "outsourcing_assignment")
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OutsourcingAssignment {
+public class OutsourcingAssignment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "outsourcing_assignment_seq")
@@ -45,12 +45,6 @@ public class OutsourcingAssignment {
     @Column(name = "end_date")
     private LocalDate endDate;      // 철수일
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;    // 행 생성일
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;    // 행 수정일
-
     public void update(Emp emp, OutsourcingCompany company, String projectName, String status, LocalDate startDate, LocalDate endDate) {
         this.emp = emp;
         this.company = company;
@@ -58,17 +52,5 @@ public class OutsourcingAssignment {
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
-    }
-
-    @PrePersist
-    public void prePersist() {
-        LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
     }
 }
