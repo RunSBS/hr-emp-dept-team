@@ -10,6 +10,7 @@ const Attendance = () => {
     // 오늘 상태
     const [hasCheckedIn, setHasCheckedIn] = useState(false);
     const [hasCheckedOut, setHasCheckedOut] = useState(false);
+    const [todayStatus, setTodayStatus] = useState(null);
 
     // 📌 근태 내역
     const [records, setRecords] = useState([]);
@@ -26,6 +27,7 @@ const Attendance = () => {
             const res = await axios.get("/back/work/status");
             setHasCheckedIn(res.data.checkedIn);
             setHasCheckedOut(res.data.checkedOut);
+            setTodayStatus(res.data);
         } catch (err) {
             console.error(err);
         }
@@ -134,9 +136,16 @@ const Attendance = () => {
             <Card className="p-4 mb-4 shadow-sm">
                 {renderButton()}
 
+                {todayStatus && todayStatus.checkedIn && (
+                    <div className="mt-3 text-muted">
+                        <div>📅 오늘 근무 상태: <b>{todayStatus.workStatus}</b></div>
+                        <div>🏷 근무 유형: <b>{todayStatus.workType}</b></div>
+                    </div>
+                )}
+
                 {result && (
                     <Alert variant="success" className="mt-3">
-                        <div>{result.message}</div>
+                        {result.message}
                     </Alert>
                 )}
 
@@ -146,6 +155,7 @@ const Attendance = () => {
                     </Alert>
                 )}
             </Card>
+
 
             {/* 📌 근태 조회 */}
             <Card className="p-4 shadow-sm">

@@ -23,5 +23,6 @@ public class CompanyLocation {
     private double longitude;
     @Column(name = "ALLOWED_RADIUS_M")
     private int allowedRadiusM; // 허용 반경(m)
+
 }
 

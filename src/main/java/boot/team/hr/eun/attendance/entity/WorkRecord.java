@@ -1,5 +1,7 @@
 package boot.team.hr.eun.attendance.entity;
 
+import boot.team.hr.eun.attendance.enums.WorkStatus;
+import boot.team.hr.eun.attendance.enums.WorkType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,7 +39,13 @@ public class WorkRecord {
     private Integer unpaidMinutes;
     private Integer totalWorkMinutes;
 
-    private String workStatus; // NORMAL, LATE, EARLY_LEAVE, ABSENT, LEAVE
-    private String workType;   // OFFICE, OUTSIDE, REMOTE(IS_ACTIVE == 'N'), NIGHT, LEAVE, OFF
+    @Enumerated(EnumType.STRING)
+    @Column(name = "WORK_STATUS")
+    private WorkStatus workStatus;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "WORK_TYPE")
+    private WorkType workType;
 
 }

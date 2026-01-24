@@ -1,6 +1,8 @@
 package boot.team.hr.eun.attendance.dto;
 
 import boot.team.hr.eun.attendance.entity.WorkRecord;
+import boot.team.hr.eun.attendance.enums.WorkStatus;
+import boot.team.hr.eun.attendance.enums.WorkType;
 import boot.team.hr.eun.attendance.repo.WorkRecordRepository;
 import boot.team.hr.hyun.emp.entity.Emp;
 import lombok.AllArgsConstructor;
@@ -19,8 +21,8 @@ public class AttendanceListResponseDto {
     private LocalDate workDate;
     private LocalDateTime checkIn;
     private LocalDateTime checkOut;
-    private String workStatus;
-    private String workType;
+    private WorkStatus workStatus;
+    private WorkType workType;
     private Integer totalWorkMinutes;
 
     public static AttendanceListResponseDto from(WorkRecord workRecord, Emp emp) {

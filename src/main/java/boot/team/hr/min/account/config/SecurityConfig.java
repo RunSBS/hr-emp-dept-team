@@ -37,7 +37,8 @@ public class SecurityConfig {
 
                 //일단 전부오픈
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login","/logout").permitAll()
+                        .requestMatchers("/login","/logout","/signup/emp", "/signup/admin")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(customUserDetailsService)
