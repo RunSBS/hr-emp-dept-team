@@ -113,7 +113,7 @@ const Home = () => {
                                         {/*근태: 팀장*/}
                                         {user?.role === "LEADER" && (
                                             <>
-                                                <Nav.Link as={Link} to="/main/work/admin/attendance">출퇴근 내역 관리</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/work/admin/leaderattendance">출퇴근 내역 조회</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/admin/leaveapproval">휴가 신청 승인</Nav.Link>
                                             </>
                                         )}

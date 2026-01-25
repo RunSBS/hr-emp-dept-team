@@ -29,6 +29,8 @@ public class AttendancePolicy {
     private Integer startTime;
     private Integer lateTime;
     private Integer overtimeStart;
+    private Integer breakStart;   // 휴게 시작 (HHmm)
+    private Integer breakEnd;     // 휴게 종료 (HHmm)
 
     private String description;
     private LocalDate effectiveFrom;
@@ -115,5 +117,13 @@ public class AttendancePolicy {
 
     private LocalTime toLocalTime(int hhmm) {
         return LocalTime.of(hhmm / 100, hhmm % 100);
+    }
+
+    public LocalTime getBreakStartLocalTime() {
+        return toLocalTime(breakStart);
+    }
+
+    public LocalTime getBreakEndLocalTime() {
+        return toLocalTime(breakEnd);
     }
 }

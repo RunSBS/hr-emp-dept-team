@@ -16,15 +16,27 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
 
     // 휴가(연차, 병가, 무급휴가) 승인을 받은 사원 조회
     @Query("""
-        SELECT COUNT(l) > 0
-        FROM LeaveRequest l
-        WHERE l.employeeId = :empId
-          AND l.approvalStatus = 'APPROVED'
-          AND :workDate BETWEEN l.startDate AND l.endDate
-          AND l.leaveType.leaveTypeId IN (1, 3, 4)
-          AND :workDate BETWEEN l.startDate AND l.endDate
-    """)
-    boolean existsApprovedLeave(
+    select case when count(lr.leaveId) > 0 then true else false end
+    from LeaveRequest lr
+    where lr.employeeId = :empId
+      and lr.approvalStatus = 'APPROVED'
+      and :workDate between lr.startDate and lr.endDate
+      and lr.leaveType.leaveTypeId in (1, 3)
+""")
+    boolean existsApprovedPaidLeave(
+            @Param("empId") String empId,
+            @Param("workDate") LocalDate workDate
+    );
+
+    @Query("""
+    select case when count(lr.leaveId) > 0 then true else false end
+    from LeaveRequest lr
+    where lr.employeeId = :empId
+      and lr.approvalStatus = 'APPROVED'
+      and :workDate between lr.startDate and lr.endDate
+      and lr.leaveType.leaveTypeId = 4
+""")
+    boolean existsApprovedUnpaidLeave(
             @Param("empId") String empId,
             @Param("workDate") LocalDate workDate
     );

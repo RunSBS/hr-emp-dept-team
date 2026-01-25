@@ -2,7 +2,10 @@ package boot.team.hr.eun.attendance.repo;
 
 import boot.team.hr.eun.attendance.entity.WorkRecord;
 import boot.team.hr.eun.attendance.enums.WorkStatus;
+import boot.team.hr.eun.attendance.enums.WorkType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,5 +27,39 @@ public interface WorkRecordRepository extends JpaRepository<WorkRecord, Long> {
 
     // 특정 날짜에 workStatus를 알려줌 = 결근 마감용
     List<WorkRecord> findAllByWorkDateAndWorkStatus(LocalDate workDate, WorkStatus workStatus);
+
+    @Query("""
+    select wr
+    from WorkRecord wr
+    where wr.workDate = :workDate
+      and wr.checkIn is not null
+      and wr.checkOut is null
+      and wr.workType = :officeType
+""")
+    List<WorkRecord> findAllNightCandidates(
+            @Param("workDate") LocalDate workDate,
+            @Param("officeType") WorkType officeType
+    );
+
+    @Query("""
+    select wr
+    from WorkRecord wr
+    where wr.workDate = :workDate
+      and wr.checkIn is not null
+      and wr.checkOut is null
+      and (wr.workType = :officeType or wr.workType = :nightType)
+""")
+    List<WorkRecord> findAllAutoCheckoutTargets(
+            @Param("workDate") LocalDate workDate,
+            @Param("officeType") WorkType officeType,
+            @Param("nightType") WorkType nightType
+    );
+
+    List<WorkRecord> findByEmployeeIdInAndWorkDateBetween(
+            List<String> empIds,
+            LocalDate start,
+            LocalDate end
+    );
+
 
 }

@@ -17,6 +17,7 @@ public interface AttendanceQueryService {
     // 관리자 전체 근태 조회
     List<AttendanceListResponseDto> getAllAttendance(
             String empId,
+            String empName,
             LocalDate startDate,
             LocalDate endDate
     );

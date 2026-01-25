@@ -41,6 +41,7 @@ import Record from "../features/invite/Record.jsx";
 import ApprovalLayout from "../features/approval/components/ApprovalLayout.jsx";
 import Detail from "../features/approval/pages/Detail.jsx";
 import Outsourcing from "../features/hrm/pages/Outsourcing.jsx";
+import LeaderAttendance from "../features/work/pages/admin/LeaderAttendance.jsx";
 function Router() {
     return (
         <Routes>
@@ -73,6 +74,7 @@ function Router() {
                     <Route path="admin/adminworkpolicy" element={<AdminWorkPolicy />} />
                     <Route path="admin/leaveapproval" element={<LeaveApproval />} />
                     <Route path="admin/annualleave" element={<AnnualLeave />} />
+                    <Route path="admin/leaderattendance" element={<LeaderAttendance />}/>
                 </Route>
 
                 <Route path="salary">

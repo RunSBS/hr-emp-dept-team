@@ -1,5 +1,7 @@
 package boot.team.hr.eun.attendance.enums;
 
+import boot.team.hr.eun.attendance.entity.AttendancePolicy;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -30,23 +32,23 @@ public enum WorkStatus {
     public static WorkStatus decideAtCheckOut(
             WorkStatus currentStatus,
             LocalDateTime checkOutTime,
-            LocalTime startTime
+            AttendancePolicy policy
     ) {
-        // 정상 출근이면 유지
-        if (currentStatus == NORMAL) {
-            return NORMAL;
+        if (currentStatus == ABSENT) return ABSENT;
+        if (currentStatus == PENDING) return PENDING;
+
+        // 조퇴 판단 기준: OVERTIME_START 이전 퇴근
+        LocalTime overtimeStart = policy.getOvertimeStartLocalTime();
+        if (checkOutTime.toLocalTime().isBefore(overtimeStart)) {
+            return EARLY_LEAVE;
         }
 
-        // 이미 지각이면 유지
+        // 지각이면 지각 유지
         if (currentStatus == LATE) {
             return LATE;
         }
 
-        // 조퇴 판단
-        if (checkOutTime.toLocalTime().isBefore(startTime)) {
-            return EARLY_LEAVE;
-        }
-
-        return currentStatus;
+        // 그 외는 정상
+        return NORMAL;
     }
 }

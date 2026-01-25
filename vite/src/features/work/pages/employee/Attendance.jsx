@@ -12,12 +12,13 @@ const Attendance = () => {
     const [hasCheckedOut, setHasCheckedOut] = useState(false);
     const [todayStatus, setTodayStatus] = useState(null);
 
-    // 📌 근태 내역
+    // 근태 내역
     const [records, setRecords] = useState([]);
 
-    // 📌 조회 기간
+    // 조회 기간
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const todayStr = new Date().toISOString().slice(0, 10);
 
     /* ===============================
        오늘 출근/퇴근 상태 조회
@@ -25,8 +26,8 @@ const Attendance = () => {
     const fetchTodayStatus = async () => {
         try {
             const res = await axios.get("/back/work/status");
-            setHasCheckedIn(res.data.checkedIn);
-            setHasCheckedOut(res.data.checkedOut);
+            setHasCheckedIn(!!res.data.checkedIn);
+            setHasCheckedOut(!!res.data.checkedOut);
             setTodayStatus(res.data);
         } catch (err) {
             console.error(err);
@@ -37,6 +38,13 @@ const Attendance = () => {
         fetchTodayStatus();
     }, []);
 
+    useEffect(() => {
+        if (startDate && endDate && endDate < startDate) {
+            setEndDate(startDate);
+        }
+    }, [startDate, endDate]);
+
+
     /* ===============================
        내 근태 조회
     =============================== */
@@ -45,10 +53,7 @@ const Attendance = () => {
         setError(null);
         try {
             const res = await axios.get("/back/work/my", {
-                params: {
-                    startDate,
-                    endDate,
-                },
+                params: { startDate, endDate },
             });
             setRecords(res.data);
         } catch (err) {
@@ -57,6 +62,17 @@ const Attendance = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    /* ===============================
+       서버 에러 메시지 뽑기
+    =============================== */
+    const getErrorMessage = (err, fallback) => {
+        return (
+            err?.response?.data?.message ||
+            err?.response?.data?.error ||
+            fallback
+        );
     };
 
     /* ===============================
@@ -83,8 +99,9 @@ const Attendance = () => {
                     });
                     setResult(res.data);
                     setHasCheckedIn(true);
+                    await fetchTodayStatus(); // ✅ 상태 동기화
                 } catch (err) {
-                    setError("출근 처리 중 오류가 발생했습니다.");
+                    setError(getErrorMessage(err, "출근 처리 중 오류가 발생했습니다."));
                 } finally {
                     setLoading(false);
                 }
@@ -108,24 +125,85 @@ const Attendance = () => {
             const res = await axios.post("/back/work/check-out");
             setResult(res.data);
             setHasCheckedOut(true);
+            await fetchTodayStatus(); // ✅ 상태 동기화
         } catch (err) {
-            setError("퇴근 처리 중 오류가 발생했습니다.");
+            setError(getErrorMessage(err, "퇴근 처리 중 오류가 발생했습니다."));
         } finally {
             setLoading(false);
         }
     };
 
     /* ===============================
+       오늘 상태 기반으로 버튼 잠금 여부 계산
+    =============================== */
+    const getTodayLockState = () => {
+        if (!todayStatus) return { locked: false, reason: "" };
+
+        const { workStatus, workType } = todayStatus;
+
+        // 결근이면 출근/퇴근 불가
+        if (workStatus === "ABSENT") {
+            return { locked: true, reason: "결근 처리된 날짜입니다." };
+        }
+
+        // 휴가/외근이면 출근/퇴근 개념 없음(너가 WorkType에서 막았다고 했으니 프론트도 동일)
+        if (workType === "LEAVE") {
+            return { locked: true, reason: "오늘은 휴가 처리되어 출근/퇴근이 불가합니다." };
+        }
+        if (workType === "OUTSIDE") {
+            return { locked: true, reason: "오늘은 외근 처리되어 출근/퇴근이 불가합니다." };
+        }
+
+        return { locked: false, reason: "" };
+    };
+
+    /* ===============================
        버튼 렌더링
     =============================== */
     const renderButton = () => {
+        if (loading) {
+            return (
+                <Button disabled>
+                    <Spinner size="sm" animation="border" className="me-2" />
+                    처리 중...
+                </Button>
+            );
+        }
+
+        const { locked, reason } = getTodayLockState();
+
+        if (locked) {
+            return (
+                <>
+                    <Button variant="secondary" disabled>
+                        출퇴근 불가
+                    </Button>
+                    {reason && <div className="mt-2 text-muted">{reason}</div>}
+                </>
+            );
+        }
+
+        // 아직 출근 전
         if (!hasCheckedIn) {
             return <Button onClick={handleCheckIn}>출근하기</Button>;
         }
+
+        // 출근 후, 퇴근 전
         if (hasCheckedIn && !hasCheckedOut) {
-            return <Button variant="danger" onClick={handleCheckOut}>퇴근하기</Button>;
+            const isNight = todayStatus?.workType === "NIGHT";
+            return (
+                <Button variant="danger" onClick={handleCheckOut}>
+                    {isNight ? "야근 종료(퇴근하기)" : "퇴근하기"}
+                </Button>
+            );
         }
-        return <Button variant="secondary" disabled>오늘 근무 완료</Button>;
+
+        // 오늘 완료
+        return (
+            <Button variant="secondary" disabled>
+                오늘 근무 완료
+            </Button>
+        );
     };
 
     return (
@@ -136,16 +214,20 @@ const Attendance = () => {
             <Card className="p-4 mb-4 shadow-sm">
                 {renderButton()}
 
-                {todayStatus && todayStatus.checkedIn && (
+                {todayStatus && (
                     <div className="mt-3 text-muted">
-                        <div>📅 오늘 근무 상태: <b>{todayStatus.workStatus}</b></div>
-                        <div>🏷 근무 유형: <b>{todayStatus.workType}</b></div>
+                        <div>
+                            📅 오늘 근무 상태: <b>{todayStatus.workStatus ?? "-"}</b>
+                        </div>
+                        <div>
+                            🏷 근무 유형: <b>{todayStatus.workType ?? "-"}</b>
+                        </div>
                     </div>
                 )}
 
                 {result && (
                     <Alert variant="success" className="mt-3">
-                        {result.message}
+                        {result.message || "처리가 완료되었습니다."}
                     </Alert>
                 )}
 
@@ -156,8 +238,7 @@ const Attendance = () => {
                 )}
             </Card>
 
-
-            {/* 📌 근태 조회 */}
+            {/* 근태 조회 */}
             <Card className="p-4 shadow-sm">
                 <h5 className="mb-3">내 근태 내역</h5>
 
@@ -170,6 +251,8 @@ const Attendance = () => {
                     <Form.Control
                         type="date"
                         value={endDate}
+                        min={startDate || undefined}
+                        max={todayStr}
                         onChange={(e) => setEndDate(e.target.value)}
                     />
                     <Button onClick={fetchMyAttendance} disabled={loading}>

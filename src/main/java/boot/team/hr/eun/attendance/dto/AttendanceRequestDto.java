@@ -5,6 +5,6 @@ import lombok.Getter;
 /*프론트 -> 백엔드 (위치 정보 전달)*/
 @Getter
 public class AttendanceRequestDto {
-    private Double latitude;
-    private Double longitude;
+    private double latitude;
+    private double longitude;
 }

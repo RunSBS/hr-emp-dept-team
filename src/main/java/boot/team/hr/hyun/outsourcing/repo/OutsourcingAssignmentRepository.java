@@ -1,5 +1,6 @@
 package boot.team.hr.hyun.outsourcing.repo;
 
+import boot.team.hr.hyun.emp.entity.Emp;
 import boot.team.hr.hyun.outsourcing.entity.OutsourcingAssignment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,14 +11,16 @@ import java.time.LocalDate;
 public interface OutsourcingAssignmentRepository extends JpaRepository<OutsourcingAssignment,Long> {
 
     @Query("""
-        SELECT COUNT(o) > 0
-        FROM OutsourcingAssignment o
-        WHERE o.emp = :empId
-        AND :workDate BETWEEN o.startDate AND o.endDate
+        select (count(a) > 0)
+        from OutsourcingAssignment a
+        where a.emp = :emp
+        and :workDate between a.startDate and a.endDate
     """)
     boolean existsAssignment(
-            @Param("empId") String empId,
+            @Param("emp") Emp emp,
             @Param("workDate") LocalDate workDate
     );
+
+
 
 }

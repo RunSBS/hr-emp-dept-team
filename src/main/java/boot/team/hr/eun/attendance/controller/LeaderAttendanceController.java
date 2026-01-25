@@ -1,9 +1,6 @@
 package boot.team.hr.eun.attendance.controller;
 
-import boot.team.hr.eun.attendance.dto.AdminAttendanceUpdateRequestDto;
 import boot.team.hr.eun.attendance.dto.AttendanceListResponseDto;
-import boot.team.hr.eun.attendance.dto.AttendanceResponseDto;
-import boot.team.hr.eun.attendance.service.AdminAttendanceService;
 import boot.team.hr.eun.attendance.service.AttendanceQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +10,10 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/attendance")
-public class AdminAttendanceController {
+@RequestMapping("/leader/attendance")
+public class LeaderAttendanceController {
 
     private final AttendanceQueryService queryService;
-    private final AdminAttendanceService adminAttendanceService;
 
     @GetMapping("/list")
     public List<AttendanceListResponseDto> list(
@@ -35,10 +31,5 @@ public class AdminAttendanceController {
                 : LocalDate.parse(endDate);
 
         return queryService.getAllAttendance(empId, empName, start, end);
-    }
-
-    @PatchMapping("/check-out")
-    public AttendanceResponseDto updateCheckOut(@RequestBody AdminAttendanceUpdateRequestDto req) {
-        return adminAttendanceService.updateCheckOut(req);
     }
 }

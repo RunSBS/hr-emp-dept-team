@@ -47,7 +47,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 request.getLongitude()
         );
 
-        // 🔥 반드시 기존 레코드를 가져온다
+        // 반드시 기존 레코드를 가져온다
         WorkRecord record = workRecordRepository
                 .findByEmployeeIdAndWorkDate(empId, workDate)
                 .orElseThrow(() ->
@@ -126,29 +126,36 @@ public class AttendanceServiceImpl implements AttendanceService {
                         new IllegalStateException("적용 가능한 근태 정책이 없습니다.")
                 );
 
+        // 급여 정산을 위한 분(minute) 계산 (정책 기반)
         AttendanceTimeCalculator.WorkTimeResult timeResult =
-                AttendanceTimeCalculator.calculate(
+                AttendanceTimeCalculator.calculateAtCheckOut(
                         record.getCheckIn(),
                         checkOutTime,
-                        LocalDateTime.of(
-                                workDate,
-                                policy.getOvertimeStartLocalTime()
-                        )
+                        policy
                 );
 
+        // 퇴근 시 상태 판단 (조퇴 기준: OVERTIME_START 이전 퇴근)
         WorkStatus finalStatus =
                 WorkStatus.decideAtCheckOut(
                         record.getWorkStatus(),
                         checkOutTime,
-                        policy.getStartLocalTime()
+                        policy
                 );
 
         record.setWorkStatus(finalStatus);
         record.setNormalWorkMinutes(timeResult.normalMinutes());
         record.setOvertimeWorkMinutes(timeResult.overtimeMinutes());
+        record.setUnpaidMinutes(timeResult.unpaidMinutes());
         record.setTotalWorkMinutes(timeResult.totalMinutes());
+        record.setWorkType(WorkType.OFF);
+
+        // 야근 타입 판정: OVERTIME_START + 1시간 이후까지 근무했다면 NIGHT
         record.setWorkType(
-                WorkType.decideAtCheckOut(record.getWorkType())
+                WorkType.decideAtCheckOut(
+                        record.getWorkType(),
+                        checkOutTime.toLocalTime(),
+                        policy.getOvertimeStartLocalTime()
+                )
         );
 
         return AttendanceResponseDto.builder()

@@ -14,6 +14,7 @@ public interface EmpRepository extends JpaRepository<Emp,String> {
     List<Emp> findByEmpIdIn(List<String> empIds);
     @Query("select e from Emp e where e.empRole = 'EMP'")
     List<Emp> findAllEmployeesOnly();
+    List<Emp> findByEmpNameContainingIgnoreCase(String empName);
 
 
 }
