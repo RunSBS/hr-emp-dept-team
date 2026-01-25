@@ -71,16 +71,16 @@ public class AutoCheckoutScheduler {
                     policy
             );
 
-            record.setNormalWorkMinutes(time.normalMinutes());
-            record.setOvertimeWorkMinutes(time.overtimeMinutes());
+            record.setNormalWorkMinutes(time.normalWorkMinutes());
+            record.setOvertimeWorkMinutes(time.overtimeWorkMinutes());
             record.setUnpaidMinutes(time.unpaidMinutes());
-            record.setTotalWorkMinutes(time.totalMinutes());
+            record.setTotalWorkMinutes(time.totalWorkMinutes());
 
             // 상태 결정 (조퇴 기준: OVERTIME_START 이전이면 조퇴, 아니면 기존 지각 유지/정상)
             WorkStatus finalStatus = WorkStatus.decideAtCheckOut(
                     record.getWorkStatus(),
                     autoCheckoutTime,
-                    policy
+                    policy.getOvertimeStartLocalTime()
             );
             record.setWorkStatus(finalStatus);
 

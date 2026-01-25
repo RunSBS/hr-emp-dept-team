@@ -97,10 +97,10 @@ public class WorkRecordInitializerService {
                         .workDate(workDate)
                         .workStatus(WorkStatus.NORMAL)
                         .workType(type)
-                        .normalWorkMinutes(time.normalMinutes())
-                        .overtimeWorkMinutes(time.overtimeMinutes())
+                        .normalWorkMinutes(time.normalWorkMinutes())
+                        .overtimeWorkMinutes(time.overtimeWorkMinutes())
                         .unpaidMinutes(time.unpaidMinutes())
-                        .totalWorkMinutes(time.totalMinutes())
+                        .totalWorkMinutes(time.totalWorkMinutes())
                         .build()
         );
     }

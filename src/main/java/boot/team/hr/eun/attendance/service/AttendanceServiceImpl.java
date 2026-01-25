@@ -31,7 +31,6 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final AttendanceLocationValidator locationValidator;
     private final EmpRepository empRepository;
 
-    /* ===================== 출근 ===================== */
     @Override
     public AttendanceResponseDto checkIn(String email, AttendanceRequestDto request) {
 
@@ -41,44 +40,28 @@ public class AttendanceServiceImpl implements AttendanceService {
         String empId = emp.getEmpId();
         LocalDate workDate = WorkDateResolver.today();
 
-        // 위치 검증
-        locationValidator.validate(
-                request.getLatitude(),
-                request.getLongitude()
-        );
+        locationValidator.validate(request.getLatitude(), request.getLongitude());
 
-        // 반드시 기존 레코드를 가져온다
         WorkRecord record = workRecordRepository
                 .findByEmployeeIdAndWorkDate(empId, workDate)
-                .orElseThrow(() ->
-                        new IllegalStateException("오늘의 근무 레코드가 생성되지 않았습니다.")
-                );
+                .orElseThrow(() -> new IllegalStateException("오늘의 근무 레코드가 생성되지 않았습니다."));
 
         if (record.getWorkStatus() == WorkStatus.ABSENT) {
             throw new IllegalStateException("결근 처리된 날짜에는 출근할 수 없습니다.");
         }
-
         if (record.getWorkStatus() != WorkStatus.PENDING) {
             throw new IllegalStateException("출근 가능한 상태가 아닙니다.");
         }
-
         if (record.getCheckIn() != null) {
             throw new IllegalStateException("이미 출근 처리되었습니다.");
         }
 
-        AttendancePolicy policy = policyRepository
-                .findPolicyByWorkDate(workDate)
-                .orElseThrow(() ->
-                        new IllegalStateException("적용 가능한 근태 정책이 없습니다.")
-                );
+        AttendancePolicy policy = policyRepository.findPolicyByWorkDate(workDate)
+                .orElseThrow(() -> new IllegalStateException("적용 가능한 근태 정책이 없습니다."));
 
         LocalDateTime checkInTime = LocalDateTime.now();
 
-        WorkStatus workStatus =
-                WorkStatus.decideAtCheckIn(
-                        checkInTime,
-                        policy.getLateLocalTime()
-                );
+        WorkStatus workStatus = WorkStatus.decideAtCheckIn(checkInTime, policy.getLateLocalTime());
 
         record.setCheckIn(checkInTime);
         record.setWorkStatus(workStatus);
@@ -90,73 +73,55 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .build();
     }
 
-
-    /* ===================== 퇴근 ===================== */
     @Override
     public AttendanceResponseDto checkOut(String email) {
 
         Emp emp = empRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new IllegalStateException("EMP 정보가 존재하지 않습니다.")
-                );
+                .orElseThrow(() -> new IllegalStateException("EMP 정보가 존재하지 않습니다."));
 
         String empId = emp.getEmpId();
         LocalDate workDate = WorkDateResolver.today();
 
         WorkRecord record = workRecordRepository
                 .findByEmployeeIdAndWorkDate(empId, workDate)
-                .orElseThrow(() ->
-                        new IllegalStateException("출근 기록이 존재하지 않습니다.")
-                );
+                .orElseThrow(() -> new IllegalStateException("출근 기록이 존재하지 않습니다."));
 
         if (!record.getWorkType().canCheckOut()) {
             throw new IllegalStateException("퇴근할 수 없는 근무 상태입니다.");
         }
-
         if (record.getCheckOut() != null) {
             throw new IllegalStateException("이미 퇴근 처리되었습니다.");
         }
 
+        AttendancePolicy policy = policyRepository.findPolicyByWorkDate(workDate)
+                .orElseThrow(() -> new IllegalStateException("적용 가능한 근태 정책이 없습니다."));
+
         LocalDateTime checkOutTime = LocalDateTime.now();
         record.setCheckOut(checkOutTime);
 
-        AttendancePolicy policy = policyRepository
-                .findPolicyByWorkDate(workDate)
-                .orElseThrow(() ->
-                        new IllegalStateException("적용 가능한 근태 정책이 없습니다.")
-                );
-
-        // 급여 정산을 위한 분(minute) 계산 (정책 기반)
-        AttendanceTimeCalculator.WorkTimeResult timeResult =
+        // ✅ 새 계산기 API 사용
+        AttendanceTimeCalculator.WorkTimeResult time =
                 AttendanceTimeCalculator.calculateAtCheckOut(
                         record.getCheckIn(),
                         checkOutTime,
                         policy
                 );
 
-        // 퇴근 시 상태 판단 (조퇴 기준: OVERTIME_START 이전 퇴근)
+        // ✅ 조퇴 판정: overtimeStart 기준
         WorkStatus finalStatus =
                 WorkStatus.decideAtCheckOut(
                         record.getWorkStatus(),
                         checkOutTime,
-                        policy
+                        policy.getOvertimeStartLocalTime()
                 );
 
         record.setWorkStatus(finalStatus);
-        record.setNormalWorkMinutes(timeResult.normalMinutes());
-        record.setOvertimeWorkMinutes(timeResult.overtimeMinutes());
-        record.setUnpaidMinutes(timeResult.unpaidMinutes());
-        record.setTotalWorkMinutes(timeResult.totalMinutes());
-        record.setWorkType(WorkType.OFF);
 
-        // 야근 타입 판정: OVERTIME_START + 1시간 이후까지 근무했다면 NIGHT
-        record.setWorkType(
-                WorkType.decideAtCheckOut(
-                        record.getWorkType(),
-                        checkOutTime.toLocalTime(),
-                        policy.getOvertimeStartLocalTime()
-                )
-        );
+        record.setNormalWorkMinutes(time.normalWorkMinutes());
+        record.setOvertimeWorkMinutes(time.overtimeWorkMinutes());
+        record.setUnpaidMinutes(time.unpaidMinutes());
+        record.setTotalWorkMinutes(time.totalWorkMinutes());
+        record.setWorkType(WorkType.OFF);
 
         return AttendanceResponseDto.builder()
                 .workStatus(record.getWorkStatus())
@@ -164,35 +129,23 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .build();
     }
 
-    /* ===================== 오늘 상태 조회 ===================== */
     @Override
     @Transactional(readOnly = true)
     public WorkStatusResponseDto getTodayStatus(String email) {
 
         Emp emp = empRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new IllegalStateException("EMP 정보가 존재하지 않습니다.")
-                );
+                .orElseThrow(() -> new IllegalStateException("EMP 정보가 존재하지 않습니다."));
 
         LocalDate workDate = WorkDateResolver.today();
 
         return workRecordRepository
                 .findByEmployeeIdAndWorkDate(emp.getEmpId(), workDate)
-                .map(record ->
-                        new WorkStatusResponseDto(
-                                record.getCheckIn() != null,
-                                record.getCheckOut() != null,
-                                record.getWorkStatus(),
-                                record.getWorkType()
-                        )
-                )
-                .orElseGet(() ->
-                        new WorkStatusResponseDto(
-                                false,
-                                false,
-                                null,
-                                null
-                        )
-                );
+                .map(record -> new WorkStatusResponseDto(
+                        record.getCheckIn() != null,
+                        record.getCheckOut() != null,
+                        record.getWorkStatus(),
+                        record.getWorkType()
+                ))
+                .orElseGet(() -> new WorkStatusResponseDto(false, false, null, null));
     }
 }

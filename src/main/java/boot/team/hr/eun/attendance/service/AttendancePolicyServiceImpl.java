@@ -57,6 +57,8 @@ public class AttendancePolicyServiceImpl implements AttendancePolicyService {
                 request.getStartTime(),
                 request.getLateTime(),
                 request.getOvertimeStart(),
+                request.getBreakStart(),
+                request.getBreakEnd(),
                 request.getDescription(),
                 request.getEffectiveFrom(),
                 request.getEffectiveTo(),
@@ -98,6 +100,8 @@ public class AttendancePolicyServiceImpl implements AttendancePolicyService {
                 request.getStartTime(),
                 request.getLateTime(),
                 request.getOvertimeStart(),
+                request.getBreakStart(),
+                request.getBreakEnd(),
                 request.getDescription(),
                 request.getEffectiveFrom(),
                 request.getEffectiveTo(),
@@ -121,6 +125,8 @@ public class AttendancePolicyServiceImpl implements AttendancePolicyService {
                 .startTime(policy.getStartTime())
                 .lateTime(policy.getLateTime())
                 .overtimeStart(policy.getOvertimeStart())
+                .breakStart(policy.getBreakStart())
+                .breakEnd(policy.getBreakEnd())
                 .description(policy.getDescription())
                 .effectiveFrom(policy.getEffectiveFrom())
                 .effectiveTo(policy.getEffectiveTo())

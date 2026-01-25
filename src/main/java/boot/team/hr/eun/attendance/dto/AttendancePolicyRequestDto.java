@@ -10,8 +10,11 @@ public class AttendancePolicyRequestDto {
     private Integer startTime;
     private Integer lateTime;
     private Integer overtimeStart;
-    private String description;
 
+    private Integer breakStart;
+    private Integer breakEnd;
+
+    private String description;
     private LocalDate effectiveFrom;
     private LocalDate effectiveTo;
 }

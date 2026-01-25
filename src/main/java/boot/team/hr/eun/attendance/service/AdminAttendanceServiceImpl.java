@@ -68,17 +68,17 @@ public class AdminAttendanceServiceImpl implements AdminAttendanceService {
                 policy
         );
 
-        record.setNormalWorkMinutes(time.normalMinutes());
-        record.setOvertimeWorkMinutes(time.overtimeMinutes());
+        record.setNormalWorkMinutes(time.normalWorkMinutes());
+        record.setOvertimeWorkMinutes(time.overtimeWorkMinutes());
         record.setUnpaidMinutes(time.unpaidMinutes());
-        record.setTotalWorkMinutes(time.totalMinutes());
+        record.setTotalWorkMinutes(time.totalWorkMinutes());
 
         // 3) 상태 재결정
         record.setWorkStatus(
                 boot.team.hr.eun.attendance.enums.WorkStatus.decideAtCheckOut(
                         record.getWorkStatus(),
                         newCheckOut,
-                        policy
+                        policy.getOvertimeStartLocalTime()
                 )
         );
 
