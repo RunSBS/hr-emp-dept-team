@@ -36,6 +36,7 @@ public class MeetingRoomBook {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(length = 50)
     private String description;
 
     @PrePersist

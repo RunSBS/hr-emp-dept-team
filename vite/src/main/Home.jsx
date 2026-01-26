@@ -45,9 +45,9 @@ const Home = () => {
                             style={{ cursor: "pointer" }}
                             onClick={() => setShowAccountModal(true)}
                         >
-                            계정
+                            <img src="/images/sheild.png"/>
                         </Nav.Link>
-                        <Nav.Link onClick={handleLogout} style={{ cursor: "pointer" }}>Logout</Nav.Link>
+                        <Nav.Link onClick={handleLogout} style={{ cursor: "pointer" }}><img src="/images/logout.png"/></Nav.Link>
                     </Nav>
                 </Container>
             </Navbar>

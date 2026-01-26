@@ -31,6 +31,7 @@ public class ProjectMember {
     @JoinColumn(name="emp_id",nullable=false)
     private Emp emp;
 
+    @Column(length=50)
     private String role;
 
     public static ProjectMember from(Project project, Emp emp, String role) {

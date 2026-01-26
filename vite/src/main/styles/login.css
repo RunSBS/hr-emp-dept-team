@@ -1,73 +1,110 @@
-/* 전체 중앙 정렬 */
+/* login.css */
+
+/* 전체 배경: 대시보드 배경색과 통일 */
 .login-wrapper {
     height: 100vh;
-    background-color: #ffffff;
+    background-color: #f4f6f8;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
 }
 
-/* 카드 */
+/* 카드: 선(Border)보다는 부드러운 그림자로 경계 구분 */
 .login-card {
     width: 400px;
-    border-radius: 16px;
-    border: 1px solid #e3e8f0;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    border: none !important; /* 테두리 제거 */
+    border-radius: 24px !important; /* 더 둥글게 */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    overflow: hidden;
 }
 
-/* 🔵 상단 버튼 그룹 */
+/* 🔵 상단 버튼 그룹: 탭 형태의 세련된 디자인 */
 .top-btn-group {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    padding: 16px;
-    border-bottom: 1px solid #eef2f7;
+    gap: 10px;
+    padding: 24px 24px 12px 24px;
+    border-bottom: none !important; /* 하단 선 제거 */
 }
 
 .top-btn-group button {
-    background-color: #e8f0fe;   /* 연한 파랑 */
-    color: #2f5db3;
+    background-color: #f1f3f5;
+    color: #6b7280;
     border: none;
-    padding: 6px 14px;
-    border-radius: 999px;
+    padding: 8px 16px;
+    border-radius: 12px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .top-btn-group button:hover {
-    background-color: #d2e3fc;
+    background-color: #e9ecef;
+    color: #374151;
+    transform: translateY(-1px);
 }
 
-/* 제목 */
+/* 현재 활성화된 페이지(로그인) 강조 스타일링을 위해 버튼 중 하나에 .active가 있다면 */
+.top-btn-group button:first-child {
+    background-color: #7aa2e3;
+    color: #ffffff;
+}
+
+/* 제목: 폰트 두께와 자간 조절 */
 .login-title {
     text-align: center;
-    margin-bottom: 24px;
-    font-weight: 600;
-    color: #1f3a5f;
+    margin-top: 10px;
+    margin-bottom: 32px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -0.025em;
 }
 
-/* 입력창 */
+/* 입력창: 더 높고 부드러운 스타일 */
 .form-control {
-    height: 42px;
-    border-radius: 10px;
+    height: 52px !important;
+    padding: 0 16px !important;
+    border-radius: 14px !important;
+    border: 1.5px solid #e5e7eb !important;
+    background-color: #f9fafb !important;
+    font-size: 15px !important;
+    transition: all 0.2s ease !important;
+}
+
+.form-control::placeholder {
+    color: #9ca3af;
 }
 
 .form-control:focus {
-    box-shadow: none;
-    border-color: #7aa2e3;
+    background-color: #ffffff !important;
+    border-color: #7aa2e3 !important;
+    box-shadow: 0 0 0 4px rgba(122, 162, 227, 0.15) !important;
 }
 
-/* 로그인 버튼 */
+/* 로그인 버튼: 메인 대시보드 테마색 반영 */
 .login-btn {
-    height: 44px;
-    border-radius: 10px;
-    background-color: #7aa2e3;
-    border: none;
-    font-weight: 600;
+    height: 52px !important;
+    margin-top: 12px;
+    border-radius: 14px !important;
+    background-color: #7aa2e3 !important; /* 대시보드 포인트 컬러 */
+    border: none !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(122, 162, 227, 0.2) !important;
+    transition: all 0.2s ease !important;
 }
 
 .login-btn:hover {
-    background-color: #4c7ed9;
+    background-color: #5d8cd9 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(122, 162, 227, 0.3) !important;
+}
+
+.login-btn:active {
+    transform: translateY(0);
 }

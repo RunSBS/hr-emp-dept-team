@@ -152,3 +152,132 @@ html, body {
     padding: 0 !important;
     white-space: nowrap;
 }
+
+/*네브바 업데이트*/
+/*기존거 사용시 아래를 삭제하면댐*/
+/* ===== Sidebar 카드형 레이아웃 최종 ===== */
+
+/* ===== 네브바 업데이트 (여기서부터 수정 및 추가) ===== */
+
+/* 사이드바 바깥 배경 */
+.vertical-navbar {
+    background: #f4f6f8;
+    padding: 14px;
+    overflow-y: auto; /* 내용이 많아질 경우 대비 */
+}
+
+/* 실제 메뉴 카드 */
+.vertical-navbar > .nav {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.08);
+    height: auto; /* 고정 height 100% 대신 내용에 맞게 설정 */
+    min-height: calc(100vh - 100px); /* 최소 높이 확보 */
+}
+
+/* 🔹 상위 메뉴 */
+.vertical-navbar > .nav > .nav-link {
+    background: transparent;
+    color: #6b7280 !important;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vertical-navbar > .nav > .nav-link:hover {
+    background: #f1f3f5;
+    color: #4b5563 !important;
+}
+
+/* 🔹 서브메뉴 영역 (Collapse 핵심 수정) */
+/* .collapse 내부의 .nav에 배경을 주면 애니메이션 시 덜컥거림 발생 */
+.vertical-navbar .collapse {
+    border-radius: 10px;
+    overflow: hidden; /* 애니메이션 도중 텍스트 튀어나옴 방지 */
+}
+
+.vertical-navbar .collapse .nav {
+    background: #f8fafc; /* 조금 더 밝은 회색으로 변경 */
+    border-radius: 10px;
+    padding: 8px 0;
+    margin: 4px 0 10px 0; /* 아래 항목과의 간격 확보 */
+}
+
+/* 🔹 서브메뉴 링크 */
+.vertical-navbar .collapse .nav-link {
+    background: transparent;
+    color: #6b7280 !important;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 8px;
+
+    /* 투명도 문제 해결: 초기 상태를 1로 두거나, transition 대상을 명확히 함 */
+    opacity: 1;
+    transform: none;
+    transition: background 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.vertical-navbar .collapse .nav-link:hover {
+    background: #e5e7eb;
+    color: #1f2937 !important;
+}
+
+/* 서브메뉴 기호 */
+.vertical-navbar .collapse .nav-link::before {
+    content: "-"; /* - 보다 점이 깔끔할 수 있습니다 */
+    margin-right: 8px;
+    font-weight: bold;
+    color: #cbd5e1;
+    width:1px;
+}
+
+/* 활성화 상태 */
+.vertical-navbar .collapse .nav-link.active {
+    background: #eef2ff;
+    color: #2f80ed !important;
+    font-weight: 600;
+}
+
+/* 상단 Navbar 그림자 보강 */
+.custom-navbar {
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid #e5e7eb;
+    z-index: 1050; /* 사이드바보다 위 */
+}
+
+/* 🔹 텍스트 겹침 방지를 위한 레이아웃 정렬 */
+.admin-page .row {
+    align-items: flex-start; /* 자식 요소들이 높이에 따라 밀리지 않게 상단 정렬 */
+}
+/* 상단 Navbar 아이콘 스타일 (기본 영역 유지 버전) */
+.custom-navbar .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 패딩을 아예 없애지 말고 기존 Bootstrap 높이를 유지하도록 설정 */
+    padding: 0.5rem 1rem !important;
+    transition: none; /* 링크 자체의 떨림 방지 */
+}
+
+.custom-navbar .nav-link img {
+    width: 22px;  /* 아이콘 크기 살짝 키움 */
+    height: 22px;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 쫀득한 움직임 */
+}
+
+/* 호버 시: 영역 변화 없이 아이콘만 '공중 부양' 효과 */
+.custom-navbar .nav-link:hover img {
+    transform: scale(1.1); /* 크기만 살짝 확대 */
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); /* 입체감만 추가 */
+}
+
+/* 클릭 시 효과 */
+.custom-navbar .nav-link:active img {
+    transform: scale(0.95);
+}

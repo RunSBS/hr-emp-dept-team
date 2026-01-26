@@ -67,7 +67,7 @@ export default function ChatWidget() {
                                 />
                                 <div className="chat-header-text">
                                     <h1>HR Assistant</h1>
-                                    <p>인사 · 급여 · 휴가 · 근태를 도와드려요</p>
+                                    <p>인사 · 근태 · 일정 · 평가 · 포상 · 전자결재에 대해 질문하세요</p>
                                 </div>
                             </div>
                             <FaTimes onClick={() => setOpen(false)} />
@@ -90,7 +90,7 @@ export default function ChatWidget() {
 
                         {/* 채팅 로그 */}
                         <div className="chat-log" ref={chatLogRef}>
-                            {messages.map((m, i) => (
+                            {messages.map((m) => (
                                 <div className={`chat-msg ${m.role}`}>
 
                                     {m.role === "bot" ? (

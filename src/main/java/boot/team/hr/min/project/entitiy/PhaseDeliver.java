@@ -32,7 +32,6 @@ public class PhaseDeliver {
     private String filePath;
 
     @Column(name="created_at",nullable = false)
-
     private LocalDateTime createdAt;
 
     @Column(name="updated_at")
