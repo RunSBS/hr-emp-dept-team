@@ -1,10 +1,9 @@
 package boot.team.hr.min.invite.entity;
 
 import boot.team.hr.hyun.emp.entity.Emp;
+import boot.team.hr.min.invite.dto.InviteDto;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -15,9 +14,10 @@ import java.time.LocalDateTime;
                 @UniqueConstraint(columnNames = "email")
         }
 )
-@NoArgsConstructor
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Invite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,16 +39,23 @@ public class Invite {
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
-    // 초대 생성
-    public Invite(Emp emp, String email) {
-        this.emp = emp;
-        this.email = email;
-        this.status = "PENDING";
+    @PrePersist
+    protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        if (this.status == null) {
+            this.status = "PENDING";
+        }
+    }
+
+    public static Invite from(Emp emp, InviteDto dto){
+        return Invite.builder()
+                .emp(emp)
+                .email(dto.getEmail())
+                .build();
     }
 
     // 초대 수락
-    public void complete() {
+    public void update() {
         this.status = "COMPLETED";
         this.completedAt = LocalDateTime.now();
     }

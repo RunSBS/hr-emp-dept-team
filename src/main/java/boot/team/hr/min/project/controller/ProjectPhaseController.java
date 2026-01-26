@@ -3,6 +3,7 @@ package boot.team.hr.min.project.controller;
 import boot.team.hr.min.project.dto.ProjectPhaseDto;
 import boot.team.hr.min.project.service.ProjectPhaseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +17,9 @@ public class ProjectPhaseController {
 
     // 생성
     @PostMapping("/{projectId}")
-    public ProjectPhaseDto createPhase(@PathVariable Long projectId, @RequestBody ProjectPhaseDto dto) {
-        return phaseService.createPhase(projectId, dto);
+    public ResponseEntity<Long> createPhase(@PathVariable Long projectId, @RequestBody ProjectPhaseDto dto) {
+        phaseService.createPhase(projectId, dto);
+        return ResponseEntity.ok(projectId);
     }
 
     // 프로젝트별 단계 조회

@@ -30,7 +30,7 @@ public class ProjectMemberService {
         Emp emp = empRepository.findById(empId)
                 .orElseThrow(() -> new IllegalArgumentException("사원 없음"));
 
-        ProjectMember member = new ProjectMember(project, emp, role);
+        ProjectMember member = ProjectMember.from(project, emp, role);
         projectMemberRepository.save(member);
     }
 

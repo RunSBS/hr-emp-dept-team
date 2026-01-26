@@ -48,7 +48,7 @@ public class AccountService {
                 .status("ACTIVE")    // 바로 활성화
                 .build();
 
-        inviteService.completeInviteByEmail(request.getEmail());
+        inviteService.completeInvite(request.getEmail());
 
         return accountRepository.save(emp).getId();
     }
@@ -59,11 +59,7 @@ public class AccountService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("계정 없음"));
 
-        if (!passwordEncoder.matches(currentPw, account.getPassword())) {
-            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
-        }
-
-        account.setPassword(passwordEncoder.encode(newPw));
+        account.changePassword(currentPw, newPw, passwordEncoder);
     }
 
     //

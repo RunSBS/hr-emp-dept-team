@@ -26,17 +26,6 @@ public class InviteController {
         Long inviteId = inviteService.createInvite(dto);
         return ResponseEntity.ok(inviteId);
     }
-
-    /**
-     * 초대 수락
-     * (이메일 기준)
-     */
-    @PostMapping("/complete")
-    public ResponseEntity<Void> completeInvite(@RequestParam String email) {
-        inviteService.completeInvite(email);
-        return ResponseEntity.ok().build();
-    }
-
     //페이징
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
@@ -47,33 +36,31 @@ public class InviteController {
     ) {
         return inviteService.findByStatus(status, page, size);
     }
-
-
-    /**
-     * 전체 조회
-     */
+    //전체 조회
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<InviteDto>> findAll() {
         return ResponseEntity.ok(inviteService.findAll());
     }
 
-    /**
-     * 단건 조회
-     */
+    //단건 조회
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<InviteDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(inviteService.findById(id));
     }
 
-    /**
-     * 삭제
-     */
+    //삭제
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         inviteService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+    //초대수락
+    @PostMapping("/complete")
+    public ResponseEntity<Void> completeInvite(@RequestParam String email) {
+        inviteService.completeInvite(email);
+        return ResponseEntity.ok().build();
     }
 }

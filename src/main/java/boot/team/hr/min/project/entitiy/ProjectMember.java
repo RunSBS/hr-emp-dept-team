@@ -2,9 +2,7 @@ package boot.team.hr.min.project.entitiy;
 
 import boot.team.hr.hyun.emp.entity.Emp;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name="PROJECT_MEMBER",
@@ -16,8 +14,9 @@ import lombok.Setter;
     }
 )
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProjectMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,11 +33,14 @@ public class ProjectMember {
 
     private String role;
 
-    public ProjectMember(Project project, Emp emp, String role) {
-        this.project = project;
-        this.emp = emp;
-        this.role = role;
+    public static ProjectMember from(Project project, Emp emp, String role) {
+        return ProjectMember.builder()
+                .project(project)
+                .emp(emp)
+                .role(role)
+                .build();
     }
+
     public void changeRole(String role) {
         this.role = role;
     }

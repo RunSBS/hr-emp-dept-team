@@ -6,6 +6,8 @@ import boot.team.hr.min.project.entitiy.ProjectPhase;
 import boot.team.hr.min.project.repository.ProjectPhaseRepository;
 import boot.team.hr.min.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,23 +23,12 @@ public class ProjectPhaseService {
 
     // 생성
     @Transactional
-    public ProjectPhaseDto createPhase(Long projectId, ProjectPhaseDto dto) {
+    public void createPhase(Long projectId, ProjectPhaseDto dto) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("프로젝트 없음"));
 
-        ProjectPhase phase = new ProjectPhase(
-                project,
-                dto.getName(),
-                dto.getDescription(),
-                dto.getSequence(),
-                dto.getStartDate(),
-                dto.getEndDate(),
-                dto.getStatus()
-        );
+        phaseRepository.save(ProjectPhase.from(dto,project));
 
-        phaseRepository.save(phase);
-
-        return ProjectPhaseDto.from(phase);
     }
 
     // 조회 (프로젝트별)
@@ -46,7 +37,7 @@ public class ProjectPhaseService {
         return phaseRepository.findByProjectIdOrderBySequence(projectId)
                 .stream()
                 .map(ProjectPhaseDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // 조회 (단일 단계)

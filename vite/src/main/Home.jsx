@@ -62,17 +62,21 @@ const Home = () => {
                             <Nav.Link as={Link} to="/main">홈</Nav.Link>
 
                             {/*초대*/}
-                            <Nav.Link onClick={() => setOpenInvite(!openInvite)}>
-                                초대 {openInvite ? "▾" : "▸"}
-                            </Nav.Link>
-                            <Collapse in={openInvite}>
-                                <div>
-                                    <Nav className="flex-column ms-3">
-                                        <Nav.Link as={Link} to="/main/invite/record">초대 내역</Nav.Link>
-                                    </Nav>
-                                </div>
-                            </Collapse>
-                            {/* 인사 */}
+                            {user?.role==="ADMIN" &&(
+                                <>
+                                <Nav.Link onClick={() => setOpenInvite(!openInvite)}>
+                                    초대 {openInvite ? "▾" : "▸"}
+                                </Nav.Link>
+                                <Collapse in={openInvite}>
+                                    <div>
+                                        <Nav className="flex-column ms-3">
+                                            <Nav.Link as={Link} to="/main/invite/record">초대 내역</Nav.Link>
+                                        </Nav>
+                                    </div>
+                                </Collapse>
+                                {/* 인사 */}
+                                </>
+                             )}
                             <Nav.Link as={Link} to="/main/hr/all" onClick={() => setOpenHr(!openHr)}>
                                 인사 {openHr ? "▾" : "▸"}
                             </Nav.Link>
@@ -156,7 +160,11 @@ const Home = () => {
                                 <div>
                                     <Nav className="flex-column ms-3">
                                         <Nav.Link as={Link} to="/main/schedule/calendar">캘린더</Nav.Link>
-                                        <Nav.Link as={Link} to="/main/schedule/project">프로젝트 생성</Nav.Link>
+                                        {(user?.role === "ADMIN" || user?.role === "SCHEDULE") && (
+                                            <Nav.Link as={Link} to="/main/schedule/project">
+                                                프로젝트 생성
+                                            </Nav.Link>
+                                        )}
                                         <Nav.Link as={Link} to="/main/schedule/admin/projectmanage">프로젝트 관리</Nav.Link>
                                         <Nav.Link as={Link} to="/main/schedule/meeting">회의실</Nav.Link>
                                     </Nav>

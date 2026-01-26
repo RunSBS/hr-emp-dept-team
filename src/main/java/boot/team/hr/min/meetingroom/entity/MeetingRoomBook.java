@@ -1,18 +1,18 @@
 package boot.team.hr.min.meetingroom.entity;
 
 import boot.team.hr.hyun.emp.entity.Emp;
+import boot.team.hr.min.meetingroom.dto.MeetingRoomBookDto;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "MEETING_ROOM_BOOK")
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class MeetingRoomBook {
 
     @Id
@@ -41,6 +41,20 @@ public class MeetingRoomBook {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public static MeetingRoomBook from(
+            MeetingRoomBookDto dto,
+            MeetingRoom meetingRoom,
+            Emp emp
+    ) {
+        return MeetingRoomBook.builder()
+                .meetingRoom(meetingRoom)
+                .emp(emp)
+                .startTime(dto.getStartTime())
+                .endTime(dto.getEndTime())
+                .description(dto.getDescription())
+                .build();
     }
 
     public void update(

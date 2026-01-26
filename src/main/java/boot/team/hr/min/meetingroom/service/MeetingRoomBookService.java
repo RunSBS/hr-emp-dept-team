@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+
 public class MeetingRoomBookService {
 
     private final MeetingRoomBookRepository bookRepository;
@@ -24,15 +24,17 @@ public class MeetingRoomBookService {
     private final EmpRepository empRepository;
 
     // 전체 조회
+    @Transactional(readOnly = true)
     public List<MeetingRoomBookDto> findAll() {
         return bookRepository.findAll()
                 .stream()
                 .map(MeetingRoomBookDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // 생성
-    public MeetingRoomBookDto create(MeetingRoomBookDto dto) {
+    @Transactional
+    public void create(MeetingRoomBookDto dto) {
 
         MeetingRoom meetingRoom = meetingRoomRepository
                 .findById(dto.getMeetingRoomId())
@@ -41,15 +43,14 @@ public class MeetingRoomBookService {
         Emp emp = empRepository.findById(dto.getEmpId())//
                 .orElseThrow(() -> new IllegalArgumentException("사원 없음"));
 
-        MeetingRoomBook book = new MeetingRoomBook();
-        book.update(meetingRoom, emp, dto.getStartTime(), dto.getEndTime(), dto.getDescription());
+        MeetingRoomBook meetingRoomBook=MeetingRoomBook.from(dto,meetingRoom,emp);
 
-        bookRepository.save(book);
-        return MeetingRoomBookDto.from(book);
+        bookRepository.save(meetingRoomBook);
     }
 
     // 수정
-    public MeetingRoomBookDto update(Long id, MeetingRoomBookDto dto) {
+    @Transactional
+    public void update(Long id, MeetingRoomBookDto dto) {
 
         MeetingRoomBook book = bookRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("예약 없음"));
@@ -63,11 +64,10 @@ public class MeetingRoomBookService {
                 .orElseThrow(() -> new IllegalArgumentException("사원 없음"));
 
         book.update(meetingRoom, emp, dto.getStartTime(), dto.getEndTime(), dto.getDescription());
-
-        return MeetingRoomBookDto.from(book);
     }
 
     // 삭제
+    @Transactional
     public void delete(Long id) {
         bookRepository.deleteById(id);
     }

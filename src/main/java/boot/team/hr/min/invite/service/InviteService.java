@@ -24,9 +24,9 @@ public class InviteService {
     private final InviteRepository inviteRepository;
     private final MailService mailService;
     private final EmpRepository empRepository;
-    /**
-     * 초대 생성
-     */
+
+    //c
+    @Transactional
     public Long createInvite(InviteDto dto) {
 
         // 1. 사원 조회 (이미 존재하는 프로필)
@@ -36,7 +36,7 @@ public class InviteService {
                 );
 
         // 2. Invite 생성
-        Invite invite = new Invite(emp, dto.getEmail());
+        Invite invite = Invite.from(emp, dto);
         Invite saved = inviteRepository.save(invite);
 
         // 3. 초대 링크
@@ -49,10 +49,8 @@ public class InviteService {
         return saved.getId();
     }
 
-
-    /**
-     * 초대 수락
-     */
+    //u
+    @Transactional
     public void completeInvite(String email) {
 
         Invite invite = inviteRepository
@@ -61,64 +59,38 @@ public class InviteService {
                         new IllegalArgumentException("유효한 초대가 없습니다.")
                 );
 
-        invite.complete();
+        invite.update();
     }
     //페이징
+    @Transactional(readOnly = true)
     public Page<InviteDto> findByStatus(String status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return inviteRepository.findByStatus(status, pageable)
-                .map(this::toDto);
+                .map(InviteDto::from);
     }
-    /**
-     * 전체 조회
-     */
+    //r
+    @Transactional(readOnly = true)
     public List<InviteDto> findAll() {
         return inviteRepository.findAll()
                 .stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+                .map(InviteDto::from)
+                .toList();
     }
-
-    /**
-     * 단건 조회
-     */
+    //r
+    @Transactional(readOnly = true)
     public InviteDto findById(Long id) {
         Invite invite = inviteRepository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException("초대를 찾을 수 없습니다.")
                 );
 
-        return toDto(invite);
+        return InviteDto.from(invite);
     }
 
-    /**
-     * 삭제
-     */
+    //d
+    @Transactional
     public void delete(Long id) {
         inviteRepository.deleteById(id);
-    }
-
-    // =====================
-    // Entity → DTO 변환
-    // =====================
-    private InviteDto toDto(Invite invite) {
-        InviteDto dto = new InviteDto();
-        dto.setId(invite.getId());
-        dto.setEmpId(invite.getEmp().getEmpId());
-        dto.setEmail(invite.getEmail());
-        dto.setStatus(invite.getStatus());
-        dto.setCreatedAt(invite.getCreatedAt());
-        dto.setCompletedAt(invite.getCompletedAt());
-        return dto;
-    }
-
-    @Transactional
-    public void completeInviteByEmail(String email) {
-        inviteRepository.findByEmailAndStatus(email, "PENDING")
-                .ifPresent(invite -> {
-                    invite.complete();  // status = COMPLETED, completedAt = now()
-                    inviteRepository.save(invite);
-                });
     }
     
 }

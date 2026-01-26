@@ -23,9 +23,9 @@ public class PhaseDeliverController {
     private final FileStorageService fileStorageService;
 
     @PostMapping
-    public ResponseEntity<PhaseDeliverDto> create(@RequestBody PhaseDeliverDto dto) {
-        PhaseDeliverDto created = phaseDeliverService.create(dto);
-        return ResponseEntity.ok(created);
+    public ResponseEntity<Long> create(@RequestBody PhaseDeliverDto dto) {
+        phaseDeliverService.create(dto);
+        return ResponseEntity.ok(dto.getId());
     }
 
     @GetMapping
@@ -75,7 +75,7 @@ public class PhaseDeliverController {
     @GetMapping("/{id}/download")
     public ResponseEntity<byte[]> download(@PathVariable Long id) {
         PhaseDeliver deliver = phaseDeliverService.findEntityById(id);
-        byte[] fileData = fileStorageService.loadFileAsBytes(deliver.getFile_path());
+        byte[] fileData = fileStorageService.loadFileAsBytes(deliver.getFilePath());
 
         // 한글 파일명 깨짐 방지
         String encodedFileName = URLEncoder.encode(deliver.getName(), StandardCharsets.UTF_8)

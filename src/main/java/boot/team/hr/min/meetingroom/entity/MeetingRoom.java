@@ -27,8 +27,7 @@ public class MeetingRoom {
     @Column(nullable = false)
     private Integer capacity;
 
-    // DTO → Entity
-    public static MeetingRoom from(MeetingRoomDto dto) {
+    public static MeetingRoom from(MeetingRoomDto dto){
         return MeetingRoom.builder()
                 .meetingRoomId(dto.getMeetingRoomId())
                 .name(dto.getName())
@@ -36,6 +35,7 @@ public class MeetingRoom {
                 .capacity(dto.getCapacity())
                 .build();
     }
+
     public void update(MeetingRoomDto dto) {
         this.name = dto.getName();
         this.location = dto.getLocation();

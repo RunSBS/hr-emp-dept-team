@@ -23,15 +23,7 @@ public class ProjectService {
     //c
     @Transactional
     public ProjectDto create(ProjectDto dto){
-        Project project = new Project(
-                dto.getName(),
-                dto.getDescription(),
-                dto.getMethodology(),
-                dto.getStartDate(),
-                dto.getEndDate(),
-                dto.getStatus()
-        );
-        Project saved = repository.save(project);
+        Project saved = repository.save(Project.from(dto));
         return ProjectDto.from(saved);
     }
     //r
@@ -47,24 +39,6 @@ public class ProjectService {
         Project project=repository.findById(id)
                 .orElseThrow(()->new IllegalArgumentException("해당 프로젝트 없음"));
         return ProjectDto.from(project);
-    }
-    //u
-    @Transactional
-    public void update(Long id, ProjectDto dto){
-        Project project=repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 프로젝트 없음"));
-        project.update(
-                dto.getName(),
-                dto.getDescription(),
-                dto.getMethodology(),
-                dto.getStartDate(),
-                dto.getEndDate(),
-                dto.getStatus());
-    }
-    //d
-    @Transactional
-    public void delete(Long id){
-        repository.deleteById(id);
     }
     //page
     @Transactional(readOnly = true)
@@ -88,5 +62,22 @@ public class ProjectService {
     ) {
         return projectMemberRepository.findMyProjects(empId, keyword, pageable);
     }
-
+    //u
+    @Transactional
+    public void update(Long id, ProjectDto dto){
+        Project project=repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 프로젝트 없음"));
+        project.update(
+                dto.getName(),
+                dto.getDescription(),
+                dto.getMethodology(),
+                dto.getStartDate(),
+                dto.getEndDate(),
+                dto.getStatus());
+    }
+    //d
+    @Transactional
+    public void delete(Long id){
+        repository.deleteById(id);
+    }
 }
