@@ -31,6 +31,10 @@ const Candidate = () => {
     reason: ''
   });
 
+  // 포상 승인 관련 (CEO 전용)
+  const [pendingCandidates, setPendingCandidates] = useState([]);
+  const [approveLoading, setApproveLoading] = useState(false);
+
   useEffect(() => {
     checkPermissionAndLoadData();
   }, []);
@@ -71,6 +75,47 @@ const Candidate = () => {
     }
   };
 
+  // 포상 승인 관련 핸들러 (CEO 전용)
+  const fetchPendingCandidates = async () => {
+    try {
+      setApproveLoading(true);
+      const data = await candidateApi.getPendingCandidates();
+      setPendingCandidates(Array.isArray(data) ? data : []);
+      console.log('[포상 승인] 대기 목록 조회 완료:', data.length, '건');
+    } catch (error) {
+      console.error('[포상 승인] 대기 목록 조회 실패:', error);
+      setPendingCandidates([]);
+    } finally {
+      setApproveLoading(false);
+    }
+  };
+
+  const handleApprove = async (candidateId, nomineeName) => {
+    if (!window.confirm(`"${nomineeName}" 님의 포상 추천을 승인하시겠습니까?`)) return;
+
+    try {
+      await candidateApi.approveCandidate(candidateId);
+      alert('승인되었습니다.');
+      await fetchPendingCandidates();
+    } catch (error) {
+      console.error('[포상 승인] 승인 실패:', error);
+      alert('승인에 실패했습니다.');
+    }
+  };
+
+  const handleReject = async (candidateId, nomineeName) => {
+    if (!window.confirm(`"${nomineeName}" 님의 포상 추천을 거절하시겠습니까?`)) return;
+
+    try {
+      await candidateApi.rejectCandidate(candidateId);
+      alert('거절되었습니다.');
+      await fetchPendingCandidates();
+    } catch (error) {
+      console.error('[포상 승인] 거절 실패:', error);
+      alert('거절에 실패했습니다.');
+    }
+  };
+
   const handleSelectNominationType = async (type) => {
     setNominationType(type);
 
@@ -92,6 +137,9 @@ const Candidate = () => {
       // AI 추천 화면으로 이동 (바로 추천 시작하지 않음)
       setAiStarted(false);
       setAiRecommendations([]);
+    } else if (type === 'APPROVE') {
+      // 포상 승인 관리 (CEO 전용)
+      await fetchPendingCandidates();
     }
   };
 
@@ -357,6 +405,16 @@ const Candidate = () => {
               <div className="button-title">AI 추천</div>
               <div className="button-description">평가 점수와 코멘트 기반 AI 추천</div>
             </button>
+            {currentUser && currentUser.empRole === 'CEO' && (
+              <button
+                className="type-button approve-button"
+                onClick={() => handleSelectNominationType('APPROVE')}
+              >
+                <div className="button-icon">📋</div>
+                <div className="button-title">포상 승인 관리</div>
+                <div className="button-description">대기 중인 포상 추천을 승인/거절</div>
+              </button>
+            )}
           </div>
         </div>
 
@@ -505,6 +563,86 @@ const Candidate = () => {
             </div>
           </form>
         </div>
+      </div>
+    );
+  }
+
+  // 포상 승인 관리 화면 (CEO 전용)
+  if (nominationType === 'APPROVE') {
+    return (
+      <div className="candidate-container">
+        <div className="candidate-header">
+          <h1 className="candidate-title">포상 승인 관리</h1>
+          <button className="back-button" onClick={handleBackToSelection}>
+            ← 뒤로 가기
+          </button>
+        </div>
+
+        {approveLoading ? (
+          <div className="ai-loading">
+            <div className="loading-spinner"></div>
+            <p>대기 중인 포상 추천을 불러오고 있습니다...</p>
+          </div>
+        ) : pendingCandidates.length === 0 ? (
+          <div className="no-recommendations">
+            <div className="no-data-icon">📋</div>
+            <h3>대기 중인 포상 추천이 없습니다</h3>
+            <p>현재 승인 대기 상태인 포상 추천 건이 없습니다.</p>
+          </div>
+        ) : (
+          <div className="approve-section">
+            <div className="approve-summary">
+              <span className="approve-count">승인 대기: <strong>{pendingCandidates.length}</strong>건</span>
+            </div>
+            <div className="nominations-table-container">
+              <table className="nominations-table">
+                <thead>
+                  <tr>
+                    <th>피추천자</th>
+                    <th>포상 정책</th>
+                    <th>추천자</th>
+                    <th>추천 방식</th>
+                    <th>추천 사유</th>
+                    <th>지급 값</th>
+                    <th>추천일시</th>
+                    <th>처리</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pendingCandidates.map((candidate) => (
+                    <tr key={candidate.candidateId}>
+                      <td><strong>{candidate.nomineeName}</strong></td>
+                      <td>{candidate.policyName}</td>
+                      <td>{candidate.nominatorName}</td>
+                      <td>
+                        <span className={`nomination-type-badge ${candidate.nominationType === 'AI' ? 'type-ai' : 'type-manual'}`}>
+                          {candidate.nominationType === 'AI' ? '🎰 AI' : '✋ 수동'}
+                        </span>
+                      </td>
+                      <td className="reason-cell">{candidate.reason}</td>
+                      <td>{candidate.rewardAmount?.toLocaleString()}</td>
+                      <td>{formatDate(candidate.createdAt)}</td>
+                      <td className="approve-actions">
+                        <button
+                          className="approve-btn"
+                          onClick={() => handleApprove(candidate.candidateId, candidate.nomineeName)}
+                        >
+                          승인
+                        </button>
+                        <button
+                          className="reject-btn"
+                          onClick={() => handleReject(candidate.candidateId, candidate.nomineeName)}
+                        >
+                          거절
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

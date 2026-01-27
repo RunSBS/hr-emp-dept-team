@@ -141,6 +141,68 @@ public class RewardCandidateController {
         return ResponseEntity.ok(rewards);
     }
 
+    // ==================== 포상 승인 API (CEO 전용) ====================
+
+    /**
+     * PENDING 상태의 포상 후보 목록 조회 (CEO 전용)
+     */
+    @GetMapping("/pending")
+    public ResponseEntity<List<RewardCandidateDTO>> getPendingCandidates(Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            System.out.println("[포상 승인] 대기 목록 조회 실패 - 인증 정보 없음");
+            return ResponseEntity.status(401).build();
+        }
+
+        try {
+            String email = authentication.getName();
+            List<RewardCandidateDTO> candidates = candidateService.getPendingCandidates(email);
+            return ResponseEntity.ok(candidates);
+        } catch (IllegalArgumentException e) {
+            System.out.println("[포상 승인] 대기 목록 조회 실패 - " + e.getMessage());
+            return ResponseEntity.status(403).build();
+        }
+    }
+
+    /**
+     * 포상 후보 승인 (CEO 전용)
+     */
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<Void> approveCandidate(Authentication authentication, @PathVariable Long id) {
+        if (authentication == null || authentication.getName() == null) {
+            System.out.println("[포상 승인] 승인 실패 - 인증 정보 없음");
+            return ResponseEntity.status(401).build();
+        }
+
+        try {
+            String email = authentication.getName();
+            candidateService.approveCandidate(email, id);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            System.out.println("[포상 승인] 승인 실패 - " + e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * 포상 후보 거절 (CEO 전용)
+     */
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<Void> rejectCandidate(Authentication authentication, @PathVariable Long id) {
+        if (authentication == null || authentication.getName() == null) {
+            System.out.println("[포상 승인] 거절 실패 - 인증 정보 없음");
+            return ResponseEntity.status(401).build();
+        }
+
+        try {
+            String email = authentication.getName();
+            candidateService.rejectCandidate(email, id);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            System.out.println("[포상 승인] 거절 실패 - " + e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     // ==================== AI 추천 API ====================
 
     /**
