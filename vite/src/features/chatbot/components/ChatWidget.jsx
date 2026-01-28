@@ -1,18 +1,61 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import "../styles/chatWidget.css";
-import { FaComments, FaTimes, FaPaperPlane } from "react-icons/fa";
+import { FaComments, FaTimes, FaPaperPlane, FaUndo } from "react-icons/fa";
 
 export default function ChatWidget() {
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
+    const [suggestions, setSuggestions] = useState([]);
     const chatLogRef = useRef(null);
 
+    // 통계 데이터를 가져오는 로직을 별도 함수로 분리
+    const fetchStats = useCallback(async () => {
+        try {
+            const resp = await fetch("/ai/chatbot/stats");
+            const data = await resp.json();
+
+            if (data && data.length > 0) {
+                const top3 = data.slice(0, 3).map(item => ({
+                    title: item.title,
+                    sub: `누적 질문 ${item.count}건`
+                }));
+                setSuggestions(top3);
+            } else {
+                setSuggestions([]);
+            }
+        } catch (err) {
+            console.error("통계 로딩 실패:", err);
+            setSuggestions([]);
+        }
+    }, []);
+
+    // 자동 스크롤
     useEffect(() => {
         if (chatLogRef.current) {
             chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
         }
     }, [messages]);
+
+    // ✅ 위젯이 열릴 때마다 통계 새로고침 (핫리로드)
+    useEffect(() => {
+        if (open) {
+            fetchStats();
+        }
+    }, [open, fetchStats]);
+
+    // 대화 초기화 함수
+    const resetChat = async () => {
+        if (window.confirm("대화 내역을 초기화하시겠습니까?")) {
+            setMessages([]);
+            setInput("");
+
+            // ✅ 초기화 시 통계 데이터를 다시 불러와서 최신 상태로 갱신
+            await fetchStats();
+
+            // (선택 사항) 서버의 chat_history도 비우고 싶다면 여기에 fetch("/ai/chatbot/reset") 추가
+        }
+    };
 
     const sendMessage = async (preset) => {
         const msg = (preset ?? input).trim();
@@ -33,14 +76,14 @@ export default function ChatWidget() {
             setMessages(prev => {
                 const updated = [...prev];
                 const idx = updated.findIndex(m => m.thinking);
-                if (idx !== -1) updated[idx] = { role: "bot", text: data.answer };
+                if (idx !== -1) updated[idx] = { role: "bot", text: data.answer, thinking: false };
                 return updated;
             });
-        } catch {
+        } catch (error) {
             setMessages(prev => {
                 const updated = [...prev];
                 const idx = updated.findIndex(m => m.thinking);
-                if (idx !== -1) updated[idx] = { role: "bot", text: "서버 오류가 발생했습니다." };
+                if (idx !== -1) updated[idx] = { role: "bot", text: "서버 오류가 발생했습니다.", thinking: false };
                 return updated;
             });
         }
@@ -48,7 +91,6 @@ export default function ChatWidget() {
 
     return (
         <>
-            {/* 플로팅 버튼 */}
             <button className="chat-fab" onClick={() => setOpen(true)}>
                 <FaComments />
             </button>
@@ -56,73 +98,56 @@ export default function ChatWidget() {
             {open && (
                 <div className="chat-modal-overlay">
                     <div className="chat-modal">
-
-                        {/* 헤더 */}
                         <div className="chat-header">
                             <div className="chat-header-left">
-                                <img
-                                    src="/images/hrbot.png"
-                                    alt="chatbot"
-                                    className="chat-header-icon"
-                                />
+                                <img src="/images/hrbot.png" alt="chatbot" className="chat-header-icon" />
                                 <div className="chat-header-text">
                                     <h1>HR Assistant</h1>
-                                    <p>인사 · 근태 · 일정 · 평가 · 포상 · 전자결재에 대해 질문하세요</p>
+                                    <p>인사 · 근태 · 급여 · 일정 · 평가 · 전자결재에 대하여 질문하세요.</p>
                                 </div>
                             </div>
-                            <FaTimes onClick={() => setOpen(false)} />
+                            <div className="chat-header-btns">
+                                <FaUndo className="reset-icon" onClick={resetChat} title="대화 초기화" />
+                                <FaTimes className="close-icon" onClick={() => setOpen(false)} />
+                            </div>
                         </div>
 
-                        {/* 추천 질문 */}
                         {messages.length === 0 && (
                             <div className="chat-suggestions">
-                                <div onClick={() => sendMessage("연차 규정 알려줘")}>
-                                    연차 규정<br /><span>연차 발생 / 사용 기준</span>
-                                </div>
-                                <div onClick={() => sendMessage("급여 지급일은 언제야?")}>
-                                    급여 지급일<br /><span>급여일 / 명세서</span>
-                                </div>
-                                <div onClick={() => sendMessage("지각하면 어떻게 처리돼?")}>
-                                    근태 규정<br /><span>지각 / 결근</span>
-                                </div>
+                                {suggestions.length > 0 ? (
+                                    suggestions.map((s, idx) => (
+                                        <div key={idx} className="suggestion-item" onClick={() => sendMessage(s.title)}>
+                                            {s.title}<br /><span>{s.sub}</span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="no-suggestions">많이 한 질문이 아직 없어요 질문을 생성하세요!</div>
+                                )}
                             </div>
                         )}
 
-                        {/* 채팅 로그 */}
                         <div className="chat-log" ref={chatLogRef}>
-                            {messages.map((m) => (
-                                <div className={`chat-msg ${m.role}`}>
-
+                            {messages.map((m, idx) => (
+                                <div key={idx} className={`chat-msg ${m.role}`}>
                                     {m.role === "bot" ? (
                                         <div className="bot-wrap">
                                             {!m.thinking && (
                                                 <div className="bot-meta">
-                                                    <img
-                                                        src="/images/hrbot.png"
-                                                        alt="bot"
-                                                        className="chatbot-avatar"
-                                                    />
+                                                    <img src="/images/hrbot.png" alt="bot" className="chatbot-avatar" />
                                                     <span className="bot-label">AI 답변</span>
                                                 </div>
                                             )}
-
                                             <div className={`bubble ${m.thinking ? "thinking" : ""}`}>
-                                                {m.thinking ? (
-                                                    <span className="thinking-text">답변 생성 중</span>
-                                                ) : (
-                                                    m.text
-                                                )}
+                                                {m.thinking ? <span className="thinking-text">답변 생성 중...</span> : m.text}
                                             </div>
                                         </div>
                                     ) : (
                                         <div className="bubble">{m.text}</div>
                                     )}
-
                                 </div>
                             ))}
                         </div>
 
-                        {/* 입력 */}
                         <div className="chat-input">
                             <input
                                 value={input}
@@ -134,7 +159,6 @@ export default function ChatWidget() {
                                 <FaPaperPlane />
                             </button>
                         </div>
-
                     </div>
                 </div>
             )}

@@ -37,8 +37,8 @@ const Home = () => {
             {/* 상단 Navbar */}
             <Navbar className="custom-navbar">
                 <Container>
-                          <Navbar.Brand>
-                        <div className="brand">HR</div>
+                    <Navbar.Brand>
+                        <img src="/images/logo.png" alt="logo"/>
                     </Navbar.Brand>
                     <Nav className="ms-auto">
                         <Nav.Link

@@ -9,24 +9,25 @@
     height: 64px;
     border-radius: 50%;
     border: none;
-    background: linear-gradient(135deg, #7c3aed, #9333ea);
+    background: linear-gradient(135deg, #2563eb, #3b82f6); /* 🔵 변경 */
     color: white;
     font-size: 26px;
     cursor: pointer;
-    box-shadow: 0 10px 30px rgba(124,58,237,0.5);
+    box-shadow: 0 10px 30px rgba(37,99,235,0.5); /* 🔵 변경 */
     z-index: 1500;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    transition: transform 0.2s ease, box-shadow 0.2s ease; /*  추가 */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .chat-fab:hover {
     transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 14px 40px rgba(124,58,237,0.7);
+    box-shadow: 0 14px 40px rgba(37,99,235,0.7); /* 🔵 변경 */
 }
+
 
 /* ===============================
    오버레이
@@ -258,4 +259,31 @@
     50%  { content: ".."; }
     75%  { content: "..."; }
     100% { content: ""; }
+}
+.chat-header-btns {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.reset-icon, .close-icon {
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+}
+
+.reset-icon:hover {
+    color: #ff9800;
+    transform: rotate(-180deg);
+}
+
+.no-suggestions {
+    width: 100%;
+    padding: 15px;
+    text-align: center;
+    color: #999;
+    font-size: 0.85rem;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    background-color: #fcfcfc;
 }

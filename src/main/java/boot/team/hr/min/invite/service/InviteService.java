@@ -28,23 +28,24 @@ public class InviteService {
     //c
     @Transactional
     public Long createInvite(InviteDto dto) {
-
-        // 1. 사원 조회 (이미 존재하는 프로필)
         Emp emp = empRepository.findById(dto.getEmpId())
                 .orElseThrow(() ->
                         new IllegalArgumentException("사원을 찾을 수 없습니다.")
                 );
 
-        // 2. Invite 생성
         Invite invite = Invite.from(emp, dto);
         Invite saved = inviteRepository.save(invite);
 
-        // 3. 초대 링크
-        String inviteLink =
-                "http://localhost:5173/empsign?email=" + dto.getEmail();
+        String inviteLink = "http://localhost:5173/empsign?email=" + dto.getEmail();
 
-        // 4. 메일 발송
-        mailService.sendInviteMail(dto.getEmail(), inviteLink);
+        try {
+            mailService.sendInviteMail(dto.getEmail(), inviteLink);
+        } catch (Exception e) {
+            // 로깅 후 트랜잭션 유지 여부 결정
+            System.err.println("메일 발송 실패: " + e.getMessage());
+            // 원하면 예외를 런타임으로 변환해 트랜잭션 롤백 가능
+            // throw new RuntimeException(e);
+        }
 
         return saved.getId();
     }

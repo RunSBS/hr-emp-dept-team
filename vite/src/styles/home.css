@@ -281,3 +281,23 @@ html, body {
 .custom-navbar .nav-link:active img {
     transform: scale(0.95);
 }
+
+/* Navbar 전체 높이 안정화 */
+.custom-navbar {
+    height: 56px;              /* Bootstrap 기본 Navbar 높이 */
+    padding: 0 16px;
+}
+
+/* 브랜드 영역 */
+.custom-navbar .navbar-brand {
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+
+/* 🔥 로고 이미지 사이즈 조절 */
+.custom-navbar .navbar-brand img {
+    height: 28px;              /* ⭐ 핵심 */
+    width: auto;
+    object-fit: contain;
+}
