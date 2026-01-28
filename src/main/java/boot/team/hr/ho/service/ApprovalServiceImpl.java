@@ -293,6 +293,18 @@ public class ApprovalServiceImpl implements ApprovalService {
     // DTO 매핑
     private ApprovalResponseDto mapToResponseDto(ApprovalDoc doc) {
 
+        ApprovalLog rejectedLog =
+                approvalLogRepository
+                        .findTopByApprovalIdAndActionOrderByLogIdDesc(
+                                doc.getApprovalId(),
+                                "REJECTED"
+                        )
+                        .orElse(null);
+
+        String rejectedEmpId =
+                rejectedLog == null ? null : rejectedLog.getEmpId();
+
+
         List<LineDto> lines =
                 approvalLineRepository.findByApprovalIdOrderByStepOrder(doc.getApprovalId())
                         .stream()
@@ -304,6 +316,10 @@ public class ApprovalServiceImpl implements ApprovalService {
                             dto.setStepOrder(l.getStepOrder());
                             dto.setCurrent(l.isCurrent());
                             dto.setActionAt(l.getActionAt());
+                            dto.setRejected(
+                                    rejectedEmpId != null &&
+                                            rejectedEmpId.equals(l.getEmpId())
+                            );
                             return dto;
                         }).collect(Collectors.toList());
 

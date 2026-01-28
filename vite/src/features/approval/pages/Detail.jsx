@@ -60,19 +60,24 @@ const Detail = () => {
     };
 
     const handleReject = async () => {
-        const comment = prompt("반려 사유를 입력하세요");
-        if (!comment) return;
+        if (!window.confirm("결재를 반려하시겠습니까?")) return;
+
         const res = await fetch(`/back/ho/approvals/${approvalId}/reject`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify({ empId: loginEmpId, comment })
+            body: JSON.stringify({
+                empId: loginEmpId
+                // comment 제거
+            })
         });
+
         if (res.ok) {
             alert("반려되었습니다.");
             navigate("/main/approval/pending");
         }
     };
+
 
     const handleCancel = async () => {
         if (!window.confirm("결재를 취소하시겠습니까?")) return;
@@ -165,12 +170,25 @@ const Detail = () => {
                                     key={line.lineId}
                                     className="d-flex justify-content-between align-items-center"
                                     style={{
-                                        backgroundColor: line.current ? "#e3f2fd" : "#f8f9fa"
+                                        backgroundColor: line.rejected
+                                            ? "#fdecea"
+                                            : line.current
+                                                ? "#e3f2fd"
+                                                : "#f8f9fa"
                                     }}
                                 >
-                                    <span>{line.stepOrder}차: {line.empName}</span>
-                                    {line.current && <strong className="text-primary">현재</strong>}
+                                    <span>
+                                        {line.stepOrder}차: {line.empName}
+                                    </span>
+                                    {line.rejected && (
+                                        <Badge bg="danger">반려</Badge>
+                                    )}
+
+                                    {!line.rejected && line.current && (
+                                        <Badge bg="primary">현재</Badge>
+                                    )}
                                 </ListGroup.Item>
+
                             ))}
                         </ListGroup>
                     </Col>
