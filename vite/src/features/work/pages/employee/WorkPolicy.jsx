@@ -1,80 +1,46 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Card, Spinner, Alert } from "react-bootstrap";
+import { Card, Alert, Spinner } from "react-bootstrap";
 
 const WorkPolicy = () => {
     const [policy, setPolicy] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // ===============================
-    // 현재 근태 정책 조회
-    // ===============================
-    const fetchCurrentPolicy = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const res = await axios.get("/back/admin/attendance-policy/current");
-            setPolicy(res.data);
-        } catch (err) {
-            console.error(err);
-            setError("현재 적용 중인 근태 정책을 불러오지 못했습니다.");
-        } finally {
-            setLoading(false);
-        }
+    const formatTime = (hhmm) => {
+        if (hhmm == null) return "-";
+        const s = String(hhmm).padStart(4, "0");
+        return `${s.slice(0, 2)}:${s.slice(2)}`;
     };
 
     useEffect(() => {
-        fetchCurrentPolicy();
+        const fetchPolicy = async () => {
+            try {
+                const res = await axios.get("/back/work-policy/current");
+                setPolicy(res.data);
+            } catch (e) {
+                setError("근태 정책을 불러오지 못했습니다.");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchPolicy();
     }, []);
 
+    if (loading) return <Spinner animation="border" />;
+    if (error) return <Alert variant="danger">{error}</Alert>;
+    if (!policy) return <Alert variant="secondary">적용 중인 정책이 없습니다.</Alert>;
+
     return (
-        <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-            <h2 className="mb-4">근태 정책 및 법정 기준</h2>
-
-            {/* ===============================
-          회사 근태 기준
-      =============================== */}
-            <Card className="p-4 mb-4 shadow-sm">
-                <h4>📌 회사 근태 기준</h4>
-
-                {loading && <Spinner animation="border" />}
-                {error && <Alert variant="danger">{error}</Alert>}
-
-                {policy && (
-                    <>
-                        <p>출근 시간: {String(policy.startTime).padStart(4, "0").slice(0, 2)}:
-                            {String(policy.startTime).padStart(4, "0").slice(2)}</p>
-
-                        <p>지각 기준: {String(policy.lateTime).padStart(4, "0").slice(0, 2)}:
-                            {String(policy.lateTime).padStart(4, "0").slice(2)}</p>
-
-                        <p>야근 시작: {String(policy.overtimeStart).padStart(4, "0").slice(0, 2)}:
-                            {String(policy.overtimeStart).padStart(4, "0").slice(2)}</p>
-
-                        <small style={{ color: "gray" }}>
-                            * 회사 내부 정책에 따라 변경될 수 있습니다.
-                        </small>
-                    </>
-                )}
-            </Card>
-
-            {/* ===============================
-          법정 근로 기준
-      =============================== */}
-            <Card className="p-4 shadow-sm">
-                <h4>📌 법정 근로 기준 (수정 불가)</h4>
-                <ul>
-                    <li>법정 근로시간: 1일 8시간, 주 40시간</li>
-                    <li>연장근로: 1주 최대 12시간</li>
-                    <li>연차 유급휴가: 1년간 80% 이상 출근 시 15일</li>
-                    <li>연차 사용 촉진 제도는 근로기준법 제61조에 따름</li>
-                </ul>
-                <small style={{ color: "gray" }}>
-                    * 본 내용은 근로기준법에 따른 법정 기준으로 수정할 수 없습니다.
-                </small>
-            </Card>
-        </div>
+        <Card className="p-4 shadow-sm" style={{ maxWidth: "700px", margin: "0 auto" }}>
+            <h4 className="mb-3">현재 근태 정책</h4>
+            <p>시작 시간: {formatTime(policy.startTime)}</p>
+            <p>지각 기준: {formatTime(policy.lateTime)}</p>
+            <p>야근 시작: {formatTime(policy.overtimeStart)}</p>
+            <p>휴게 시간: {formatTime(policy.breakStart)} ~ {formatTime(policy.breakEnd)}</p>
+            <p>설명: {policy.description || "-"}</p>
+            <p>적용 기간: {policy.effectiveFrom} ~ {policy.effectiveTo}</p>
+        </Card>
     );
 };
 
