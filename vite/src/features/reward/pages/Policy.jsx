@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { policyApi } from '../api/policyApi';
-import '../styles/Policy.css';
+import "../styles/Policy.module.css";
 
 const Policy = () => {
   const [currentUser, setCurrentUser] = useState(null);

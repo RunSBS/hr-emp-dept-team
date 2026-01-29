@@ -24,35 +24,34 @@ public class InviteService {
     private final InviteRepository inviteRepository;
     private final MailService mailService;
     private final EmpRepository empRepository;
-    /**
-     * 초대 생성
-     */
-    public Long createInvite(InviteDto dto) {
 
-        // 1. 사원 조회 (이미 존재하는 프로필)
+    //c
+    @Transactional
+    public Long createInvite(InviteDto dto) {
         Emp emp = empRepository.findById(dto.getEmpId())
                 .orElseThrow(() ->
                         new IllegalArgumentException("사원을 찾을 수 없습니다.")
                 );
 
-        // 2. Invite 생성
-        Invite invite = new Invite(emp, dto.getEmail());
+        Invite invite = Invite.from(emp, dto);
         Invite saved = inviteRepository.save(invite);
 
-        // 3. 초대 링크
-        String inviteLink =
-                "http://localhost:5173/empsign?email=" + dto.getEmail();
+        String inviteLink = "http://localhost:5173/empsign?email=" + dto.getEmail();
 
-        // 4. 메일 발송
-        mailService.sendInviteMail(dto.getEmail(), inviteLink);
+        try {
+            mailService.sendInviteMail(dto.getEmail(), inviteLink);
+        } catch (Exception e) {
+            // 로깅 후 트랜잭션 유지 여부 결정
+            System.err.println("메일 발송 실패: " + e.getMessage());
+            // 원하면 예외를 런타임으로 변환해 트랜잭션 롤백 가능
+            // throw new RuntimeException(e);
+        }
 
         return saved.getId();
     }
 
-
-    /**
-     * 초대 수락
-     */
+    //u
+    @Transactional
     public void completeInvite(String email) {
 
         Invite invite = inviteRepository
@@ -61,64 +60,38 @@ public class InviteService {
                         new IllegalArgumentException("유효한 초대가 없습니다.")
                 );
 
-        invite.complete();
+        invite.update();
     }
     //페이징
+    @Transactional(readOnly = true)
     public Page<InviteDto> findByStatus(String status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return inviteRepository.findByStatus(status, pageable)
-                .map(this::toDto);
+                .map(InviteDto::from);
     }
-    /**
-     * 전체 조회
-     */
+    //r
+    @Transactional(readOnly = true)
     public List<InviteDto> findAll() {
         return inviteRepository.findAll()
                 .stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+                .map(InviteDto::from)
+                .toList();
     }
-
-    /**
-     * 단건 조회
-     */
+    //r
+    @Transactional(readOnly = true)
     public InviteDto findById(Long id) {
         Invite invite = inviteRepository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException("초대를 찾을 수 없습니다.")
                 );
 
-        return toDto(invite);
+        return InviteDto.from(invite);
     }
 
-    /**
-     * 삭제
-     */
+    //d
+    @Transactional
     public void delete(Long id) {
         inviteRepository.deleteById(id);
-    }
-
-    // =====================
-    // Entity → DTO 변환
-    // =====================
-    private InviteDto toDto(Invite invite) {
-        InviteDto dto = new InviteDto();
-        dto.setId(invite.getId());
-        dto.setEmpId(invite.getEmp().getEmpId());
-        dto.setEmail(invite.getEmail());
-        dto.setStatus(invite.getStatus());
-        dto.setCreatedAt(invite.getCreatedAt());
-        dto.setCompletedAt(invite.getCompletedAt());
-        return dto;
-    }
-
-    @Transactional
-    public void completeInviteByEmail(String email) {
-        inviteRepository.findByEmailAndStatus(email, "PENDING")
-                .ifPresent(invite -> {
-                    invite.complete();  // status = COMPLETED, completedAt = now()
-                    inviteRepository.save(invite);
-                });
     }
     
 }

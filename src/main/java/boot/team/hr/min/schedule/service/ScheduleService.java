@@ -13,26 +13,17 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final EmpRepository empRepository;
 
     /* 일정 생성 */
+    @Transactional
     public ScheduleDto create(ScheduleDto dto) {
         Emp emp = empRepository.findById(dto.getEmpId())
                 .orElseThrow(() -> new IllegalArgumentException("사원 없음"));
-
-        Schedule schedule = new Schedule(
-                emp,
-                dto.getTitle(),
-                dto.getStartAt(),
-                dto.getEndAt(),
-                dto.getDescription()
-        );
-
-        return ScheduleDto.from(scheduleRepository.save(schedule));
+        return ScheduleDto.from(scheduleRepository.save(Schedule.from(dto,emp)));
     }
 
     /* 일정 단건 조회 */
@@ -61,6 +52,7 @@ public class ScheduleService {
                 .toList();
     }
     /* 일정 수정 */
+    @Transactional
     public ScheduleDto update(Long id, ScheduleDto dto) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("일정 없음"));
@@ -80,6 +72,7 @@ public class ScheduleService {
     }
 
     /* 일정 삭제 */
+    @Transactional
     public void delete(Long id) {
         scheduleRepository.deleteById(id);
     }

@@ -270,8 +270,8 @@
   color: #666;
 }
 
-/* 상세 모달 */
-.modal-overlay {
+/* 상세 모달 - reward 전용 (다른 모달과 충돌 방지) */
+.reward-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -282,10 +282,10 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  animation: fadeIn 0.2s;
+  animation: rewardFadeIn 0.2s;
 }
 
-@keyframes fadeIn {
+@keyframes rewardFadeIn {
   from {
     opacity: 0;
   }
@@ -294,7 +294,7 @@
   }
 }
 
-.modal-content {
+.reward-modal-content {
   background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
   border-radius: 16px;
   width: 550px;
@@ -303,10 +303,10 @@
   overflow: auto;
   box-shadow: 0 10px 40px rgba(26, 40, 71, 0.3);
   border: 2px solid #d4af37;
-  animation: slideUp 0.3s;
+  animation: rewardSlideUp 0.3s;
 }
 
-@keyframes slideUp {
+@keyframes rewardSlideUp {
   from {
     transform: translateY(30px);
     opacity: 0;
@@ -317,14 +317,14 @@
   }
 }
 
-.modal-header {
+.reward-modal-header {
   background: linear-gradient(135deg, #1a2847 0%, #2c3e5f 100%);
   padding: 25px 30px;
   border-top-left-radius: 14px;
   border-top-right-radius: 14px;
 }
 
-.modal-header h2 {
+.reward-modal-header h2 {
   color: #ffffff;
   font-size: 22px;
   font-weight: bold;
@@ -334,40 +334,40 @@
   gap: 12px;
 }
 
-.modal-trophy {
+.reward-modal-trophy {
   font-size: 28px;
 }
 
-.modal-body {
+.reward-modal-body {
   padding: 30px;
 }
 
-.modal-field {
+.reward-modal-field {
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.modal-field.full-width {
+.reward-modal-field.full-width {
   flex-direction: column;
   align-items: flex-start;
 }
 
-.modal-label {
+.reward-modal-label {
   font-weight: 600;
   color: #1a2847;
   font-size: 14px;
   min-width: 100px;
 }
 
-.modal-value {
+.reward-modal-value {
   color: #333;
   font-size: 15px;
   font-weight: 500;
 }
 
-.modal-reason {
+.reward-modal-reason {
   margin-top: 12px;
   padding: 20px;
   background-color: #f8f9fa;
@@ -380,14 +380,14 @@
   width: 100%;
 }
 
-.modal-footer {
+.reward-modal-footer {
   padding: 20px 30px;
   display: flex;
   justify-content: flex-end;
   border-top: 1px solid #e0e0e0;
 }
 
-.modal-close-button {
+.reward-modal-close-button {
   padding: 12px 30px;
   background: linear-gradient(135deg, #d4af37 0%, #f0d57c 100%);
   color: #1a2847;
@@ -400,7 +400,7 @@
   box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
 }
 
-.modal-close-button:hover {
+.reward-modal-close-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
 }
@@ -459,13 +459,13 @@
     white-space: nowrap;
   }
 
-  .modal-content {
+  .reward-modal-content {
     width: 95%;
   }
 
-  .modal-header,
-  .modal-body,
-  .modal-footer {
+  .reward-modal-header,
+  .reward-modal-body,
+  .reward-modal-footer {
     padding: 20px;
   }
 }

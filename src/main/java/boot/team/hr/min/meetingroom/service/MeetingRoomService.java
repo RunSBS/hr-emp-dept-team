@@ -17,15 +17,14 @@ public class MeetingRoomService {
 
     private final MeetingRoomRepository meetingRoomRepository;
     //c
-    private final MeetingRoomRepository repository;
     @Transactional
     public void createRoom(MeetingRoomDto dto) {
-        repository.save(MeetingRoom.from(dto));
+        meetingRoomRepository.save(MeetingRoom.from(dto));
     }
     //r
     @Transactional(readOnly = true)
     public List<MeetingRoomDto> findAllRoom() {
-        return repository.findAll()
+        return meetingRoomRepository.findAll()
                 .stream()
                 .map(MeetingRoomDto::from)
                 .toList();
@@ -36,9 +35,9 @@ public class MeetingRoomService {
         Page<MeetingRoom> page;
 
         if (keyword == null || keyword.isBlank()) {
-            page = repository.findAll(pageable);
+            page = meetingRoomRepository.findAll(pageable);
         } else {
-            page = repository.findByNameContaining(keyword, pageable);
+            page = meetingRoomRepository.findByNameContaining(keyword, pageable);
         }
 
         return page.map(MeetingRoomDto::from);
@@ -46,7 +45,7 @@ public class MeetingRoomService {
     //u
     @Transactional
     public void updateRoom(String id, MeetingRoomDto dto) {
-        MeetingRoom room = repository.findById(id)
+        MeetingRoom room = meetingRoomRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("회의실 없음: " + id));
 
         room.update(dto);

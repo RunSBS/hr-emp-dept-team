@@ -2,6 +2,7 @@ package boot.team.hr.min.account.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -48,5 +49,16 @@ public class Account {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void changePassword(
+            String currentPw,
+            String newPw,
+            PasswordEncoder encoder
+    ) {
+        if (!encoder.matches(currentPw, this.password)) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+        this.password = encoder.encode(newPw);
     }
 }

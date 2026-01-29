@@ -7,6 +7,7 @@ import MeetingRoomModal from "../components/MeetingRoomModal.jsx";
 
 import "../styles/meetingManage.css";
 import "../styles/project.css";
+import {useAuth} from "../../../main/AuthContext.jsx";
 
 const MeetingManage = () => {
     const [rooms, setRooms] = useState([]);
@@ -24,8 +25,11 @@ const MeetingManage = () => {
     const [pageable, setPageable] = useState({ page: 0, size: 6 });
     const [totalPages, setTotalPages] = useState(0);
 
-    // 🔍 검색 상태
+    //  검색 상태
     const [searchText, setSearchText] = useState("");
+
+    // 세션
+    const {user}=useAuth();
 
     /* =========================
        회의실 + 예약 조회 (페이징 + 검색)
@@ -102,6 +106,7 @@ const MeetingManage = () => {
                                 setPageable(prev => ({ ...prev, page: 0 }));
                             }}
                         />
+                        {(user?.role==="ADMIN" || user?.role==="SCHEDULE") && (
                         <Button
                             className="fc-like-btn"
                             onClick={() => {
@@ -111,6 +116,7 @@ const MeetingManage = () => {
                         >
                             새 회의실 생성
                         </Button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -149,6 +155,7 @@ const MeetingManage = () => {
                                                 <div>수용인원 - {r.capacity}명</div>
 
                                                 <div className="d-flex justify-content-end gap-2 flex-wrap mt-3">
+                                                    {(user?.role==="ADMIN" || user?.role==="SCHEDULE") && (
                                                     <Button
                                                         size="sm"
                                                         className="btn-room-edit"
@@ -159,7 +166,8 @@ const MeetingManage = () => {
                                                     >
                                                         회의실 수정
                                                     </Button>
-
+                                                        )}
+                                                    {(user?.role==="ADMIN" || user?.role==="SCHEDULE") && (
                                                     <Button
                                                         size="sm"
                                                         variant="danger"
@@ -169,6 +177,7 @@ const MeetingManage = () => {
                                                     >
                                                         회의실 삭제
                                                     </Button>
+                                                        )}
 
                                                     <Button
                                                         size="sm"

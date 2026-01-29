@@ -27,6 +27,7 @@ public class MeetingRoomController {
         meetingRoomService.createRoom(dto);
         return ResponseEntity.ok("회의실 생성 완료: " + dto.getName());
     }
+
     @GetMapping("/")
     public List<MeetingRoomDto> findAllRoom(){
         return meetingRoomService.findAllRoom();
@@ -55,4 +56,6 @@ public class MeetingRoomController {
     public void deleteRoom(@PathVariable String id) {
         meetingRoomService.deleteRoom(id);
     }
+
+
 }

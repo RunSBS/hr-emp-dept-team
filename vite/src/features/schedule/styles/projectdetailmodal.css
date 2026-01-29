@@ -321,3 +321,39 @@ input {
     font-weight: bold;
     border-radius: 0 0 0 8px; /* 살짝 둥글게 */
 }
+.project-modal.edit .modal-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+/* =========================
+   AI Purple Button
+========================= */
+.btn-ai {
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-ai:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);;
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+}
+
+.btn-ai:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(124, 58, 237, 0.25);
+}
+
+.btn-ai:disabled {
+    background: #c4b5fd;
+    cursor: not-allowed;
+    box-shadow: none;
+}

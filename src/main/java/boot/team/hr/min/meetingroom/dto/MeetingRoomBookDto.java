@@ -16,12 +16,12 @@ public class MeetingRoomBookDto {
 
     public static MeetingRoomBookDto from(MeetingRoomBook book) {
         MeetingRoomBookDto dto = new MeetingRoomBookDto();
-        dto.setId(book.getId());
-        dto.setMeetingRoomId(book.getMeetingRoom().getMeetingRoomId());
-        dto.setEmpId(book.getEmp().getEmpId());
-        dto.setStartTime(book.getStartTime());
-        dto.setEndTime(book.getEndTime());
-        dto.setDescription(book.getDescription());
+        dto.id=book.getId();
+        dto.meetingRoomId=book.getMeetingRoom().getMeetingRoomId();
+        dto.empId=book.getEmp().getEmpId();
+        dto.startTime=book.getStartTime();
+        dto.endTime=book.getEndTime();
+        dto.description=book.getDescription();
         return dto;
     }
 }

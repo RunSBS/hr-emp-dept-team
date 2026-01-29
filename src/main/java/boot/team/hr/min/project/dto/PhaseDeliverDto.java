@@ -22,9 +22,9 @@ public class PhaseDeliverDto {
         dto.phaseId = phaseDeliver.getProjectPhase().getId();
         dto.name = phaseDeliver.getName();
         dto.description = phaseDeliver.getDescription();
-        dto.filePath = phaseDeliver.getFile_path();
-        dto.createdAt = phaseDeliver.getCreated_at();
-        dto.updatedAt = phaseDeliver.getUpdated_at();
+        dto.filePath = phaseDeliver.getFilePath();
+        dto.createdAt = phaseDeliver.getCreatedAt();
+        dto.updatedAt = phaseDeliver.getUpdatedAt();
         dto.status = phaseDeliver.getStatus();
         return dto;
     }
