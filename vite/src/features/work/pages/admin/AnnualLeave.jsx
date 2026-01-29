@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "../../styles/AnnualLeave.css";
 import axios from "axios";
 import {
     Table,
@@ -131,100 +132,135 @@ const AnnualLeave = () => {
     };
 
     return (
-        <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-            <h2 className="mb-4">연차 관리</h2>
+        <div className="annual-leave">
+            {/* ===== Header ===== */}
+            <div className="al-header">
+                <h2 className="al-title">연차 관리</h2>
+                <p className="al-subtitle">연도별 연차를 조회하고, 연차 부여/수정을 할 수 있습니다.</p>
+            </div>
 
-            {/* ===============================
-               상단 컨트롤 영역
-            =============================== */}
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <Button onClick={() => setShowCreate(true)}>
+            {/* ===== Top Controls ===== */}
+            <div className="al-controls al-card">
+                <Button className="al-btn" onClick={() => setShowCreate(true)}>
                     연차 부여
                 </Button>
 
-                <Form.Select
-                    style={{ width: "200px" }}
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                >
-                    <option value="">전체 연도</option>
-                    {years.map((y) => (
-                        <option key={y} value={y}>
-                            {y}년
-                        </option>
-                    ))}
-                </Form.Select>
+                <div className="al-controls-right">
+                    <div className="al-year-filter">
+                        <div className="al-label">연도</div>
+                        <Form.Select
+                            className="al-select"
+                            value={selectedYear}
+                            onChange={(e) => setSelectedYear(e.target.value)}
+                        >
+                            <option value="">전체 연도</option>
+                            {years.map((y) => (
+                                <option key={y} value={y}>
+                                    {y}년
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </div>
+                </div>
             </div>
 
-            {loading && <Spinner animation="border" />}
-            {error && <Alert variant="danger">{error}</Alert>}
+            {/* ===== Loading / Alerts ===== */}
+            {loading && (
+                <div className="al-loading">
+                    <Spinner animation="border" size="sm" className="me-2" />
+                    불러오는 중...
+                </div>
+            )}
 
-            {/* ===============================
-               연차 테이블
-            =============================== */}
+            {error && (
+                <Alert className="al-alert" variant="danger">
+                    {error}
+                </Alert>
+            )}
+
+            {/* ===== Table ===== */}
             {!loading && balances.length > 0 && (
-                <Table bordered hover>
-                    <thead>
-                    <tr>
-                        <th>사원 ID</th>
-                        <th>연도</th>
-                        <th>총 연차</th>
-                        <th>사용 연차</th>
-                        <th>잔여 연차</th>
-                        <th>관리</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {balances.map((b) => (
-                        <tr key={b.balanceId}>
-                            <td>{b.employeeId}</td>
-                            <td>{b.leaveYear}</td>
-                            <td>{b.totalLeaveMinutes / 480}일</td>
-                            <td>{b.usedLeaveMinutes / 480}일</td>
-                            <td>{b.remainingLeaveMinutes / 480}일</td>
-                            <td>
-                                <Button
-                                    size="sm"
-                                    onClick={() => {
-                                        setEditForm({
-                                            balanceId: b.balanceId,
-                                            totalDays: b.totalLeaveMinutes / 480
-                                        });
-                                        setShowEdit(true);
-                                    }}
-                                >
-                                    수정
-                                </Button>
-                            </td>
+                <div className="al-card al-table-wrap">
+                    <Table bordered hover responsive className="al-table">
+                        <thead>
+                        <tr>
+                            <th>사원 ID</th>
+                            <th>연도</th>
+                            <th>총 연차</th>
+                            <th>사용 연차</th>
+                            <th>잔여 연차</th>
+                            <th style={{ width: 90 }}>관리</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </Table>
+                        </thead>
+                        <tbody>
+                        {balances.map((b) => (
+                            <tr key={b.balanceId}>
+                                <td>{b.employeeId}</td>
+                                <td>{b.leaveYear}</td>
+                                <td>
+                                    <span className="al-badge al-badge-total">
+                                        {b.totalLeaveMinutes / 480}일
+                                    </span>
+                                </td>
+                                <td>
+                                    <span className="al-badge al-badge-used">
+                                        {b.usedLeaveMinutes / 480}일
+                                    </span>
+                                </td>
+                                <td>
+                                    <span className="al-badge al-badge-remaining">
+                                        {b.remainingLeaveMinutes / 480}일
+                                    </span>
+                                </td>
+                                <td>
+                                    <Button
+                                        size="sm"
+                                        className="al-btn al-btn-sm"
+                                        onClick={() => {
+                                            setEditForm({
+                                                balanceId: b.balanceId,
+                                                totalDays: b.totalLeaveMinutes / 480,
+                                            });
+                                            setShowEdit(true);
+                                        }}
+                                    >
+                                        수정
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </Table>
+                </div>
             )}
 
             {!loading && balances.length === 0 && (
-                <Alert variant="secondary">
+                <Alert className="al-alert" variant="secondary">
                     조회된 연차 정보가 없습니다.
                 </Alert>
             )}
 
-            {/* ===============================
-               연차 부여 모달
-            =============================== */}
-            <Modal show={showCreate} onHide={() => setShowCreate(false)}>
+            {/* ===== Create Modal ===== */}
+            <Modal
+                show={showCreate}
+                onHide={() => setShowCreate(false)}
+                centered
+                dialogClassName="al-modal"
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>연차 부여</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={handleCreate}>
+                    <Form onSubmit={handleCreate} className="al-form">
                         <Form.Group className="mb-2">
-                            <Form.Label>사원 ID</Form.Label>
+                            <Form.Label className="al-label">사원 ID</Form.Label>
                             <Form.Control
+                                className="al-input"
                                 value={createForm.employeeId}
                                 onChange={(e) =>
                                     setCreateForm({
                                         ...createForm,
-                                        employeeId: e.target.value
+                                        employeeId: e.target.value,
                                     })
                                 }
                                 required
@@ -232,14 +268,15 @@ const AnnualLeave = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-2">
-                            <Form.Label>연도</Form.Label>
+                            <Form.Label className="al-label">연도</Form.Label>
                             <Form.Control
+                                className="al-input"
                                 type="number"
                                 value={createForm.year}
                                 onChange={(e) =>
                                     setCreateForm({
                                         ...createForm,
-                                        year: e.target.value
+                                        year: e.target.value,
                                     })
                                 }
                                 required
@@ -247,55 +284,83 @@ const AnnualLeave = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>총 연차 (일)</Form.Label>
+                            <Form.Label className="al-label">총 연차 (일)</Form.Label>
                             <Form.Control
+                                className="al-input"
                                 type="number"
                                 value={createForm.totalDays}
                                 onChange={(e) =>
                                     setCreateForm({
                                         ...createForm,
-                                        totalDays: e.target.value
+                                        totalDays: e.target.value,
                                     })
                                 }
                                 required
                             />
                         </Form.Group>
 
-                        <Button type="submit">부여</Button>
+                        <div className="al-modal-actions">
+                            <Button
+                                variant="outline-secondary"
+                                onClick={() => setShowCreate(false)}
+                                type="button"
+                            >
+                                취소
+                            </Button>
+                            <Button className="al-btn" type="submit">
+                                부여
+                            </Button>
+                        </div>
                     </Form>
                 </Modal.Body>
             </Modal>
 
-            {/* ===============================
-               연차 수정 모달
-            =============================== */}
-            <Modal show={showEdit} onHide={() => setShowEdit(false)}>
+            {/* ===== Edit Modal ===== */}
+            <Modal
+                show={showEdit}
+                onHide={() => setShowEdit(false)}
+                centered
+                dialogClassName="al-modal"
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>연차 수정</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={handleEdit}>
+                    <Form onSubmit={handleEdit} className="al-form">
                         <Form.Group className="mb-3">
-                            <Form.Label>총 연차 (일)</Form.Label>
+                            <Form.Label className="al-label">총 연차 (일)</Form.Label>
                             <Form.Control
+                                className="al-input"
                                 type="number"
                                 value={editForm.totalDays}
                                 onChange={(e) =>
                                     setEditForm({
                                         ...editForm,
-                                        totalDays: e.target.value
+                                        totalDays: e.target.value,
                                     })
                                 }
                                 required
                             />
                         </Form.Group>
 
-                        <Button type="submit">수정</Button>
+                        <div className="al-modal-actions">
+                            <Button
+                                variant="outline-secondary"
+                                onClick={() => setShowEdit(false)}
+                                type="button"
+                            >
+                                취소
+                            </Button>
+                            <Button className="al-btn" type="submit">
+                                수정
+                            </Button>
+                        </div>
                     </Form>
                 </Modal.Body>
             </Modal>
         </div>
     );
+
 };
 
 export default AnnualLeave;

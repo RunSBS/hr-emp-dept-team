@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "../../styles/AdminWorkPolicy.css";
 import axios from "axios";
 import { Button, Modal, Form, Table, Alert, Card } from "react-bootstrap";
 
@@ -219,61 +220,72 @@ const AdminWorkPolicy = () => {
     };
 
     return (
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <div className="admin-work-policy">
             {/* =========================
-                근태 정책 관리
-            ========================= */}
-            <h2 className="mb-3">관리자 근태 정책 관리</h2>
+            근태 정책 관리
+        ========================= */}
+            <h2 className="admin-work-policy__title">관리자 근태 정책 관리</h2>
 
-            {error && <Alert variant="danger">{error}</Alert>}
+            {error && (
+                <Alert className="awp-alert" variant="danger">
+                    {error}
+                </Alert>
+            )}
 
-            <div className="mb-3">
-                <Button onClick={() => openModal(null)}>+ 정책 추가</Button>
+            <div className="awp-card awp-section">
+                <div className="awp-actions">
+                    <Button onClick={() => openModal(null)}>+ 정책 추가</Button>
+                </div>
+
+                <div className="awp-table-wrap">
+                    <Table bordered hover className="awp-table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>시작</th>
+                            <th>지각</th>
+                            <th>야근 시작</th>
+                            <th>휴게 시작</th>
+                            <th>휴게 종료</th>
+                            <th>설명</th>
+                            <th>적용 시작</th>
+                            <th>적용 종료</th>
+                            <th>수정</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {policies.length === 0 ? (
+                            <tr>
+                                <td colSpan="10" className="text-center awp-empty">
+                                    정책이 없습니다.
+                                </td>
+                            </tr>
+                        ) : (
+                            policies.map((p) => (
+                                <tr key={p.policyId}>
+                                    <td>{p.policyId}</td>
+                                    <td>{p.startTime}</td>
+                                    <td>{p.lateTime}</td>
+                                    <td>{p.overtimeStart}</td>
+                                    <td>{p.breakStart}</td>
+                                    <td>{p.breakEnd}</td>
+                                    <td>{p.description}</td>
+                                    <td>{p.effectiveFrom}</td>
+                                    <td>{p.effectiveTo}</td>
+                                    <td>
+                                        <Button size="sm" onClick={() => openModal(p)}>
+                                            수정
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                        </tbody>
+                    </Table>
+                </div>
             </div>
 
-            <Table bordered hover>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>시작</th>
-                    <th>지각</th>
-                    <th>야근 시작</th>
-                    <th>휴게 시작</th>
-                    <th>휴게 종료</th>
-                    <th>설명</th>
-                    <th>적용 시작</th>
-                    <th>적용 종료</th>
-                    <th>수정</th>
-                </tr>
-                </thead>
-                <tbody>
-                {policies.length === 0 ? (
-                    <tr>
-                        <td colSpan="10" className="text-center">정책이 없습니다.</td>
-                    </tr>
-                ) : (
-                    policies.map((p) => (
-                        <tr key={p.policyId}>
-                            <td>{p.policyId}</td>
-                            <td>{p.startTime}</td>
-                            <td>{p.lateTime}</td>
-                            <td>{p.overtimeStart}</td>
-                            <td>{p.breakStart}</td>
-                            <td>{p.breakEnd}</td>
-                            <td>{p.description}</td>
-                            <td>{p.effectiveFrom}</td>
-                            <td>{p.effectiveTo}</td>
-                            <td>
-                                <Button size="sm" onClick={() => openModal(p)}>
-                                    수정
-                                </Button>
-                            </td>
-                        </tr>
-                    ))
-                )}
-                </tbody>
-            </Table>
-
+            {/* ===== 근태 정책 모달 ===== */}
             <Modal show={showModal} onHide={closeModal} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>{editingPolicyId ? "정책 수정" : "정책 추가"}</Modal.Title>
@@ -369,68 +381,99 @@ const AdminWorkPolicy = () => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={closeModal}>취소</Button>
-                    <Button variant="primary" onClick={handleSubmit}>저장</Button>
+                    <Button variant="secondary" onClick={closeModal}>
+                        취소
+                    </Button>
+                    <Button variant="primary" onClick={handleSubmit}>
+                        저장
+                    </Button>
                 </Modal.Footer>
             </Modal>
 
             {/* =========================
-                회사 위치 관리
-            ========================= */}
-            <Card className="p-3 mt-4 shadow-sm">
-                <h3 className="mb-3">회사 위치 관리 (COMPANY_LOCATION)</h3>
+            회사 위치 관리
+        ========================= */}
+            <Card className="p-3 mt-4 awp-location-card">
+                <h3 className="admin-work-policy__section-title">
+                    회사 위치 관리 (COMPANY_LOCATION)
+                </h3>
 
-                {locError && <Alert variant="danger">{locError}</Alert>}
-                {locSuccess && <Alert variant="success">{locSuccess}</Alert>}
+                {locError && (
+                    <Alert className="awp-alert" variant="danger">
+                        {locError}
+                    </Alert>
+                )}
+                {locSuccess && (
+                    <Alert className="awp-alert" variant="success">
+                        {locSuccess}
+                    </Alert>
+                )}
 
-                <div className="d-flex gap-2 mb-3">
+                <div className="awp-actions">
                     <Button onClick={() => openLocModal(null)}>+ 회사 위치 추가</Button>
-                    <Button variant="outline-secondary" onClick={fetchLocations}>새로고침</Button>
+                    <Button variant="outline-secondary" onClick={fetchLocations}>
+                        새로고침
+                    </Button>
                 </div>
 
-                <Table bordered hover responsive>
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>회사명</th>
-                        <th>주소</th>
-                        <th>위도</th>
-                        <th>경도</th>
-                        <th>허용 반경(m)</th>
-                        <th>활성</th>
-                        <th>관리</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {locations.length === 0 ? (
+                <div className="awp-table-wrap">
+                    <Table bordered hover responsive className="awp-table">
+                        <thead>
                         <tr>
-                            <td colSpan="8" className="text-center">등록된 위치가 없습니다.</td>
+                            <th>ID</th>
+                            <th>회사명</th>
+                            <th>주소</th>
+                            <th>위도</th>
+                            <th>경도</th>
+                            <th>허용 반경(m)</th>
+                            <th>활성</th>
+                            <th>관리</th>
                         </tr>
-                    ) : (
-                        locations.map((l) => (
-                            <tr key={l.locationId}>
-                                <td>{l.locationId}</td>
-                                <td>{l.companyName}</td>
-                                <td>{l.address ?? "-"}</td>
-                                <td>{l.latitude}</td>
-                                <td>{l.longitude}</td>
-                                <td>{l.allowedRadiusM}</td>
-                                <td>{l.activeYn}</td>
-                                <td className="d-flex gap-2">
-                                    <Button size="sm" variant="outline-primary" onClick={() => openLocModal(l)}>
-                                        수정
-                                    </Button>
-                                    <Button size="sm" variant="outline-danger" onClick={() => deleteLocation(l.locationId)}>
-                                        삭제
-                                    </Button>
+                        </thead>
+                        <tbody>
+                        {locations.length === 0 ? (
+                            <tr>
+                                <td colSpan="8" className="text-center awp-empty">
+                                    등록된 위치가 없습니다.
                                 </td>
                             </tr>
-                        ))
-                    )}
-                    </tbody>
-                </Table>
+                        ) : (
+                            locations.map((l) => (
+                                <tr key={l.locationId}>
+                                    <td>{l.locationId}</td>
+                                    <td>{l.companyName}</td>
+                                    <td>{l.address ?? "-"}</td>
+                                    <td>{l.latitude}</td>
+                                    <td>{l.longitude}</td>
+                                    <td>{l.allowedRadiusM}</td>
+                                    <td>{l.activeYn}</td>
+                                    <td>
+                                        <div className="awp-manage">
+                                            <Button
+                                                size="sm"
+                                                variant="outline-primary"
+                                                onClick={() => openLocModal(l)}
+                                            >
+                                                수정
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="outline-danger"
+                                                onClick={() => deleteLocation(l.locationId)}
+                                            >
+                                                삭제
+                                            </Button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                        </tbody>
+                    </Table>
+                </div>
             </Card>
 
+            {/* ===== 회사 위치 모달 ===== */}
             <Modal show={showLocModal} onHide={closeLocModal} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>{editingLocId ? "회사 위치 수정" : "회사 위치 추가"}</Modal.Title>
@@ -507,8 +550,12 @@ const AdminWorkPolicy = () => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={closeLocModal}>취소</Button>
-                    <Button variant="primary" onClick={submitLocation}>저장</Button>
+                    <Button variant="secondary" onClick={closeLocModal}>
+                        취소
+                    </Button>
+                    <Button variant="primary" onClick={submitLocation}>
+                        저장
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </div>

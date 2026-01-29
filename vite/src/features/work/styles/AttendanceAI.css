@@ -1,0 +1,231 @@
+/* =========================================================
+   AttendanceAI (추천 대시보드 톤)
+   - 카드/여백/텍스트 가독성 중심
+   - Bootstrap 위에 “정리용” 커스텀
+   ========================================================= */
+
+.att-ai{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 52px 18px 40px;
+}
+
+/* ===== Header ===== */
+.att-ai__header{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+.att-ai__title{
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 900;
+    letter-spacing: -0.35px;
+}
+.att-ai__subtitle{
+    margin: 6px 0 0;
+    color: rgba(17, 24, 39, 0.62);
+    font-size: 0.95rem;
+}
+.att-ai__header-actions{
+    display:flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.att-ai__btn{
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+}
+
+/* ===== Card Base ===== */
+.att-ai__card{
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+}
+
+/* ===== Filter ===== */
+.att-ai__filter{
+    padding: 14px 14px 10px;
+    margin-bottom: 12px;
+}
+.att-ai__filter-form .form-label{
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.72);
+    margin-bottom: 6px;
+}
+.att-ai__filter-form .form-control,
+.att-ai__filter-form .form-select{
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    box-shadow: none !important;
+    height: 40px;
+}
+.att-ai__filter-form .form-control:focus,
+.att-ai__filter-form .form-select:focus{
+    border-color: rgba(59, 130, 246, 0.55);
+    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.12) !important;
+}
+.att-ai__filter-form .btn{
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+}
+
+/* loading / alerts */
+.att-ai__loading{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    padding: 10px 2px 0;
+    color: rgba(17, 24, 39, 0.72);
+}
+.att-ai__alert{
+    border-radius: 12px;
+    margin-top: 10px;
+}
+
+/* ===== Panel ===== */
+.att-ai__panel{
+    padding: 14px;
+}
+
+/* top banner */
+.att-ai__banner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 12px;
+
+    padding: 12px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(15,23,42,.08);
+    background: rgba(17, 24, 39, 0.03);
+    margin-bottom: 12px;
+}
+.att-ai__banner.is-danger{
+    background: rgba(239,68,68,.06);
+    border-color: rgba(239,68,68,.15);
+}
+.att-ai__banner.is-ok{
+    background: rgba(34,197,94,.06);
+    border-color: rgba(34,197,94,.15);
+}
+.att-ai__banner-left{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    min-width: 0;
+}
+.att-ai__banner-text{
+    color: rgba(17,24,39,.82);
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    line-height: 1.35;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ===== Subcards ===== */
+.att-ai__subcard{
+    background:#fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 10px 22px rgba(15,23,42,.04);
+    padding: 12px;
+}
+.att-ai__subhead{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+.att-ai__subhead strong{
+    font-weight: 900;
+    letter-spacing: -0.25px;
+    color: rgba(17,24,39,.86);
+}
+
+/* select */
+.att-ai__select{
+    max-width: 260px;
+    border-radius: 10px !important;
+    height: 40px;
+    border: 1px solid rgba(15, 23, 42, 0.14) !important;
+    box-shadow: none !important;
+}
+.att-ai__select:focus{
+    border-color: rgba(59, 130, 246, 0.55) !important;
+    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.12) !important;
+}
+
+/* empty */
+.att-ai__empty{
+    padding: 10px 2px;
+    color: rgba(17, 24, 39, 0.55);
+    font-weight: 700;
+}
+
+/* chart spacing */
+.att-ai__chart-block{
+    margin-bottom: 14px;
+}
+.att-ai__chart-block:last-child{
+    margin-bottom: 0;
+}
+
+/* ===== Analysis ===== */
+.att-ai__analysis{
+    padding-top: 2px;
+}
+.att-ai__section{
+    margin-bottom: 12px;
+}
+.att-ai__label{
+    font-weight: 900;
+    color: rgba(17,24,39,.86);
+    margin-bottom: 6px;
+    letter-spacing: -0.2px;
+}
+.att-ai__text{
+    color: rgba(17,24,39,.82);
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.att-ai__list{
+    margin: 6px 0 0;
+    padding-left: 18px;
+}
+.att-ai__list li{
+    margin: 5px 0;
+    line-height: 1.5;
+    font-size: 0.93rem;
+    color: rgba(17,24,39,.82);
+}
+
+/* top list */
+.att-ai__top{
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(15, 23, 42, 0.16);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px){
+    .att-ai{
+        padding: 14px 12px 30px;
+    }
+    .att-ai__header{
+        align-items:flex-start;
+        flex-direction: column;
+    }
+    .att-ai__banner-text{
+        white-space: normal;
+    }
+}

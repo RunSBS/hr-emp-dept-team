@@ -1,5 +1,7 @@
 package boot.team.hr.eun.leave.service;
 
+import boot.team.hr.eun.attendance.repo.AttendancePolicyRepository;
+import boot.team.hr.eun.attendance.util.AttendanceTimeCalculator;
 import boot.team.hr.eun.leave.dto.LeaveRequestCreateDto;
 import boot.team.hr.eun.leave.dto.LeaveRequestResponseDto;
 import boot.team.hr.eun.leave.dto.LeaveTypeResponseDto;
@@ -14,10 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
-
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,9 @@ public class LeaveServiceImpl implements LeaveService {
     private final LeaveTypeRepository leaveTypeRepository;
     private final LeaveRequestRepository leaveRequestRepository;
     private final EmpRepository empRepository;
+
+    // ✅ 추가: 정책 조회용
+    private final AttendancePolicyRepository attendancePolicyRepository;
 
     /* ===============================
        휴가 유형 조회
@@ -48,7 +52,6 @@ public class LeaveServiceImpl implements LeaveService {
        휴가 신청
     =============================== */
     @Override
-    @Transactional
     public void requestLeave(String email, LeaveRequestCreateDto dto) {
 
         log.info("leave request email = {}", email);
@@ -62,7 +65,12 @@ public class LeaveServiceImpl implements LeaveService {
         LeaveType leaveType = leaveTypeRepository.findById(dto.getLeaveTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 휴가 타입입니다."));
 
-        int leaveMinutes = calculateLeaveMinutes(dto);
+        // ✅ 수정: dto -> (leaveTypeId, startDate, endDate)로 계산
+        int leaveMinutes = calculateLeaveMinutes(
+                dto.getLeaveTypeId(),
+                dto.getStartDate(),
+                dto.getEndDate()
+        );
 
         LeaveRequest leaveRequest = LeaveRequest.create(
                 empId,
@@ -76,8 +84,6 @@ public class LeaveServiceImpl implements LeaveService {
         leaveRequestRepository.save(leaveRequest);
     }
 
-
-
     /* ===============================
        내 휴가 신청 목록
     =============================== */
@@ -85,20 +91,17 @@ public class LeaveServiceImpl implements LeaveService {
     @Transactional(readOnly = true)
     public List<LeaveRequestResponseDto> getMyLeaveRequests(String email) {
 
-        // 1️⃣ email → emp 변환 (Attendance와 동일)
         Emp emp = empRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("직원 정보를 찾을 수 없습니다."));
 
         String empId = emp.getEmpId();
 
-        // 2️⃣ empId 기준 조회
         return leaveRequestRepository
                 .findByEmployeeIdOrderByCreatedAtDesc(empId)
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
-
 
     /* ===============================
        Entity → Response DTO
@@ -118,26 +121,36 @@ public class LeaveServiceImpl implements LeaveService {
 
     /* ===============================
         휴가 시간 계산
+        - 1(연차),3(병가),4(무급): "정상근무분 * 일수"
+        - 5(AM),6(PM): "정상근무분 / 2" (휴게시간 제외 반영)
     =============================== */
-    private int calculateLeaveMinutes(LeaveRequestCreateDto dto) {
-        LocalDate start = dto.getStartDate();
-        LocalDate end = dto.getEndDate();
+    private int calculateLeaveMinutes(Long leaveTypeId, LocalDate startDate, LocalDate endDate) {
 
-        if (start == null || end == null) {
-            throw new IllegalArgumentException("휴가 시작일과 종료일은 필수입니다.");
+        if (leaveTypeId == null) throw new IllegalArgumentException("leaveTypeId가 필요합니다.");
+        if (startDate == null || endDate == null) throw new IllegalArgumentException("시작일/종료일이 필요합니다.");
+        if (endDate.isBefore(startDate)) throw new IllegalArgumentException("종료일은 시작일보다 빠를 수 없습니다.");
+
+        // ✅ 반차(AM/PM)는 1일만 허용
+        if ((leaveTypeId == 5L || leaveTypeId == 6L) && !startDate.equals(endDate)) {
+            throw new IllegalArgumentException("반차(AM/PM)는 시작일과 종료일이 같아야 합니다.");
         }
 
-        if (end.isBefore(start)) {
-            throw new IllegalArgumentException("종료일은 시작일보다 빠를 수 없습니다.");
+        var policy = attendancePolicyRepository.findPolicyByWorkDate(startDate)
+                .orElseThrow(() -> new IllegalStateException("적용 가능한 근태 정책이 없습니다."));
+
+        int scheduled = AttendanceTimeCalculator.scheduledWorkMinutes(policy); // 휴게시간 제외된 정상근무분
+
+        // 전일 휴가(연차/병가/무급)
+        if (leaveTypeId == 1L || leaveTypeId == 3L || leaveTypeId == 4L) {
+            long days = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+            return (int) (scheduled * days);
         }
 
-        // (종료일 - 시작일) + 1 → 포함 계산
-        long days = ChronoUnit.DAYS.between(start, end) + 1;
+        // 반차(AM/PM)
+        if (leaveTypeId == 5L || leaveTypeId == 6L) {
+            return scheduled / 2;
+        }
 
-        // 1일 = 8시간 = 480분 (정책 기준)
-        return (int) (days * 8 * 60);
+        throw new IllegalArgumentException("지원하지 않는 leaveTypeId=" + leaveTypeId);
     }
-
-
-
 }

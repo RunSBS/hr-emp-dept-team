@@ -1,0 +1,191 @@
+/* =========================================================
+   LeaveRequest(휴가 신청/현황) 페이지 전용 스타일
+   - AdminAttendance / Attendance 톤과 통일감
+   ========================================================= */
+
+.leave-request-page{
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 18px 40px;
+}
+
+/* ===== Header ===== */
+.lr-header{
+    margin-bottom: 14px;
+}
+.lr-title{
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+.lr-subtitle{
+    margin: 6px 0 0;
+    color: rgba(17, 24, 39, 0.62);
+    font-size: 0.95rem;
+}
+
+/* ===== Actions ===== */
+.lr-actions{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.lr-primary-btn{
+    border-radius: 10px;
+    font-weight: 900;
+}
+
+/* ===== Alerts/Loading ===== */
+.lr-alert{
+    border-radius: 12px;
+}
+.lr-loading{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 2px;
+    color: rgba(17, 24, 39, 0.7);
+}
+
+/* ===== Card ===== */
+.lr-card{
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* ===== Table area ===== */
+.lr-table-wrap{
+    padding: 10px;
+    overflow: hidden;
+}
+.lr-table-head{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 6px 6px 10px;
+}
+.lr-table-title{
+    margin: 0;
+    font-weight: 900;
+    letter-spacing: -0.2px;
+}
+.lr-table-subtitle{
+    margin-top: 6px;
+    color: rgba(17, 24, 39, 0.58);
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+/* ===== Table ===== */
+.lr-table{
+    margin: 0;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+}
+.lr-table thead th{
+    background: rgba(17, 24, 39, 0.03);
+    color: rgba(17, 24, 39, 0.82);
+    font-weight: 900;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.lr-table tbody td{
+    font-size: 0.92rem;
+    vertical-align: middle;
+}
+.lr-table.table-hover tbody tr:hover{
+    background: rgba(59, 130, 246, 0.04);
+}
+
+/* 휴가 유형 칸 */
+.lr-type-name{
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.92);
+}
+.lr-type-sub{
+    margin-top: 2px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.55);
+}
+.lr-tilde{
+    color: rgba(17, 24, 39, 0.45);
+    margin: 0 4px;
+}
+.lr-reason{
+    color: rgba(17, 24, 39, 0.72);
+}
+
+/* ===== Pagination ===== */
+.lr-pagination{
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 8px 2px;
+}
+.lr-page-btn{
+    min-width: 36px;
+    height: 34px;
+    padding: 0 10px;
+
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #fff;
+
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.78);
+
+    transition: background .12s ease, transform .12s ease, border-color .12s ease;
+}
+.lr-page-btn:hover{
+    background: rgba(59,130,246,.06);
+    border-color: rgba(59,130,246,.35);
+    transform: translateY(-1px);
+}
+.lr-page-btn.active{
+    background: rgba(59,130,246,.14);
+    border-color: rgba(59,130,246,.45);
+    color: rgba(17,24,39,.92);
+}
+.lr-page-btn:disabled{
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+}
+.lr-ellipsis{
+    padding: 0 4px;
+    color: rgba(17, 24, 39, 0.45);
+    font-weight: 900;
+}
+
+/* ===== Modal ===== */
+.lr-modal-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.lr-modal-actions{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.lr-modal-actions .btn{
+    border-radius: 10px;
+    font-weight: 900;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px){
+    .leave-request-page{
+        padding: 14px 12px 30px;
+    }
+    .lr-modal-grid{
+        grid-template-columns: 1fr;
+    }
+}

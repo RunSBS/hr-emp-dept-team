@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "../../styles/Attendance.css";
 import { Button, Card, Alert, Spinner, Table, Form } from "react-bootstrap";
 
 const Attendance = () => {
@@ -19,6 +20,17 @@ const Attendance = () => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const todayStr = new Date().toISOString().slice(0, 10);
+
+    // ✅ 페이지네이션
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
+
+    // ✅ 현재 페이지 데이터 슬라이스
+    const totalPages = Math.max(1, Math.ceil(records.length / pageSize));
+    const pageRecords = records.slice(
+        (currentPage - 1) * pageSize,
+        currentPage * pageSize
+    );
 
     /* ===============================
        오늘 출근/퇴근 상태 조회
@@ -44,9 +56,8 @@ const Attendance = () => {
         }
     }, [startDate, endDate]);
 
-
     /* ===============================
-       내 근태 조회
+       나의 근태 조회
     =============================== */
     const fetchMyAttendance = async () => {
         setLoading(true);
@@ -55,7 +66,8 @@ const Attendance = () => {
             const res = await axios.get("/back/work/my", {
                 params: { startDate, endDate },
             });
-            setRecords(res.data);
+            setRecords(res.data || []);
+            setCurrentPage(1); // ✅ 새 조회 시 첫 페이지로
         } catch (err) {
             console.error(err);
             setError("근태 내역 조회 실패");
@@ -68,11 +80,7 @@ const Attendance = () => {
        서버 에러 메시지 뽑기
     =============================== */
     const getErrorMessage = (err, fallback) => {
-        return (
-            err?.response?.data?.message ||
-            err?.response?.data?.error ||
-            fallback
-        );
+        return err?.response?.data?.message || err?.response?.data?.error || fallback;
     };
 
     /* ===============================
@@ -146,7 +154,7 @@ const Attendance = () => {
             return { locked: true, reason: "결근 처리된 날짜입니다." };
         }
 
-        // 휴가/외근이면 출근/퇴근 개념 없음(너가 WorkType에서 막았다고 했으니 프론트도 동일)
+        // 휴가/외근이면 출근/퇴근 개념 없음
         if (workType === "LEAVE") {
             return { locked: true, reason: "오늘은 휴가 처리되어 출근/퇴근이 불가합니다." };
         }
@@ -207,20 +215,37 @@ const Attendance = () => {
     };
 
     return (
-        <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-            <h2 className="mb-4">출퇴근 기록</h2>
+        <div className="attendance-page">
+            <div className="at-header">
+                <h2 className="at-title">출퇴근 기록</h2>
+                <p className="at-subtitle">오늘 출근/퇴근을 처리하고, 기간별 내역을 확인합니다.</p>
+            </div>
 
             {/* 출퇴근 카드 */}
-            <Card className="p-4 mb-4 shadow-sm">
+            <Card className="at-card at-action-card">
                 {renderButton()}
 
                 {todayStatus && (
-                    <div className="mt-3 text-muted">
+                    <div className="at-today mt-3">
                         <div>
-                            📅 오늘 근무 상태: <b>{todayStatus.workStatus ?? "-"}</b>
+                            📅 오늘 근무 상태:{" "}
+                            <b
+                                className={`at-badge at-status at-status-${String(
+                                    todayStatus.workStatus || ""
+                                ).toLowerCase()}`}
+                            >
+                                {todayStatus.workStatus ?? "-"}
+                            </b>
                         </div>
-                        <div>
-                            🏷 근무 유형: <b>{todayStatus.workType ?? "-"}</b>
+                        <div className="mt-1">
+                            🏷 근무 유형:{" "}
+                            <b
+                                className={`at-badge at-type at-type-${String(
+                                    todayStatus.workType || ""
+                                ).toLowerCase()}`}
+                            >
+                                {todayStatus.workType ?? "-"}
+                            </b>
                         </div>
                     </div>
                 )}
@@ -239,62 +264,148 @@ const Attendance = () => {
             </Card>
 
             {/* 근태 조회 */}
-            <Card className="p-4 shadow-sm">
-                <h5 className="mb-3">내 근태 내역</h5>
+            <Card className="at-card at-list-card">
+                {/* ✅ 제목을 h2 톤으로 */}
+                <div className="at-header at-list-header">
+                    <h2 className="at-title">나의 근태 내역</h2>
+                    <p className="at-subtitle">시작일 ~ 종료일로 기간을 지정해 조회할 수 있습니다.</p>
+                </div>
 
-                <Form className="d-flex gap-2 mb-3">
-                    <Form.Control
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                    />
-                    <Form.Control
-                        type="date"
-                        value={endDate}
-                        min={startDate || undefined}
-                        max={todayStr}
-                        onChange={(e) => setEndDate(e.target.value)}
-                    />
-                    <Button onClick={fetchMyAttendance} disabled={loading}>
-                        조회
+                {/* ✅ 한 줄 배치: 시작일 ~ 종료일 [조회] */}
+                <Form className="at-filter-row mb-3">
+                    <div className="at-date-group">
+                        <div className="at-date-item">
+                            <div className="at-label">시작일</div>
+                            <Form.Control
+                                className="at-date-input"
+                                type="date"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="at-tilde">~</div>
+
+                        <div className="at-date-item">
+                            <div className="at-label">종료일</div>
+                            <Form.Control
+                                className="at-date-input"
+                                type="date"
+                                value={endDate}
+                                min={startDate || undefined}
+                                max={todayStr}
+                                onChange={(e) => setEndDate(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <Button className="at-search-btn" onClick={fetchMyAttendance} disabled={loading}>
+                        {loading ? (
+                            <>
+                                <Spinner size="sm" animation="border" className="me-2" />
+                                조회 중...
+                            </>
+                        ) : (
+                            "조회"
+                        )}
                     </Button>
                 </Form>
 
-                <Table bordered hover>
-                    <thead>
-                    <tr>
-                        <th>근무일</th>
-                        <th>출근</th>
-                        <th>퇴근</th>
-                        <th>근무상태</th>
-                        <th>근무유형</th>
-                        <th>총 근무시간(분)</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {records.length === 0 ? (
+                <div className="at-table-wrap">
+                    <Table bordered hover responsive className="at-table">
+                        <thead>
                         <tr>
-                            <td colSpan="6" className="text-center">
-                                조회 결과 없음
-                            </td>
+                            <th>근무일</th>
+                            <th>출근 시간</th>
+                            <th>퇴근 시간</th>
+                            <th>근무상태</th>
+                            <th>근무유형</th>
+                            <th>총 근무시간(분)</th>
                         </tr>
-                    ) : (
-                        records.map((r, idx) => (
-                            <tr key={idx}>
-                                <td>{r.workDate}</td>
-                                <td>{r.checkIn || "-"}</td>
-                                <td>{r.checkOut || "-"}</td>
-                                <td>{r.workStatus}</td>
-                                <td>{r.workType}</td>
-                                <td>{r.totalWorkMinutes}</td>
+                        </thead>
+
+                        <tbody>
+                        {records.length === 0 ? (
+                            <tr>
+                                <td colSpan="6" className="text-center at-empty">
+                                    조회 결과 없음
+                                </td>
                             </tr>
-                        ))
+                        ) : (
+                            pageRecords.map((r, idx) => (
+                                <tr key={idx}>
+                                    <td>{r.workDate}</td>
+                                    <td>{r.checkIn || "-"}</td>
+                                    <td>{r.checkOut || "-"}</td>
+
+                                    <td>
+                    <span
+                        className={`at-badge at-status at-status-${String(
+                            r.workStatus || ""
+                        ).toLowerCase()}`}
+                    >
+                      {r.workStatus}
+                    </span>
+                                    </td>
+
+                                    <td>
+                    <span
+                        className={`at-badge at-type at-type-${String(
+                            r.workType || ""
+                        ).toLowerCase()}`}
+                    >
+                      {r.workType}
+                    </span>
+                                    </td>
+
+                                    <td>{r.totalWorkMinutes}</td>
+                                </tr>
+                            ))
+                        )}
+                        </tbody>
+                    </Table>
+
+                    {/* 페이지네이션 */}
+                    {records.length > 0 && totalPages > 1 && (
+                        <div className="at-pagination">
+                            <button
+                                className="at-page-btn"
+                                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                            >
+                                ‹
+                            </button>
+
+                            {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                .slice(
+                                    Math.max(0, currentPage - 4),
+                                    Math.min(totalPages, currentPage + 3)
+                                )
+                                .map((p) => (
+                                    <button
+                                        key={p}
+                                        className={`at-page-btn ${p === currentPage ? "active" : ""}`}
+                                        onClick={() => setCurrentPage(p)}
+                                    >
+                                        {p}
+                                    </button>
+                                ))}
+
+                            <button
+                                className="at-page-btn"
+                                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                            >
+                                ›
+                            </button>
+                        </div>
                     )}
-                    </tbody>
-                </Table>
+                </div>
             </Card>
         </div>
     );
+
+
 };
 
 export default Attendance;

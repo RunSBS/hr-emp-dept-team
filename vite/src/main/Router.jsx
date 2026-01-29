@@ -30,13 +30,11 @@ import AdminWorkPolicy from "../features/work/pages/admin/AdminWorkPolicy.jsx";
 import LeaveApproval from "../features/work/pages/admin/LeaveApproval.jsx";
 import AnnualLeave from "../features/work/pages/admin/AnnualLeave.jsx";
 import Salary from "../features/salary/pages/employee/Salary";
-import ObAllowance from "../features/salary/pages/employee/ObAllowance";
+import AttendanceAI from "../features/work/pages/admin/AttendanceAI.jsx";
 import SalaryPolicy from "../features/salary/pages/employee/SalaryPolicy";
 import AdminSalary from "../features/salary/pages/admin/AdminSalary";
 import AdminSalaryPolicy from "../features/salary/pages/admin/AdminSalaryPolicy";
-import Dispatch from "../features/hrm/pages/Outsourcing.jsx";
 import EmpSign from "./EmpSign.jsx";
-
 import Record from "../features/invite/Record.jsx";
 import ApprovalLayout from "../features/approval/components/ApprovalLayout.jsx";
 import Detail from "../features/approval/pages/Detail.jsx";
@@ -65,12 +63,13 @@ function Router() {
                 <Route path="work">
                     {/* 개인 근태 */}
                     <Route path="employee/attendance" element={<Attendance />} />
-                    <Route path="employee/request" element={<LeaveRequest />} />
+                    <Route path="employee/leaverequest" element={<LeaveRequest />} />
                     <Route path="employee/usage" element={<AnnualUsage />} />
                     <Route path="employee/workpolicy" element={<WorkPolicy />} />
 
                     {/* 관리자 근태 */}
                     <Route path="admin/attendance" element={<AdminAttendance />} />
+                    <Route path="admin/attendanceai" element={<AttendanceAI />} />
                     <Route path="admin/adminworkpolicy" element={<AdminWorkPolicy />} />
                     <Route path="admin/leaveapproval" element={<LeaveApproval />} />
                     <Route path="admin/annualleave" element={<AnnualLeave />} />
@@ -80,7 +79,6 @@ function Router() {
                 <Route path="salary">
                     {/* 일반사원 급여 */}
                     <Route path="employee/salary" element={<Salary />} />
-                    <Route path="employee/oballowance" element={<ObAllowance />} />
                     <Route path="employee/salarypolicy" element={<SalaryPolicy />} />
 
                     {/* 관리자 급여 */}

@@ -61,5 +61,55 @@ public interface WorkRecordRepository extends JpaRepository<WorkRecord, Long> {
             LocalDate end
     );
 
+    @Query("""
+    select
+    coalesce(sum(wr.normalWorkMinutes),0),
+    coalesce(sum(wr.unpaidMinutes),0),
+    coalesce(sum(wr.overtimeWorkMinutes),0)
+    from WorkRecord wr
+    where wr.employeeId = :empId
+    and wr.workDate between :start and :end
+    """)
+    Object[] sumMinutesForMonth(
+            @Param("empId") String empId,
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
+
+    @Query("""
+        select coalesce(sum(w.normalWorkMinutes), 0)
+        from WorkRecord w
+        where w.employeeId = :empId
+          and w.workDate between :start and :end
+    """)
+    int sumNormalMinutesByEmpAndMonth(
+            @Param("empId") String empId,
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
+
+    @Query("""
+        select coalesce(sum(w.unpaidMinutes), 0)
+        from WorkRecord w
+        where w.employeeId = :empId
+          and w.workDate between :start and :end
+    """)
+    int sumUnpaidMinutesByEmpAndMonth(
+            @Param("empId") String empId,
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
+
+    @Query("""
+        select coalesce(sum(w.overtimeWorkMinutes), 0)
+        from WorkRecord w
+        where w.employeeId = :empId
+          and w.workDate between :start and :end
+    """)
+    int sumOvertimeMinutesByEmpAndMonth(
+            @Param("empId") String empId,
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
 
 }

@@ -1,4 +1,4 @@
-package boot.team.hr.eun.attendance.vaildator;
+package boot.team.hr.eun.attendance.validator;
 
 import boot.team.hr.eun.attendance.entity.CompanyLocation;
 import boot.team.hr.eun.attendance.repo.CompanyLocationRepository;

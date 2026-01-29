@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "../../styles/AdminSalaryPolicy.css";
 import axios from "axios";
 import { Card, Form, Button, Alert, Spinner } from "react-bootstrap";
 
@@ -79,37 +80,65 @@ const AdminSalaryPolicy = () => {
     };
 
     return (
-        <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-            <h2 className="mb-4">급여 정책 관리</h2>
+        <div className="admin-salary-policy">
+            {/* ===== Header ===== */}
+            <div className="asp-header">
+                <h2 className="asp-title">급여 정책 관리</h2>
+                <p className="asp-subtitle">
+                    연장수당 배율/월 기준 근무분을 관리합니다. 저장 후 급여 계산에 반영됩니다.
+                </p>
+            </div>
 
-            <Card className="p-4 shadow-sm">
+            {/* ===== Main Card ===== */}
+            <Card className="asp-card">
+                {/* Loading */}
                 {loading ? (
-                    <div className="d-flex align-items-center gap-2">
+                    <div className="asp-loading">
                         <Spinner animation="border" size="sm" />
                         <span>불러오는 중...</span>
                     </div>
                 ) : (
                     <>
-                        {error && <Alert variant="danger">{error}</Alert>}
-                        {ok && <Alert variant="success">{ok}</Alert>}
+                        {/* Alerts */}
+                        {error && (
+                            <Alert className="asp-alert" variant="danger">
+                                {error}
+                            </Alert>
+                        )}
+                        {ok && (
+                            <Alert className="asp-alert" variant="success">
+                                {ok}
+                            </Alert>
+                        )}
 
-                        <div className="mb-3 text-muted">
+                        {/* Current Policy Info */}
+                        <div className="asp-meta">
                             {policy ? (
                                 <>
-                                    <div>
-                                        현재 정책 ID: <b>{policy.payrollPolicyId ?? "-"}</b>
+                                    <div className="asp-meta-row">
+                                        <span className="asp-meta-label">현재 정책 ID</span>
+                                        <span className="asp-meta-value">
+                    {policy.payrollPolicyId ?? "-"}
+                  </span>
                                     </div>
-                                    <div>
-                                        updatedBy: <b>{policy.updatedBy ?? "-"}</b> / updatedAt:{" "}
-                                        <b>{policy.updatedAt ?? "-"}</b>
+                                    <div className="asp-meta-row">
+                                        <span className="asp-meta-label">updatedBy</span>
+                                        <span className="asp-meta-value">{policy.updatedBy ?? "-"}</span>
+                                    </div>
+                                    <div className="asp-meta-row">
+                                        <span className="asp-meta-label">updatedAt</span>
+                                        <span className="asp-meta-value">{policy.updatedAt ?? "-"}</span>
                                     </div>
                                 </>
                             ) : (
-                                <div>현재 저장된 정책이 없습니다. 아래에서 저장하면 생성됩니다.</div>
+                                <div className="asp-meta-empty">
+                                    현재 저장된 정책이 없습니다. 아래에서 저장하면 생성됩니다.
+                                </div>
                             )}
                         </div>
 
-                        <Form>
+                        {/* Form */}
+                        <Form className="asp-form">
                             <Form.Group className="mb-3">
                                 <Form.Label>연장수당 배율 (rateMultiplier)</Form.Label>
                                 <Form.Control
@@ -119,6 +148,9 @@ const AdminSalaryPolicy = () => {
                                     onChange={(e) => setRateMultiplier(e.target.value)}
                                     placeholder="예: 1.5"
                                 />
+                                <div className="asp-helper">
+                                    예) 1.5 입력 시 연장수당이 1.5배 적용됩니다.
+                                </div>
                             </Form.Group>
 
                             <Form.Group className="mb-3">
@@ -129,9 +161,9 @@ const AdminSalaryPolicy = () => {
                                     onChange={(e) => setWorkMinutesPerMonth(e.target.value)}
                                     placeholder="예: 9600"
                                 />
-                                <Form.Text className="text-muted">
-                                    비워도 됩니다(서버에서 기본값을 쓰거나, 급여계산에서 다른 기준을 쓸 수 있음).
-                                </Form.Text>
+                                <div className="asp-helper">
+                                    비워도 됩니다(서버 기본값 또는 다른 계산 기준 사용 가능).
+                                </div>
                             </Form.Group>
 
                             <Form.Group className="mb-3">
@@ -145,13 +177,22 @@ const AdminSalaryPolicy = () => {
                                 />
                             </Form.Group>
 
-                            <div className="d-flex gap-2">
+                            <div className="asp-actions">
                                 <Button onClick={handleSave} disabled={saving}>
                                     {saving ? "저장 중..." : "저장"}
                                 </Button>
-                                <Button variant="secondary" onClick={fetchPolicy} disabled={loading || saving}>
+
+                                <Button
+                                    variant="secondary"
+                                    onClick={fetchPolicy}
+                                    disabled={loading || saving}
+                                >
                                     새로고침
                                 </Button>
+
+                                <div className="asp-actions-hint">
+                                    * 저장 버튼은 입력값이 숫자 형식일 때 정상 동작합니다.
+                                </div>
                             </div>
                         </Form>
                     </>
@@ -159,6 +200,7 @@ const AdminSalaryPolicy = () => {
             </Card>
         </div>
     );
+
 };
 
 export default AdminSalaryPolicy;

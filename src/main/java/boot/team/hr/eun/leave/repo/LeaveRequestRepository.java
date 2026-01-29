@@ -82,4 +82,23 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
 
     List<LeaveRequest> findByEmployeeIdOrderByCreatedAtDesc(String employeeId);
 
+    // ✅ 승인된 것만 조회(내역)
+    List<LeaveRequest> findByEmployeeIdAndApprovalStatusOrderByCreatedAtDesc(
+            String employeeId,
+            ApprovalStatus approvalStatus
+    );
+
+    // ✅ 승인된 것만 "사용 분" 합계
+    @Query("""
+        select coalesce(sum(lr.leaveMinutes), 0)
+        from LeaveRequest lr
+        where lr.employeeId = :employeeId
+          and lr.approvalStatus = 'APPROVED'
+          and lr.startDate between :from and :to
+    """)
+    int sumApprovedLeaveMinutesByPeriod(
+            @Param("employeeId") String employeeId,
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to
+    );
 }

@@ -1,0 +1,179 @@
+/* =========================================================
+   AdminWorkPolicy 페이지 전용 스타일
+   - 관리자 페이지 톤(카드/테이블/모달 통일)
+   - Bootstrap 위에 정리용 커스텀
+   ========================================================= */
+
+/* ===== Page Wrapper ===== */
+.admin-work-policy{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 52px 18px 40px;
+}
+
+/* ===== Titles ===== */
+.admin-work-policy__title{
+    margin: 0 0 14px;
+    font-size: 1.45rem;
+    font-weight: 900;
+    letter-spacing: -0.35px;
+    color: rgba(17,24,39,.90);
+}
+
+.admin-work-policy__section-title{
+    margin: 0 0 12px;
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: -0.25px;
+    color: rgba(17,24,39,.86);
+}
+
+/* ===== Common Card ===== */
+.awp-card{
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+    padding: 14px;
+}
+
+/* 섹션 간격 */
+.awp-section{
+    margin-top: 14px;
+}
+
+/* ===== Alert ===== */
+.awp-alert{
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+/* ===== Action Bar ===== */
+.awp-actions{
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+.awp-actions .btn{
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+}
+
+/* ===== Tables ===== */
+.awp-table-wrap{
+    border-radius: 14px;
+    overflow: hidden; /* 둥근 모서리 유지 */
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.awp-table{
+    margin: 0 !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+/* 테이블 헤더 */
+.awp-table thead th{
+    background: rgba(17, 24, 39, 0.04);
+    color: rgba(17, 24, 39, 0.85);
+    font-weight: 900;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(15,23,42,.10) !important;
+}
+
+/* 테이블 바디 */
+.awp-table tbody td{
+    font-size: 0.93rem;
+    vertical-align: middle;
+    color: rgba(17, 24, 39, 0.85);
+}
+
+/* hover */
+.awp-table.table-hover tbody tr:hover{
+    background: rgba(59, 130, 246, 0.04);
+}
+
+/* 빈 데이터 row */
+.awp-empty{
+    padding: 18px 10px !important;
+    color: rgba(17, 24, 39, 0.55);
+    font-weight: 700;
+}
+
+/* 관리 버튼 영역 */
+.awp-manage{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+.awp-manage .btn{
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+}
+
+/* ===== Modals ===== */
+.modal-content{
+    border-radius: 16px !important;
+    border: 1px solid rgba(15, 23, 42, 0.10) !important;
+    box-shadow: 0 18px 40px rgba(15,23,42,.15);
+}
+.modal-header{
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+.modal-title{
+    font-weight: 900 !important;
+    letter-spacing: -0.2px;
+}
+.modal-footer{
+    border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+/* 폼 라벨/입력 */
+.modal-body .form-label{
+    font-size: 0.86rem;
+    font-weight: 800;
+    color: rgba(17,24,39,.78);
+    margin-bottom: 6px;
+}
+.modal-body .form-control,
+.modal-body .form-select{
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    box-shadow: none !important;
+    height: 40px;
+}
+.modal-body .form-control:focus,
+.modal-body .form-select:focus{
+    border-color: rgba(59, 130, 246, 0.55);
+    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.12) !important;
+}
+.modal-footer .btn{
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+}
+
+/* ===== Company Location Card (Bootstrap Card 위 커스텀) ===== */
+.awp-location-card{
+    border-radius: 16px !important;
+    border: 1px solid rgba(15,23,42,.08) !important;
+    box-shadow: 0 10px 26px rgba(15,23,42,.06) !important;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px){
+    .admin-work-policy{
+        padding: 14px 12px 30px;
+    }
+    .awp-actions{
+        gap: 8px;
+    }
+    .awp-table thead th{
+        font-size: 0.84rem;
+    }
+}

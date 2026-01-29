@@ -11,7 +11,7 @@ import boot.team.hr.eun.attendance.repo.AttendancePolicyRepository;
 import boot.team.hr.eun.attendance.repo.WorkRecordRepository;
 import boot.team.hr.eun.attendance.util.AttendanceTimeCalculator;
 import boot.team.hr.eun.attendance.util.WorkDateResolver;
-import boot.team.hr.eun.attendance.vaildator.AttendanceLocationValidator;
+import boot.team.hr.eun.attendance.validator.AttendanceLocationValidator;
 import boot.team.hr.hyun.emp.entity.Emp;
 import boot.team.hr.hyun.emp.repo.EmpRepository;
 import lombok.RequiredArgsConstructor;

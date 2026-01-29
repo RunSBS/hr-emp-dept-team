@@ -1,0 +1,248 @@
+/* =========================================================
+   Attendance(사원 출퇴근) 페이지 전용 스타일
+   - AdminAttendance / AdminSalaryPolicy 톤과 통일감
+   - ✅ JSX(한 줄 날짜필터) 구조에 맞춤
+   ========================================================= */
+
+.attendance-page{
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 18px 40px;
+}
+
+/* ===== Header ===== */
+.at-header{
+    margin-bottom: 14px;
+}
+.at-title{
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+.at-subtitle{
+    margin: 6px 0 0;
+    color: rgba(17, 24, 39, 0.62);
+    font-size: 0.95rem;
+}
+
+/* ✅ 리스트 카드 헤더(“내 근태 내역” 카드 안에서 여백 조정) */
+.at-list-header{
+    margin-bottom: 10px;
+}
+
+/* ===== Card Base ===== */
+.at-card{
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    padding: 18px;
+}
+
+/* spacing between cards */
+.at-action-card{
+    margin-bottom: 14px;
+}
+.at-list-card{
+    margin-top: 10px;
+}
+
+/* ===== Today area (JSX: .at-today) ===== */
+.at-today{
+    margin-top: 14px;
+    background: rgba(17, 24, 39, 0.03);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 12px;
+    padding: 12px 12px;
+}
+
+/* Alert */
+.at-alert{
+    border-radius: 12px;
+}
+
+/* =========================================================
+   ✅ Filter Row (JSX: .at-filter-row / .at-date-group ...)
+   - "시작일 ~ 종료일   조회" 한 줄 배치
+   ========================================================= */
+.at-filter-row{
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.at-date-group{
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.at-date-item{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* ✅ 라벨(시작일/종료일) */
+.at-label{
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.72);
+}
+
+/* ✅ "~" 표시 */
+.at-tilde{
+    padding: 0 2px;
+    margin-bottom: 8px; /* input 높이 맞춤 */
+    color: rgba(17, 24, 39, 0.55);
+    font-weight: 900;
+}
+
+/* ✅ date input */
+.at-date-input{
+    min-width: 190px;
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    box-shadow: none !important;
+}
+.at-date-input:focus{
+    border-color: rgba(59, 130, 246, 0.55);
+    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.12) !important;
+}
+
+/* ✅ 조회 버튼 */
+.at-search-btn{
+    border-radius: 10px;
+    font-weight: 900;
+    padding: 10px 14px;
+    min-width: 92px;
+}
+
+/* =========================================================
+   Table
+   ========================================================= */
+.at-table-wrap{
+    margin-top: 6px;
+    overflow: hidden; /* rounded corner 유지 */
+    border-radius: 12px;
+}
+.at-table{
+    margin: 0;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+}
+.at-table thead th{
+    background: rgba(17, 24, 39, 0.03);
+    color: rgba(17, 24, 39, 0.82);
+    font-weight: 900;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.at-table tbody td{
+    font-size: 0.92rem;
+    vertical-align: middle;
+}
+.at-table.table-hover tbody tr:hover{
+    background: rgba(59, 130, 246, 0.04);
+}
+.at-empty{
+    color: rgba(17, 24, 39, 0.58);
+    font-weight: 700;
+    padding: 22px 0 !important;
+}
+
+/* =========================================================
+   Badges
+   ========================================================= */
+.at-badge{
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 0.82rem;
+    letter-spacing: -0.2px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(17, 24, 39, 0.03);
+}
+
+/* WorkStatus */
+.at-status-normal{ background: rgba(34,197,94,.10); border-color: rgba(34,197,94,.22); }
+.at-status-late{ background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.25); }
+.at-status-early_leave{ background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.25); }
+.at-status-absent{ background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.25); }
+.at-status-pending{ background: rgba(156,163,175,.18); border-color: rgba(156,163,175,.30); }
+
+/* WorkType */
+.at-type-office{ background: rgba(59,130,246,.10); border-color: rgba(59,130,246,.25); }
+.at-type-night{ background: rgba(168,85,247,.12); border-color: rgba(168,85,247,.25); }
+.at-type-outside{ background: rgba(34,197,94,.10); border-color: rgba(34,197,94,.25); }
+.at-type-leave{ background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.25); }
+.at-type-off{ background: rgba(156,163,175,.16); border-color: rgba(156,163,175,.30); }
+.at-type-remote{ background: rgba(14,165,233,.12); border-color: rgba(14,165,233,.25); }
+
+/* =========================================================
+   Pagination (JSX: .at-pagination / .at-page-btn)
+   ✅ 모바일뿐 아니라 기본에도 적용되게 "밖으로" 뺌
+   ========================================================= */
+.at-pagination{
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 8px 2px;
+}
+
+.at-page-btn{
+    min-width: 36px;
+    height: 34px;
+    padding: 0 10px;
+
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #fff;
+
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.78);
+
+    transition: background .12s ease, transform .12s ease, border-color .12s ease;
+}
+
+.at-page-btn:hover{
+    background: rgba(59,130,246,.06);
+    border-color: rgba(59,130,246,.35);
+    transform: translateY(-1px);
+}
+
+.at-page-btn.active{
+    background: rgba(59,130,246,.14);
+    border-color: rgba(59,130,246,.45);
+    color: rgba(17,24,39,.92);
+}
+
+.at-page-btn:disabled{
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px){
+    .attendance-page{
+        padding: 14px 12px 30px;
+    }
+    .at-card{
+        padding: 14px;
+    }
+
+    /* ✅ 모바일에서 date input 너무 커지면 자연스럽게 줄바꿈 */
+    .at-date-input{
+        min-width: 160px;
+        flex: 1;
+    }
+}

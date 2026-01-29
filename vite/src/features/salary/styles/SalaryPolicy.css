@@ -1,0 +1,173 @@
+/* =========================================================
+   SalaryPolicy 페이지 전용 스타일
+   - WorkPolicy 톤과 통일감 (차콜+블루)
+   ========================================================= */
+
+.salarypolicy-page{
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 50px 18px 40px;
+}
+
+/* ===== Header ===== */
+.sp-header{ margin-bottom: 14px; }
+.sp-title{
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+}
+.sp-subtitle{
+    margin: 6px 0 0;
+    color: rgba(17,24,39,.62);
+    font-size: .95rem;
+    font-weight: 600;
+}
+
+/* ===== Loading / Alert ===== */
+.sp-loading{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 2px;
+    color: rgba(17, 24, 39, 0.7);
+}
+.sp-alert{
+    border-radius: 12px;
+}
+
+/* ===== Card Base ===== */
+.sp-card{
+    background: #fff;
+    border: 1px solid rgba(15,23,42,.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15,23,42,.06);
+    padding: 18px;
+    margin-bottom: 14px;
+}
+
+.sp-card-head{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+/* 카드 타이틀(페이지 타이틀보다 과하지 않게) */
+.sp-card-title{
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 900;
+    letter-spacing: -0.2px;
+    color: rgba(17,24,39,.90);
+}
+
+.sp-card-sub{
+    margin: 6px 0 0;
+    color: rgba(17,24,39,.58);
+    font-weight: 600;
+    font-size: .92rem;
+}
+
+.sp-card-meta{ margin-top: 2px; }
+.sp-meta{
+    color: rgba(17,24,39,.55);
+    font-weight: 700;
+    font-size: .88rem;
+}
+
+/* ===== Grid ===== */
+.sp-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.sp-item{
+    background: rgba(17,24,39,.03);
+    border: 1px solid rgba(15,23,42,.06);
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.sp-item-wide{
+    grid-column: 1 / -1;
+}
+
+.sp-item-title{
+    font-weight: 900;
+    color: rgba(17,24,39,.90);
+    letter-spacing: -0.2px;
+    margin-bottom: 8px;
+}
+
+.sp-item-desc{
+    color: rgba(17,24,39,.70);
+    font-weight: 650;
+    line-height: 1.5;
+}
+
+/* ===== Pill ===== */
+.sp-pill{
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(59,130,246,.28);
+    background: rgba(59,130,246,.10);
+    color: rgba(17,24,39,.92);
+    font-weight: 900;
+    letter-spacing: -0.2px;
+    margin: 0 2px;
+}
+
+/* ===== Law Card ===== */
+.sp-law-list{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.sp-law-item{
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(15,23,42,.06);
+    background: rgba(17,24,39,.03);
+}
+
+.sp-law-badge{
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(15,23,42,.10);
+    background: #fff;
+    font-weight: 900;
+    font-size: .82rem;
+    color: rgba(17,24,39,.80);
+}
+
+.sp-law-text{
+    color: rgba(17,24,39,.70);
+    font-weight: 650;
+    line-height: 1.55;
+}
+
+.sp-law-footer{
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(15,23,42,.12);
+    color: rgba(17,24,39,.62);
+    font-weight: 750;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px){
+    .salarypolicy-page{ padding: 14px 12px 30px; }
+    .sp-grid{ grid-template-columns: 1fr; }
+}

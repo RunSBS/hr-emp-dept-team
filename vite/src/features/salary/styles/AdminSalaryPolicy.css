@@ -1,0 +1,141 @@
+/* =========================================================
+   AdminSalaryPolicy 페이지 전용 스타일
+   - AdminAttendance / AdminSalary 톤과 통일감
+   ========================================================= */
+
+.admin-salary-policy{
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 18px 40px;
+}
+
+/* ===== Header ===== */
+.asp-header{
+    margin-bottom: 14px;
+}
+.asp-title{
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+.asp-subtitle{
+    margin: 6px 0 0;
+    color: rgba(17, 24, 39, 0.62);
+    font-size: 0.95rem;
+}
+
+/* ===== Card ===== */
+.asp-card{
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    padding: 18px;
+}
+
+/* Loading */
+.asp-loading{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 2px;
+    color: rgba(17, 24, 39, 0.72);
+    font-weight: 600;
+}
+
+/* Alerts */
+.asp-alert{
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+/* Meta */
+.asp-meta{
+    background: rgba(17, 24, 39, 0.03);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 12px;
+    padding: 12px 12px;
+    margin-bottom: 14px;
+}
+.asp-meta-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 6px 4px;
+}
+.asp-meta-label{
+    color: rgba(17, 24, 39, 0.66);
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+.asp-meta-value{
+    color: rgba(17, 24, 39, 0.92);
+    font-weight: 800;
+    font-size: 0.92rem;
+}
+.asp-meta-empty{
+    color: rgba(17, 24, 39, 0.66);
+    font-weight: 600;
+    padding: 2px 4px;
+}
+
+/* Form */
+.asp-form .form-label{
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.76);
+    margin-bottom: 6px;
+}
+.asp-form .form-control{
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    box-shadow: none !important;
+}
+.asp-form .form-control:focus{
+    border-color: rgba(59, 130, 246, 0.55);
+    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.12) !important;
+}
+
+/* helper text (기존 Form.Text 대신) */
+.asp-helper{
+    margin-top: 6px;
+    color: rgba(17, 24, 39, 0.56);
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+/* Actions */
+.asp-actions{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+.asp-actions .btn{
+    border-radius: 10px;
+    font-weight: 800;
+}
+.asp-actions-hint{
+    margin-left: auto;
+    color: rgba(17, 24, 39, 0.55);
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 6px 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px){
+    .admin-salary-policy{
+        padding: 14px 12px 30px;
+    }
+    .asp-card{
+        padding: 14px;
+    }
+    .asp-actions-hint{
+        margin-left: 0;
+        width: 100%;
+    }
+}

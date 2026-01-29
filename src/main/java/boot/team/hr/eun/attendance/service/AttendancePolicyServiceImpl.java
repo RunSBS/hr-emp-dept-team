@@ -4,7 +4,7 @@ import boot.team.hr.eun.attendance.dto.AttendancePolicyRequestDto;
 import boot.team.hr.eun.attendance.dto.AttendancePolicyResponseDto;
 import boot.team.hr.eun.attendance.entity.AttendancePolicy;
 import boot.team.hr.eun.attendance.repo.AttendancePolicyRepository;
-import boot.team.hr.eun.attendance.vaildator.AttendancePolicyValidator;
+import boot.team.hr.eun.attendance.validator.AttendancePolicyValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,6 @@ import java.util.List;
 public class AttendancePolicyServiceImpl implements AttendancePolicyService {
 
     private final AttendancePolicyRepository policyRepository;
-    private final AttendancePolicyValidator policyValidator;
 
     /* ===================== 현재 적용 정책 조회 ===================== */
     @Override
@@ -66,11 +65,8 @@ public class AttendancePolicyServiceImpl implements AttendancePolicyService {
         );
 
         // 유효성 검사
-        policyValidator.validateTime(policy);
-        policyValidator.validatePeriod(
-                request.getEffectiveFrom(),
-                request.getEffectiveTo()
-        );
+        AttendancePolicyValidator.validateTime(policy);
+        AttendancePolicyValidator.validatePeriod(policy);
 
         policyRepository.save(policy);
         return toResponse(policy);
@@ -109,11 +105,8 @@ public class AttendancePolicyServiceImpl implements AttendancePolicyService {
         );
 
         // 유효성 검사
-        policyValidator.validateTime(policy);
-        policyValidator.validatePeriod(
-                request.getEffectiveFrom(),
-                request.getEffectiveTo()
-        );
+        AttendancePolicyValidator.validateTime(policy);
+        AttendancePolicyValidator.validatePeriod(policy);
 
         return toResponse(policy);
     }
