@@ -1,0 +1,173 @@
+/* =========================================================
+   WorkPolicy 페이지 전용 스타일
+   - Home.css(차콜+블루 톤)과 어울리게
+   ========================================================= */
+
+.workpolicy-page{
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 50px 18px 40px;
+}
+
+/* ===== Header ===== */
+.wp-header{ margin-bottom: 14px; }
+.wp-title{
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+}
+.wp-subtitle{
+    margin: 6px 0 0;
+    color: rgba(17,24,39,.62);
+    font-size: .95rem;
+    font-weight: 600;
+}
+
+/* ===== Card Base ===== */
+.wp-card{
+    background: #fff;
+    border: 1px solid rgba(15,23,42,.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15,23,42,.06);
+    padding: 18px;
+    margin-bottom: 14px;
+}
+
+.wp-card-head{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+/* ✅ "회사 근태 정책"이 페이지 타이틀보다 커보이지 않게 */
+.wp-card-title{
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 900;
+    letter-spacing: -0.2px;
+    color: rgba(17,24,39,.90);
+}
+
+.wp-card-sub{
+    margin: 6px 0 0;
+    color: rgba(17,24,39,.58);
+    font-weight: 600;
+    font-size: .92rem;
+}
+
+/* meta */
+.wp-card-meta{ margin-top: 2px; }
+.wp-meta{
+    color: rgba(17,24,39,.55);
+    font-weight: 700;
+    font-size: .88rem;
+}
+
+/* ===== Grid ===== */
+.wp-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.wp-item{
+    background: rgba(17,24,39,.03);
+    border: 1px solid rgba(15,23,42,.06);
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.wp-item-wide{
+    grid-column: 1 / -1;
+}
+
+.wp-item-title{
+    font-weight: 900;
+    color: rgba(17,24,39,.90);
+    letter-spacing: -0.2px;
+    margin-bottom: 8px;
+}
+
+.wp-item-desc{
+    color: rgba(17,24,39,.70);
+    font-weight: 650;
+    line-height: 1.5;
+}
+
+.wp-item-note{
+    margin-top: 8px;
+    color: rgba(17,24,39,.55);
+    font-weight: 650;
+    font-size: .92rem;
+}
+
+/* ===== Pill (시간/기간 강조) ===== */
+.wp-pill{
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(59,130,246,.28);
+    background: rgba(59,130,246,.10);
+    color: rgba(17,24,39,.92);
+    font-weight: 900;
+    letter-spacing: -0.2px;
+    margin: 0 2px;
+}
+
+.wp-pill-wide{
+    padding: 7px 12px;
+}
+
+/* ===== Law Card ===== */
+.wp-law-list{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.wp-law-item{
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(15,23,42,.06);
+    background: rgba(17,24,39,.03);
+}
+
+.wp-law-badge{
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(15,23,42,.10);
+    background: #fff;
+    font-weight: 900;
+    font-size: .82rem;
+    color: rgba(17,24,39,.80);
+}
+
+.wp-law-text{
+    color: rgba(17,24,39,.70);
+    font-weight: 650;
+    line-height: 1.5;
+}
+
+.wp-law-footer{
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(15,23,42,.12);
+    color: rgba(17,24,39,.62);
+    font-weight: 750;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px){
+    .workpolicy-page{ padding: 14px 12px 30px; }
+    .wp-grid{ grid-template-columns: 1fr; }
+}

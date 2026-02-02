@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "../../styles/LeaveApproval.css";
 import axios from "axios";
 import { Table, Button, Spinner, Alert } from "react-bootstrap";
 
@@ -71,61 +72,78 @@ const LeaveApproval = () => {
     };
 
     return (
-        <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-            <h2 className="mb-4">승인 대기 휴가 목록</h2>
+        <div className="leave-approval-page">
+            {/* ===== Header ===== */}
+            <div className="la-header">
+                <h2 className="la-title">휴가 승인 관리</h2>
+                <p className="la-subtitle">
+                    현재 승인 대기 중인 휴가 신청 목록입니다.
+                </p>
+            </div>
 
-            {loading && <Spinner animation="border" />}
-            {error && <Alert variant="danger">{error}</Alert>}
+            {loading && (
+                <div className="la-loading">
+                    <Spinner animation="border" size="sm" />
+                    승인 대기 휴가 불러오는 중...
+                </div>
+            )}
+
+            {error && <Alert className="la-alert" variant="danger">{error}</Alert>}
 
             {!loading && leaves.length > 0 && (
-                <Table bordered hover>
-                    <thead>
-                    <tr>
-                        <th>사원 ID</th>
-                        <th>휴가 종류</th>
-                        <th>시작일</th>
-                        <th>종료일</th>
-                        <th>총 시간(분)</th>
-                        <th>사유</th>
-                        <th>처리</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {leaves.map((l) => (
-                        <tr key={l.leaveId}>
-                            <td>{l.employeeId}</td>
-                            <td>{l.leaveTypeName}</td>
-                            <td>{l.startDate}</td>
-                            <td>{l.endDate}</td>
-                            <td>{l.leaveMinutes}</td>
-                            <td>{l.leaveReason}</td>
-                            <td>
-                                <Button
-                                    size="sm"
-                                    variant="success"
-                                    className="me-2"
-                                    onClick={() => handleApprove(l.leaveId)}
-                                    disabled={actionLoading === l.leaveId}
-                                >
-                                    {actionLoading === l.leaveId ? "처리중..." : "승인"}
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="danger"
-                                    onClick={() => handleReject(l.leaveId)}
-                                    disabled={actionLoading === l.leaveId}
-                                >
-                                    {actionLoading === l.leaveId ? "처리중..." : "반려"}
-                                </Button>
-                            </td>
+                <div className="la-card la-table-wrap">
+                    <Table bordered hover responsive className="la-table">
+                        <thead>
+                        <tr>
+                            <th>사원 ID</th>
+                            <th>휴가 종류</th>
+                            <th>시작일</th>
+                            <th>종료일</th>
+                            <th>총 시간(분)</th>
+                            <th>사유</th>
+                            <th>처리</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </Table>
+                        </thead>
+                        <tbody>
+                        {leaves.map((l) => (
+                            <tr key={l.leaveId}>
+                                <td className="la-emp">{l.employeeId}</td>
+                                <td>{l.leaveTypeName}</td>
+                                <td>{l.startDate}</td>
+                                <td>{l.endDate}</td>
+                                <td>{l.leaveMinutes}</td>
+                                <td className="la-reason">{l.leaveReason}</td>
+                                <td>
+                                    <div className="la-action-btns">
+                                        <Button
+                                            size="sm"
+                                            variant="success"
+                                            onClick={() => handleApprove(l.leaveId)}
+                                            disabled={actionLoading === l.leaveId}
+                                        >
+                                            {actionLoading === l.leaveId ? "처리중..." : "승인"}
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            variant="danger"
+                                            onClick={() => handleReject(l.leaveId)}
+                                            disabled={actionLoading === l.leaveId}
+                                        >
+                                            {actionLoading === l.leaveId ? "처리중..." : "반려"}
+                                        </Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </Table>
+                </div>
             )}
 
             {!loading && leaves.length === 0 && (
-                <Alert variant="secondary">승인 대기 중인 휴가가 없습니다.</Alert>
+                <Alert className="la-alert" variant="secondary">
+                    승인 대기 중인 휴가가 없습니다.
+                </Alert>
             )}
         </div>
     );

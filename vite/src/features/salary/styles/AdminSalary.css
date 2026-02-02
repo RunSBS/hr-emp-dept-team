@@ -1,0 +1,196 @@
+/* =========================================================
+   AdminSalary 페이지 전용 스타일
+   - AdminAttendance 톤(화이트 카드 + 차콜 텍스트 + 블루 포커스)과 통일
+   ========================================================= */
+
+/* ===== 페이지 컨테이너 ===== */
+.admin-salary{
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 50px 18px 40px; /* 위쪽 여백 충분히 */
+}
+
+/* ===== 헤더 ===== */
+.as-header{
+    margin-bottom: 14px;
+}
+.as-title{
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+.as-subtitle{
+    margin: 6px 0 0;
+    color: rgba(17, 24, 39, 0.62);
+    font-size: 0.95rem;
+}
+
+/* ===== 공통 카드 ===== */
+.as-card{
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* ===== Alert ===== */
+.as-alert{
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+/* ===== 입력 폼 카드 ===== */
+.as-form-card{
+    padding: 16px 16px 14px;
+    margin-bottom: 14px;
+}
+
+/* 폼 전체 */
+.as-form{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* 2열 그리드(작은 화면에서는 자동 1열) */
+.as-form-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 14px;
+}
+.as-field .form-label{
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.72);
+    margin-bottom: 6px;
+}
+.as-field .form-control{
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    box-shadow: none !important;
+}
+.as-field .form-control:focus{
+    border-color: rgba(59, 130, 246, 0.55);
+    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.12) !important;
+}
+
+/* hint 텍스트 */
+.as-hint{
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: rgba(17, 24, 39, 0.55);
+}
+
+/* ===== 버튼 영역 ===== */
+.as-actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+.as-actions .btn{
+    border-radius: 10px;
+    font-weight: 800;
+    padding: 10px 12px;
+}
+
+/* 버튼 너비가 너무 들쭉날쭉하지 않게 */
+.as-btn{
+    min-height: 40px;
+}
+
+/* ===== 섹션 헤드(타이틀 + 메타) ===== */
+.as-section-head{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+.as-section-title{
+    margin: 0;
+    font-weight: 900;
+    letter-spacing: -0.2px;
+}
+.as-section-meta{
+    color: rgba(17, 24, 39, 0.55);
+    font-size: 0.9rem;
+}
+
+/* ===== 테이블 카드 ===== */
+.as-table-card{
+    padding: 14px;
+    margin-top: 12px;
+}
+
+/* ===== 요약 카드 ===== */
+.as-summary-card{
+    padding: 14px;
+    margin-top: 12px;
+}
+
+/* 테이블 감싸는 영역(모서리 둥글게 유지) */
+.as-table-wrap{
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+/* 테이블 스타일 */
+.as-table{
+    margin: 0;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+}
+.as-table thead th{
+    background: rgba(17, 24, 39, 0.03);
+    color: rgba(17, 24, 39, 0.82);
+    font-weight: 900;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.as-table tbody td{
+    font-size: 0.92rem;
+    vertical-align: middle;
+}
+.as-table.table-hover tbody tr:hover{
+    background: rgba(59, 130, 246, 0.04);
+}
+
+/* 요약 테이블은 헤더(th) 강조 */
+.as-summary-table th{
+    width: 160px;
+    background: rgba(17, 24, 39, 0.02);
+    font-weight: 900;
+}
+
+/* 강조 텍스트 */
+.as-strong{
+    font-weight: 900;
+}
+
+/* 버튼 아래 안내 문구 */
+.as-action-guide{
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: rgba(17, 24, 39, 0.55);
+    line-height: 1.4;
+}
+
+.as-action-guide b{
+    color: rgba(17, 24, 39, 0.8);
+    font-weight: 800;
+}
+
+/* ===== 반응형 ===== */
+@media (max-width: 768px){
+    .admin-salary{
+        padding: 14px 12px 30px;
+    }
+    .as-form-grid{
+        grid-template-columns: 1fr; /* 모바일에서는 1열 */
+    }
+    .as-summary-table th{
+        width: auto;
+    }
+}

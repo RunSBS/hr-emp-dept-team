@@ -1,0 +1,186 @@
+/* =========================================================
+   LeaderAttendance(리더 근태 조회) 페이지 전용 스타일
+   - AdminAttendance 톤과 통일감 (차콜+블루)
+   ========================================================= */
+
+.leader-attendance{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 18px 40px;
+}
+
+/* ===== Header ===== */
+.la-header{
+    margin-bottom: 14px;
+}
+.la-title{
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+.la-subtitle{
+    margin: 6px 0 0;
+    color: rgba(17, 24, 39, 0.62);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* ===== Card ===== */
+.la-card{
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* ===== Filter ===== */
+.la-filter{
+    padding: 14px 14px 6px;
+    margin-bottom: 12px;
+}
+.la-filter-form .form-label{
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.72);
+    margin-bottom: 6px;
+}
+.la-filter-form .form-control,
+.la-filter-form .form-select{
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    box-shadow: none !important;
+}
+.la-filter-form .form-control:focus,
+.la-filter-form .form-select:focus{
+    border-color: rgba(59, 130, 246, 0.55);
+    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.12) !important;
+}
+.la-filter-form .btn{
+    border-radius: 10px;
+    font-weight: 800;
+}
+
+/* ===== Loading / Alert ===== */
+.la-loading{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 2px;
+    color: rgba(17, 24, 39, 0.7);
+}
+.la-alert{
+    border-radius: 12px;
+}
+
+/* ===== Table ===== */
+.la-table-wrap{
+    margin-top: 10px;
+    padding: 10px;
+    overflow: hidden; /* 둥근 모서리 유지 */
+}
+.la-table{
+    margin: 0;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+}
+.la-table thead th{
+    background: rgba(17, 24, 39, 0.03);
+    color: rgba(17, 24, 39, 0.82);
+    font-weight: 900;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.la-table tbody td{
+    font-size: 0.92rem;
+    vertical-align: middle;
+}
+.la-table.table-hover tbody tr:hover{
+    background: rgba(59, 130, 246, 0.04);
+}
+
+/* ===== Badge ===== */
+.la-badge{
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 0.82rem;
+    letter-spacing: -0.2px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(17, 24, 39, 0.03);
+}
+
+/* WorkStatus */
+.la-status-normal{ background: rgba(34,197,94,.10); border-color: rgba(34,197,94,.22); }
+.la-status-late{ background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.25); }
+.la-status-early_leave{ background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.25); }
+.la-status-absent{ background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.25); }
+.la-status-pending{ background: rgba(156,163,175,.18); border-color: rgba(156,163,175,.30); }
+
+/* WorkType */
+.la-type-office{ background: rgba(59,130,246,.10); border-color: rgba(59,130,246,.25); }
+.la-type-night{ background: rgba(168,85,247,.12); border-color: rgba(168,85,247,.25); }
+.la-type-outside{ background: rgba(34,197,94,.10); border-color: rgba(34,197,94,.25); }
+.la-type-leave{ background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.25); }
+.la-type-off{ background: rgba(156,163,175,.16); border-color: rgba(156,163,175,.30); }
+.la-type-remote{ background: rgba(14,165,233,.12); border-color: rgba(14,165,233,.25); }
+
+/* ===== Pagination ===== */
+.la-pagination{
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 8px 4px;
+}
+
+.la-page-btn{
+    min-width: 36px;
+    height: 34px;
+    padding: 0 10px;
+
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #fff;
+
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.78);
+
+    transition: background .12s ease, transform .12s ease, border-color .12s ease;
+}
+
+.la-page-btn:hover{
+    background: rgba(59,130,246,.06);
+    border-color: rgba(59,130,246,.35);
+    transform: translateY(-1px);
+}
+
+.la-page-btn.active{
+    background: rgba(59,130,246,.14);
+    border-color: rgba(59,130,246,.45);
+    color: rgba(17,24,39,.92);
+}
+
+.la-page-btn:disabled{
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.la-page-ellipsis{
+    padding: 0 6px;
+    color: rgba(17,24,39,.55);
+    font-weight: 900;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px){
+    .leader-attendance{
+        padding: 14px 12px 30px;
+    }
+    .la-table thead th{
+        font-size: 0.84rem;
+    }
+}

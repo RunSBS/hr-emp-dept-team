@@ -1,0 +1,175 @@
+/* =========================================================
+   AdminAttendance 페이지 전용 스타일
+   - Home.css(차콜+블루 톤)과 어울리게 구성
+   ========================================================= */
+
+/* ✅ 페이지 전체 폭/여백 */
+.admin-attendance{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 18px 40px;
+}
+
+/* ✅ 헤더 */
+.aa-header{
+    margin-bottom: 14px;
+}
+.aa-title{
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+.aa-subtitle{
+    margin: 6px 0 0;
+    color: rgba(17, 24, 39, 0.62); /* 차콜 계열 */
+    font-size: 0.95rem;
+}
+
+/* ✅ 공통 카드(필터/테이블 감싸는 영역) */
+.aa-card{
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* ✅ 필터 카드 */
+.aa-filter{
+    padding: 14px 14px 6px;
+    margin-bottom: 12px;
+}
+
+/* ✅ 필터 폼 (Bootstrap form을 정리) */
+.aa-filter-form .form-label{
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: rgba(17, 24, 39, 0.72);
+    margin-bottom: 6px;
+}
+.aa-filter-form .form-control{
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    box-shadow: none !important;
+}
+.aa-filter-form .form-control:focus{
+    border-color: rgba(59, 130, 246, 0.55); /* accent blue */
+    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.12) !important;
+}
+
+/* ✅ 버튼 톤(기본 primary는 유지 + 정리) */
+.aa-filter-form .btn{
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+/* ✅ 로딩 표시 */
+.aa-loading{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 2px;
+    color: rgba(17, 24, 39, 0.7);
+}
+
+/* ✅ Alert 여백 */
+.aa-alert{
+    border-radius: 12px;
+}
+
+/* ✅ 테이블 카드 */
+.aa-table-wrap{
+    margin-top: 10px;
+    padding: 10px;
+    overflow: hidden; /* 모서리 둥글게 유지 */
+}
+
+/* ✅ 테이블 기본 */
+.aa-table{
+    margin: 0;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+/* ✅ 헤더 고정 느낌 + 배경 */
+.aa-table thead th{
+    background: rgba(17, 24, 39, 0.03);
+    color: rgba(17, 24, 39, 0.82);
+    font-weight: 800;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* ✅ 바디 */
+.aa-table tbody td{
+    font-size: 0.92rem;
+    vertical-align: middle;
+}
+
+/* ✅ hover 시 너무 번쩍이지 않게 */
+.aa-table.table-hover tbody tr:hover{
+    background: rgba(59, 130, 246, 0.04);
+}
+
+/* ✅ 위험 row 강조 (NIGHT 미퇴근 등) */
+.aa-row-risk{
+    background: rgba(239, 68, 68, 0.06) !important; /* red soft */
+}
+.aa-row-risk:hover{
+    background: rgba(239, 68, 68, 0.10) !important;
+}
+
+/* ✅ 상태/타입 배지 공통 */
+.aa-badge{
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.82rem;
+    letter-spacing: -0.2px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(17, 24, 39, 0.03);
+}
+
+/* ✅ WorkStatus별 톤 */
+.aa-status-normal{ background: rgba(34,197,94,.10); border-color: rgba(34,197,94,.22); }
+.aa-status-late{ background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.25); }
+.aa-status-early_leave{ background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.25); }
+.aa-status-absent{ background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.25); }
+.aa-status-pending{ background: rgba(156,163,175,.18); border-color: rgba(156,163,175,.30); }
+
+/* ✅ WorkType별 톤 */
+.aa-type-office{ background: rgba(59,130,246,.10); border-color: rgba(59,130,246,.25); }
+.aa-type-night{ background: rgba(168,85,247,.12); border-color: rgba(168,85,247,.25); }
+.aa-type-outside{ background: rgba(34,197,94,.10); border-color: rgba(34,197,94,.25); }
+.aa-type-leave{ background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.25); }
+.aa-type-off{ background: rgba(156,163,175,.16); border-color: rgba(156,163,175,.30); }
+
+/* ✅ 퇴근 수정 input + 버튼 정렬 */
+.aa-table .form-control[type="datetime-local"]{
+    border-radius: 10px;
+    min-width: 175px;
+}
+
+/* ✅ “휴가/외근은 수정 불가” 텍스트 */
+.aa-muted{
+    color: rgba(17, 24, 39, 0.55);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/*출퇴근 내역 페이지 버튼 */
+.admin-attendance .pagination-area button{
+    min-width: 36px;
+}
+
+/* ✅ 작은 화면에서 테이블이 너무 뭉개지지 않게 */
+@media (max-width: 768px){
+    .admin-attendance{
+        padding: 14px 12px 30px;
+    }
+    .aa-table thead th{
+        font-size: 0.84rem;
+    }
+}

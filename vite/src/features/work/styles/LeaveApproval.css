@@ -1,0 +1,112 @@
+/* =========================================================
+   LeaveApproval(휴가 승인 관리) 페이지 전용 스타일
+   - AdminAttendance / LeaderAttendance 톤 통일
+   ========================================================= */
+
+.leave-approval-page{
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 50px 18px 40px;
+}
+
+/* ===== Header ===== */
+.la-header{
+    margin-bottom: 14px;
+}
+.la-title{
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+.la-subtitle{
+    margin: 6px 0 0;
+    color: rgba(17, 24, 39, 0.62);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* ===== Card ===== */
+.la-card{
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* ===== Loading / Alert ===== */
+.la-loading{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 2px;
+    color: rgba(17, 24, 39, 0.7);
+}
+.la-alert{
+    border-radius: 12px;
+}
+
+/* ===== Table ===== */
+.la-table-wrap{
+    margin-top: 10px;
+    padding: 10px;
+    overflow: hidden;
+}
+.la-table{
+    margin: 0;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+}
+.la-table thead th{
+    background: rgba(17, 24, 39, 0.03);
+    color: rgba(17, 24, 39, 0.82);
+    font-weight: 900;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.la-table tbody td{
+    font-size: 0.92rem;
+    vertical-align: middle;
+}
+.la-table.table-hover tbody tr:hover{
+    background: rgba(59, 130, 246, 0.04);
+}
+
+/* ===== Cells ===== */
+.la-emp{
+    font-weight: 900;
+    color: rgba(17,24,39,.9);
+}
+
+.la-reason{
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: rgba(17,24,39,.75);
+    font-weight: 600;
+}
+
+/* ===== Action Buttons ===== */
+.la-action-btns{
+    display: flex;
+    gap: 6px;
+}
+.la-action-btns .btn{
+    border-radius: 10px;
+    font-weight: 800;
+    min-width: 64px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px){
+    .leave-approval-page{
+        padding: 14px 12px 30px;
+    }
+    .la-table thead th{
+        font-size: 0.84rem;
+    }
+    .la-reason{
+        max-width: 160px;
+    }
+}

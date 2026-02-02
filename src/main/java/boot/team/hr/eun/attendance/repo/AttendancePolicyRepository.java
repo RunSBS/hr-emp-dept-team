@@ -6,30 +6,41 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface AttendancePolicyRepository
         extends JpaRepository<AttendancePolicy, Long> {
 
+    /* ===================== 현재 적용 정책 ===================== */
     @Query("""
-        SELECT p FROM AttendancePolicy p
-        WHERE CURRENT_DATE BETWEEN p.effectiveFrom AND p.effectiveTo
+        select p
+        from AttendancePolicy p
+        where :workDate between p.effectiveFrom and p.effectiveTo
     """)
-    Optional<AttendancePolicy> findCurrentPolicy();
-
-    /* ===================== 기간 중복 체크 ===================== */
-    @Query("""
-        SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END
-        FROM AttendancePolicy p
-        WHERE p.policyId <> :policyId
-          AND NOT (
-              :effectiveTo < p.effectiveFrom
-              OR :effectiveFrom > p.effectiveTo
-          )
-    """)
-    Boolean existsOverlappingPolicy(
-            @Param("policyId") Long policyId,
-            @Param("effectiveFrom") LocalDate effectiveFrom,
-            @Param("effectiveTo") LocalDate effectiveTo
+    Optional<AttendancePolicy> findPolicyByWorkDate(
+            @Param("workDate") LocalDate workDate
     );
+
+    /* Service에서 today 넘기기 싫으면 오버로드 */
+    default Optional<AttendancePolicy> findCurrentPolicy() {
+        return findPolicyByWorkDate(LocalDate.now());
+    }
+
+    /* ===================== 기간 겹침 검사 ===================== */
+    @Query("""
+        SELECT COUNT(p) > 0
+        FROM AttendancePolicy p
+        WHERE (:policyId IS NULL OR p.policyId <> :policyId)
+          AND p.effectiveFrom <= :endDate
+          AND p.effectiveTo >= :startDate
+    """)
+    boolean existsOverlappingPolicy(
+            @Param("policyId") Long policyId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    /* ===================== 전체 정책 (정렬) ===================== */
+    List<AttendancePolicy> findAllByOrderByEffectiveFromDesc();
 }

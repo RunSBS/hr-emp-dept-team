@@ -1,0 +1,152 @@
+/* =========================================================
+   Salary(내 급여 조회) 페이지 전용 스타일
+   - Attendance / WorkPolicy / SalaryPolicy 톤과 통일
+   ========================================================= */
+
+.salary-page{
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 18px 40px;
+}
+
+/* ===== Header ===== */
+.sa-header{
+    margin-bottom: 14px;
+}
+.sa-title{
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+}
+.sa-subtitle{
+    margin: 6px 0 0;
+    color: rgba(17, 24, 39, 0.62);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* ===== Card Base ===== */
+.sa-card{
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    padding: 18px;
+}
+
+.sa-search-card{
+    margin-bottom: 14px;
+}
+
+.sa-summary-card{
+    margin-top: 6px;
+}
+
+/* ===== Filter ===== */
+.sa-filter{
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.sa-filter-item{
+    min-width: 220px;
+}
+
+.sa-label{
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.72);
+    margin-bottom: 6px;
+}
+
+.sa-filter .form-control{
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    box-shadow: none !important;
+}
+
+.sa-filter .form-control:focus{
+    border-color: rgba(59, 130, 246, 0.55);
+    box-shadow: 0 0 0 0.2rem rgba(59,130,246,.12) !important;
+}
+
+.sa-filter-actions .btn{
+    border-radius: 10px;
+    font-weight: 900;
+    padding: 10px 16px;
+}
+
+/* ===== Alert ===== */
+.sa-alert{
+    margin-top: 12px;
+    border-radius: 12px;
+}
+
+/* ===== Summary ===== */
+.sa-summary-head{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.sa-summary-title{
+    margin: 0;
+    font-weight: 900;
+    letter-spacing: -0.2px;
+}
+
+.sa-summary-month{
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(59,130,246,.25);
+    background: rgba(59,130,246,.10);
+    font-weight: 900;
+    font-size: 0.85rem;
+}
+
+/* ===== Table ===== */
+.sa-table-wrap{
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.sa-table{
+    margin: 0;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+.sa-table th{
+    background: rgba(17, 24, 39, 0.03);
+    color: rgba(17, 24, 39, 0.82);
+    font-weight: 900;
+    font-size: 0.88rem;
+    width: 25%;
+}
+
+.sa-table td{
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.sa-grand{
+    color: rgba(59,130,246,.95);
+    font-size: 1rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px){
+    .salary-page{
+        padding: 14px 12px 30px;
+    }
+    .sa-card{
+        padding: 14px;
+    }
+    .sa-filter-item{
+        min-width: 160px;
+        flex: 1;
+    }
+}

@@ -56,6 +56,7 @@ const Home = () => {
                 <Row>
                     {/* 좌측 메뉴 */}
                     <Col xs={2} className="vertical-navbar p-3">
+                        <div className="sidebar-inner">
                         <Nav className="flex-column">
 
                             {/* 홈 */}
@@ -102,7 +103,7 @@ const Home = () => {
                                         {(user?.role === "EMP" /*|| user?.role === "LEADER"*/) && (
                                             <>
                                                 <Nav.Link as={Link} to="/main/work/employee/attendance">출퇴근 기록</Nav.Link>
-                                                <Nav.Link as={Link} to="/main/work/employee/request">휴가(연가) 신청</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/work/employee/leaverequest">휴가(연가) 신청</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/employee/usage">연차 사용 현황</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/employee/workpolicy">근태 정책 조회</Nav.Link>
                                             </>
@@ -111,6 +112,7 @@ const Home = () => {
                                         {user?.role === "ATTENDANCE" && (
                                             <>
                                                 <Nav.Link as={Link} to="/main/work/admin/attendance">출퇴근 내역 관리</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/work/admin/attendanceai">근태 이상 AI</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/admin/adminworkpolicy">근태 정책 관리</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/admin/annualleave">연차 촉진 관리</Nav.Link>
                                             </>
@@ -118,7 +120,7 @@ const Home = () => {
                                         {/*근태: 팀장*/}
                                         {user?.role === "LEADER" && (
                                             <>
-                                                <Nav.Link as={Link} to="/main/work/admin/attendance">출퇴근 내역 관리</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/work/admin/leaderattendance">출퇴근 내역 조회</Nav.Link>
                                                 <Nav.Link as={Link} to="/main/work/admin/leaveapproval">휴가 신청 승인</Nav.Link>
                                             </>
                                         )}
@@ -134,10 +136,14 @@ const Home = () => {
                                 <div>
                                     <Nav className="flex-column ms-3">
                                         {/*급여: 일반사원과 팀장*/}
-                                        {(user?.role === "EMP" || user?.role === "LEADER") && (
+                                        {user?.role === "EMP" && (
                                             <>
                                                 <Nav.Link as={Link} to="/main/salary/employee/salary">급여 조회</Nav.Link>
-                                                <Nav.Link as={Link} to="/main/salary/employee/oballowance">외근 수당 조회</Nav.Link>
+                                                <Nav.Link as={Link} to="/main/salary/employee/salarypolicy">급여 정책 조회</Nav.Link>
+                                            </>
+                                        )}
+                                        {user?.role === "LEADER" && (
+                                            <>
                                                 <Nav.Link as={Link} to="/main/salary/employee/salarypolicy">급여 정책 조회</Nav.Link>
                                             </>
                                         )}
@@ -215,6 +221,7 @@ const Home = () => {
                             </Collapse>
 
                         </Nav>
+                        </div>
                     </Col>
 
                     {/* 메인 콘텐츠 */}
