@@ -10,7 +10,7 @@ import java.util.UUID;
 @Service
 public class LocalFileStorageService implements FileStorageService {
 
-    private static final String UPLOAD_DIR = "uploads"; // 프로젝트 루트 기준
+    private static final String UPLOAD_DIR = "uploads";
 
     @Override
     public String save(MultipartFile file) {
