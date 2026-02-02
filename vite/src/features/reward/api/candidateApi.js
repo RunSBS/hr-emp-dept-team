@@ -59,6 +59,32 @@ export const candidateApi = {
     return response.data;
   },
 
+  // ==================== 포상 승인 API (CEO 전용) ====================
+
+  // PENDING 포상 후보 목록 조회
+  getPendingCandidates: async () => {
+    const response = await axios.get(`${API_BASE_URL}/pending`, {
+      withCredentials: true,
+    });
+    return response.data;
+  },
+
+  // 포상 후보 승인
+  approveCandidate: async (candidateId) => {
+    const response = await axios.put(`${API_BASE_URL}/${candidateId}/approve`, {}, {
+      withCredentials: true,
+    });
+    return response.data;
+  },
+
+  // 포상 후보 거절
+  rejectCandidate: async (candidateId) => {
+    const response = await axios.put(`${API_BASE_URL}/${candidateId}/reject`, {}, {
+      withCredentials: true,
+    });
+    return response.data;
+  },
+
   // ==================== AI 추천 API ====================
 
   // AI 추천 후보 목록 조회

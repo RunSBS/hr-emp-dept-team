@@ -220,6 +220,75 @@ public class RewardCandidateService {
     }
 
     /**
+     * PENDING 상태의 포상 후보 목록 조회 (CEO 전용)
+     */
+    @Transactional(readOnly = true)
+    public List<RewardCandidateDTO> getPendingCandidates(String email) {
+        Emp emp = empRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        if (!"CEO".equals(emp.getEmpRole())) {
+            throw new IllegalArgumentException("승인 권한이 없습니다. CEO만 가능합니다.");
+        }
+
+        System.out.println("[포상 승인] 대기 목록 조회 - 사용자: " + emp.getEmpName());
+
+        return candidateRepository.findByStatusOrderByCreatedAtDesc("PENDING").stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 포상 후보 승인 (CEO 전용)
+     */
+    @Transactional
+    public void approveCandidate(String email, Long candidateId) {
+        Emp emp = empRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        if (!"CEO".equals(emp.getEmpRole())) {
+            throw new IllegalArgumentException("승인 권한이 없습니다. CEO만 가능합니다.");
+        }
+
+        RewardCandidate candidate = candidateRepository.findById(candidateId)
+                .orElseThrow(() -> new IllegalArgumentException("포상 후보를 찾을 수 없습니다."));
+
+        if (!"PENDING".equals(candidate.getStatus())) {
+            throw new IllegalArgumentException("대기 상태의 후보만 승인할 수 있습니다.");
+        }
+
+        candidate.setStatus("APPROVED");
+        candidateRepository.save(candidate);
+
+        System.out.println("[포상 승인] 승인 완료 - 후보ID: " + candidateId + ", 승인자: " + emp.getEmpName());
+    }
+
+    /**
+     * 포상 후보 거절 (CEO 전용)
+     */
+    @Transactional
+    public void rejectCandidate(String email, Long candidateId) {
+        Emp emp = empRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        if (!"CEO".equals(emp.getEmpRole())) {
+            throw new IllegalArgumentException("거절 권한이 없습니다. CEO만 가능합니다.");
+        }
+
+        RewardCandidate candidate = candidateRepository.findById(candidateId)
+                .orElseThrow(() -> new IllegalArgumentException("포상 후보를 찾을 수 없습니다."));
+
+        if (!"PENDING".equals(candidate.getStatus())) {
+            throw new IllegalArgumentException("대기 상태의 후보만 거절할 수 있습니다.");
+        }
+
+        candidate.setStatus("REJECTED");
+        candidateRepository.save(candidate);
+
+        System.out.println("[포상 승인] 거절 완료 - 후보ID: " + candidateId + ", 거절자: " + emp.getEmpName());
+    }
+
+    /**
      * Entity to DTO 변환
      */
     private RewardCandidateDTO convertToDTO(RewardCandidate candidate) {

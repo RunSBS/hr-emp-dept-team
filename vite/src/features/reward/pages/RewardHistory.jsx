@@ -296,40 +296,40 @@ const RewardHistory = () => {
 
       {/* 상세 모달 */}
       {isModalOpen && selectedReward && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
+        <div className="reward-modal-overlay" onClick={closeModal}>
+          <div className="reward-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="reward-modal-header">
               <h2>
-                <span className="modal-trophy">🏆</span>
+                <span className="reward-modal-trophy">🏆</span>
                 {selectedReward.policyName}
               </h2>
             </div>
-            <div className="modal-body">
-              <div className="modal-field">
-                <span className="modal-label">포상 종류</span>
-                <span className="modal-value">{policyMap[selectedReward.policyId]?.rewardType || '-'}</span>
+            <div className="reward-modal-body">
+              <div className="reward-modal-field">
+                <span className="reward-modal-label">포상 종류</span>
+                <span className="reward-modal-value">{policyMap[selectedReward.policyId]?.rewardType || '-'}</span>
               </div>
-              <div className="modal-field">
-                <span className="modal-label">지급 내용</span>
-                <span className="modal-value">{formatAmount(selectedReward)}</span>
+              <div className="reward-modal-field">
+                <span className="reward-modal-label">지급 내용</span>
+                <span className="reward-modal-value">{formatAmount(selectedReward)}</span>
               </div>
-              <div className="modal-field">
-                <span className="modal-label">지급일</span>
-                <span className="modal-value">{formatDate(selectedReward.updatedAt || selectedReward.createdAt)}</span>
+              <div className="reward-modal-field">
+                <span className="reward-modal-label">지급일</span>
+                <span className="reward-modal-value">{formatDate(selectedReward.updatedAt || selectedReward.createdAt)}</span>
               </div>
-              <div className="modal-field">
-                <span className="modal-label">추천자</span>
-                <span className="modal-value">{selectedReward.nominatorName}</span>
+              <div className="reward-modal-field">
+                <span className="reward-modal-label">추천자</span>
+                <span className="reward-modal-value">{selectedReward.nominatorName}</span>
               </div>
-              <div className="modal-field full-width">
-                <span className="modal-label">사유</span>
-                <div className="modal-reason">
+              <div className="reward-modal-field full-width">
+                <span className="reward-modal-label">사유</span>
+                <div className="reward-modal-reason">
                   "{selectedReward.reason}"
                 </div>
               </div>
             </div>
-            <div className="modal-footer">
-              <button onClick={closeModal} className="modal-close-button">확인</button>
+            <div className="reward-modal-footer">
+              <button onClick={closeModal} className="reward-modal-close-button">확인</button>
             </div>
           </div>
         </div>

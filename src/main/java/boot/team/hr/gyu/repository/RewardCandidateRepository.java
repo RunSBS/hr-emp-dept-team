@@ -12,4 +12,5 @@ public interface RewardCandidateRepository extends JpaRepository<RewardCandidate
     List<RewardCandidate> findByNomineeId(String nomineeId);
     List<RewardCandidate> findByPolicyId(Long policyId);
     List<RewardCandidate> findByNomineeIdAndStatus(String nomineeId, String status);
+    List<RewardCandidate> findByStatusOrderByCreatedAtDesc(String status);
 }

@@ -2,6 +2,7 @@ package boot.team.hr.gyu.service;
 
 import boot.team.hr.gyu.dto.AiRecommendationDTO;
 import boot.team.hr.gyu.dto.AiRecommendationDTO.RecommendedReward;
+import boot.team.hr.gyu.dto.PythonRecommendResponse;
 import boot.team.hr.gyu.dto.RewardCandidateDTO;
 import boot.team.hr.gyu.entity.EvaluationResult;
 import boot.team.hr.gyu.entity.RewardCandidate;
@@ -12,6 +13,7 @@ import boot.team.hr.gyu.repository.RewardPolicyRepository;
 import boot.team.hr.hyun.emp.entity.Emp;
 import boot.team.hr.hyun.emp.repo.EmpRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AiRecommendationService {
 
     private final EvaluationResultRepository evaluationResultRepository;
@@ -27,6 +30,7 @@ public class AiRecommendationService {
     private final RewardCandidateRepository rewardCandidateRepository;
     private final EmpRepository empRepository;
     private final OpenAiService openAiService;
+    private final PythonAiService pythonAiService;
 
     // 키워드-포상 매핑
     private static final Map<String, List<String>> KEYWORD_MAPPING = new HashMap<>();
@@ -127,6 +131,7 @@ public class AiRecommendationService {
 
     /**
      * 개별 직원에 대한 추천 생성
+     * Python AI 서비스만 사용 (부정적 평가는 추천 제외)
      */
     private AiRecommendationDTO generateRecommendation(Emp emp, List<RewardPolicy> policies) {
         // 평가 결과 조회
@@ -150,19 +155,122 @@ public class AiRecommendationService {
                 .collect(Collectors.toList());
 
         String latestComment = comments.isEmpty() ? "" : comments.get(0);
-        String allComments = String.join(" ", comments);
 
-        // 포상 정책 이름 목록
-        List<String> policyNames = policies.stream()
-                .map(RewardPolicy::getPolicyName)
-                .collect(Collectors.toList());
-
-        // OpenAI 사용 가능 여부 확인 후 분기
-        if (openAiService.isAvailable()) {
-            return generateWithOpenAI(emp, avgScore, comments, latestComment, policies, policyNames);
-        } else {
-            return generateWithRules(emp, avgScore, comments, latestComment, allComments, policies);
+        // Python AI 서비스 사용
+        if (pythonAiService.isEnabled()) {
+            try {
+                AiRecommendationDTO pythonResult = generateWithPython(emp, evaluations, policies, avgScore, comments, latestComment);
+                if (pythonResult != null) {
+                    log.info("[AI 추천] Python AI 사용 - 직원: {}, 추천 수: {}",
+                            emp.getEmpName(),
+                            pythonResult.getRecommendedRewards() != null ? pythonResult.getRecommendedRewards().size() : 0);
+                    return pythonResult;
+                }
+            } catch (Exception e) {
+                log.warn("[AI 추천] Python AI 실패: {}", e.getMessage());
+            }
         }
+
+        // Python AI 비활성화 또는 실패 시 null 반환
+        return null;
+    }
+
+    /**
+     * Python AI 서비스를 사용한 추천 생성 (PyTorch BERT 기반)
+     * 부정적 평가는 빈 추천 리스트 반환
+     */
+    private AiRecommendationDTO generateWithPython(Emp emp, List<EvaluationResult> evaluations,
+                                                    List<RewardPolicy> policies, double avgScore,
+                                                    List<String> comments, String latestComment) {
+        PythonRecommendResponse pythonResponse = pythonAiService.getRecommendations(emp, evaluations, policies);
+
+        if (pythonResponse == null || !"success".equals(pythonResponse.getStatus())) {
+            return null;
+        }
+
+        // Python 결과를 DTO로 변환
+        List<RecommendedReward> recommendedRewards = new ArrayList<>();
+
+        List<PythonRecommendResponse.PythonRecommendation> pythonRecs = pythonResponse.getRecommendations();
+        if (pythonRecs != null && !pythonRecs.isEmpty()) {
+            for (PythonRecommendResponse.PythonRecommendation pyRec : pythonRecs) {
+                // 포상 정책 찾기
+                RewardPolicy matchedPolicy = policies.stream()
+                        .filter(p -> p.getPolicyId().equals(pyRec.getPolicyId()))
+                        .findFirst()
+                        .orElse(null);
+
+                if (matchedPolicy != null) {
+                    RecommendedReward reward = RecommendedReward.builder()
+                            .policyId(matchedPolicy.getPolicyId())
+                            .policyName(matchedPolicy.getPolicyName())
+                            .rewardType(matchedPolicy.getRewardType())
+                            .matchScore(pyRec.getMatchScore())
+                            .matchReason(pyRec.getReason())
+                            .matchedKeywords(pyRec.getKeywords() != null ? pyRec.getKeywords() : Collections.emptyList())
+                            .build();
+                    recommendedRewards.add(reward);
+                }
+            }
+        }
+
+        // 추천 점수 계산 (추천이 없으면 0)
+        double recommendationScore = recommendedRewards.isEmpty() ? 0 : calculateRecommendationScore(avgScore, recommendedRewards);
+
+        // 전체 추천 사유 생성
+        String overallReason = generateOverallReasonFromPython(avgScore, pythonResponse);
+
+        return AiRecommendationDTO.builder()
+                .empId(emp.getEmpId())
+                .empName(emp.getEmpName())
+                .empRole(emp.getEmpRole())
+                .deptName(emp.getDept() != null ? emp.getDept().getDeptName() : null)
+                .avgScore(Math.round(avgScore * 10) / 10.0)
+                .comments(comments)
+                .latestComment(latestComment)
+                .recommendedRewards(recommendedRewards)
+                .newRewardSuggestion(null)
+                .overallRecommendReason(overallReason)
+                .recommendationScore(recommendationScore)
+                .build();
+    }
+
+    /**
+     * Python 결과 기반 전체 추천 사유 생성
+     */
+    private String generateOverallReasonFromPython(double avgScore, PythonRecommendResponse response) {
+        StringBuilder reason = new StringBuilder();
+
+        // 감성 분석 결과
+        String sentiment = response.getOverallSentiment();
+
+        // 부정적 평가인 경우
+        if ("negative".equals(sentiment)) {
+            reason.append("평가 코멘트 분석 결과, 부정적인 평가가 많아 포상 추천 대상에서 제외되었습니다.");
+            return reason.toString();
+        }
+
+        reason.append("평균 평가 점수 ").append(String.format("%.1f", avgScore)).append("점");
+
+        if (avgScore >= 90) {
+            reason.append("으로 상위 우수 등급에 해당합니다. ");
+        } else if (avgScore >= 85) {
+            reason.append("으로 우수 등급에 해당합니다. ");
+        } else {
+            reason.append("입니다. ");
+        }
+
+        if ("positive".equals(sentiment)) {
+            reason.append("평가 코멘트 분석 결과, 전반적으로 긍정적인 평가를 받았습니다. ");
+        }
+
+        // 추출된 키워드
+        List<String> keywords = response.getExtractedKeywords();
+        if (keywords != null && !keywords.isEmpty()) {
+            reason.append("핵심 키워드: '").append(String.join("', '", keywords)).append("'");
+        }
+
+        return reason.toString();
     }
 
     /**
