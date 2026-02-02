@@ -13,29 +13,29 @@ import {
     Badge,
 } from "react-bootstrap";
 
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    PointElement,
-    LineElement,
-    Tooltip,
-    Legend,
-    Title,
-} from "chart.js";
-import { Bar, Line } from "react-chartjs-2";
+// import {
+//     Chart as ChartJS,
+//     CategoryScale,
+//     LinearScale,
+//     BarElement,
+//     PointElement,
+//     LineElement,
+//     Tooltip,
+//     Legend,
+//     Title,
+// } from "chart.js";
+// import { Bar, Line } from "react-chartjs-2";
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    PointElement,
-    LineElement,
-    Tooltip,
-    Legend,
-    Title
-);
+// ChartJS.register(
+//     CategoryScale,
+//     LinearScale,
+//     BarElement,
+//     PointElement,
+//     LineElement,
+//     Tooltip,
+//     Legend,
+//     Title
+// );
 
 const AttendanceAI = () => {
     const [records, setRecords] = useState([]);

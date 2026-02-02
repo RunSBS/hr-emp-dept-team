@@ -23,4 +23,6 @@ public interface EmpRepository extends JpaRepository<Emp,String> {
     );
 
     Optional<Emp> findFirstByEmpRole(String empRole);
+
+    Optional<Emp> findByEmpId(String empId);
 }
