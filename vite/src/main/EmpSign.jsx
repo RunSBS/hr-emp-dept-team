@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import { useNavigate ,useSearchParams} from "react-router-dom";
 import { Container, Card, Button, Form } from "react-bootstrap";
 import "./styles/login.css";
+import AuthTabs from "./AuthTabs.jsx";
 
 const EmpSign = () => {
     const navigate = useNavigate();
@@ -53,11 +54,7 @@ const EmpSign = () => {
         <Container fluid className="login-wrapper">
             <Card className="login-card">
 
-                <div className="top-btn-group">
-                    <button onClick={() => navigate("/")}>로그인</button>
-                    <button onClick={() => navigate("/sign")}>관리자 가입</button>
-                    <button onClick={() => navigate("/empsign")}>사원 가입</button>
-                </div>
+                <AuthTabs/>
 
                 <Card.Body>
                     <h4 className="login-title">사원 회원가입</h4>

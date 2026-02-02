@@ -48,7 +48,7 @@ function Router() {
             <Route path="/sign" element={<Sign />} />
             <Route path="/empsign" element={<EmpSign />} />
             <Route path="/main" element={<Home />}>
-                <Route index  element={<EmpMain />}/>   {/* /main */}
+                <Route index  element={<Calender/>}/>   {/* /main */}
 
                 <Route path="invite">
                     <Route path="record"   element={<Record/>}/>

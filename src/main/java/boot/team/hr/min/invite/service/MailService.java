@@ -13,13 +13,6 @@ public class MailService {
 
     private final JavaMailSender mailSender;
 
-    /**
-     * 사원 초대 메일 전송 (HTML)
-     *
-     * @param toEmail 받는 사람 이메일
-     * @param link 가입 완료 링크
-     * @throws MessagingException
-     */
     public void sendInviteMail(String toEmail, String link) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -44,7 +37,7 @@ public class MailService {
                 "</body>" +
                 "</html>";
 
-        helper.setText(htmlContent, true); // true = HTML 모드
+        helper.setText(htmlContent, true);
         mailSender.send(message);
     }
 }

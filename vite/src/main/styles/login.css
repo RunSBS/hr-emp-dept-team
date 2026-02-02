@@ -47,12 +47,6 @@
     transform: translateY(-1px);
 }
 
-/* 현재 활성화된 페이지(로그인) 강조 스타일링을 위해 버튼 중 하나에 .active가 있다면 */
-.top-btn-group button:first-child {
-    background-color: #7aa2e3;
-    color: #ffffff;
-}
-
 /* 제목: 폰트 두께와 자간 조절 */
 .login-title {
     text-align: center;
@@ -107,4 +101,30 @@
 
 .login-btn:active {
     transform: translateY(0);
+}
+/* NavLink는 a 태그라서 버튼처럼 스타일링 */
+.tab-btn {
+    background-color: #f1f3f5;
+    color: #6b7280;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-btn:hover {
+    background-color: #e9ecef;
+    color: #374151;
+    transform: translateY(-1px);
+}
+
+/* 활성 탭 */
+.tab-btn.active {
+    background-color: #7aa2e3;
+    color: #ffffff;
 }
