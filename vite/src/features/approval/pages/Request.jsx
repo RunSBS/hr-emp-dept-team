@@ -1,119 +1,91 @@
-import React, { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../main/AuthContext";
-
-const approvalTypes = [
-    { id: 1, name: "휴가 신청" },
-    { id: 2, name: "출장 신청" }
-];
+import React, { useState } from "react";
 
 const Request = () => {
     const navigate = useNavigate();
+    const { state } = useLocation();  // Select에서 전달된 type 객체
     const { user } = useAuth();
+    const [files, setFiles] = useState([]);
 
-    if (!user) {
-        return null; // 또는 로딩 UI
-    }
 
+    const type = state?.type;  // 바로 사용
     const [form, setForm] = useState({
-        typeId: "",
         title: "",
-        content: "",
-        files: []
+        content: ""
     });
 
-
-    const empId = user.empId;
-
-    if (!empId) {
-        alert("로그인 후 결재 신청이 가능합니다.");
-        return null;
+    if (!type) {
+        return <div>결재 유형 정보가 없습니다.</div>;
     }
 
-    /* -------------------------------
-       입력 핸들러
-    -------------------------------- */
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files).map(file => ({
-            fileName: file.name,
-            fileSize: file.size,
-            filePaths: "/temp"
-        }));
-
-        setForm(prev => ({ ...prev, files }));
-    };
-
-    /* -------------------------------
-       Submit
-    -------------------------------- */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 실제 로그인 사용자 empId 사용
-        const payload = {
-            empId: empId,
-            typeId: form.typeId || 1,
-            title: form.title || "제목 없음",
-            content: form.content || "",
-            files: form.files
+        const formData = new FormData();
+
+        const data = {
+            empId: user.empId,
+            typeId: type.typeId,
+            title: form.title,
+            content: form.content
         };
+
+        formData.append(
+            "data",
+            new Blob([JSON.stringify(data)], { type: "application/json" })
+        );
+
+        files.forEach(file => {
+            formData.append("files", file);
+        });
 
         const res = await fetch("/back/ho/approvals", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify(payload)
+            body: formData
         });
 
         if (res.ok) {
-            const data = await res.json();
-            alert("결재 신청 완료");
+            alert("결재 신청이 완료되었습니다.");
             navigate("/main/approval/pending");
         } else {
-            alert("결재 신청 실패");
+            alert("전송 실패");
         }
     };
 
-    /* -------------------------------
-       Render
-    -------------------------------- */
+
+
     return (
         <Card>
-            <Card.Header>결재 신청</Card.Header>
+            <Card.Header>
+                <strong>결재 신청</strong>
+            </Card.Header>
+
             <Card.Body>
                 <Form onSubmit={handleSubmit}>
-
-                    {/* 결재 유형 */}
+                    {/* 결재 유형  */}
                     <Form.Group className="mb-3">
                         <Form.Label>결재 유형</Form.Label>
-                        <Form.Select
-                            name="typeId"
-                            value={form.typeId}
-                            onChange={handleChange}
-                        >
-                            <option value="">선택</option>
-                            {approvalTypes.map(type => (
-                                <option key={type.id} value={type.id}>
-                                    {type.name}
-                                </option>
-                            ))}
-                        </Form.Select>
+                        <Form.Control
+                            value={type.description} // 한글 표시
+                            readOnly
+                            style={{
+                                backgroundColor: "#f8f9fa",
+                                color: "#212529",
+                                fontWeight: "500"
+                            }}
+                        />
                     </Form.Group>
 
                     {/* 제목 */}
                     <Form.Group className="mb-3">
                         <Form.Label>제목</Form.Label>
                         <Form.Control
-                            name="title"
                             value={form.title}
-                            onChange={handleChange}
-                            placeholder="제목을 입력하세요"
+                            onChange={e => setForm({ ...form, title: e.target.value })}
+                            required
                         />
                     </Form.Group>
 
@@ -122,24 +94,35 @@ const Request = () => {
                         <Form.Label>내용</Form.Label>
                         <Form.Control
                             as="textarea"
-                            rows={6}
-                            name="content"
                             value={form.content}
-                            onChange={handleChange}
+                            onChange={e => setForm({ ...form, content: e.target.value })}
+                            required
+                            style={{
+                                minHeight: "300px",
+                                resize: "vertical"
+                            }}
                         />
+
                     </Form.Group>
 
-                    {/* 첨부 파일 */}
                     <Form.Group className="mb-3">
-                        <Form.Label>첨부 파일</Form.Label>
+                        <Form.Label>첨부파일</Form.Label>
                         <Form.Control
                             type="file"
                             multiple
-                            onChange={handleFileChange}
+                            onChange={(e) => setFiles(Array.from(e.target.files))}
                         />
                     </Form.Group>
 
-                    <Button type="submit">결재 신청</Button>
+
+                    <div className="d-flex justify-content-end gap-2">
+                        <Button variant="secondary" onClick={() => navigate(-1)}>
+                            취소
+                        </Button>
+                        <Button type="submit">
+                            결재 신청
+                        </Button>
+                    </div>
                 </Form>
             </Card.Body>
         </Card>

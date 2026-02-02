@@ -17,4 +17,10 @@ public interface EmpRepository extends JpaRepository<Emp,String> {
     List<Emp> findByEmpNameContainingIgnoreCase(String empName);
 
 
+    Optional<Emp> findFirstByDept_DeptNoAndEmpRole(
+            Integer deptNo,
+            String empRole
+    );
+
+    Optional<Emp> findFirstByEmpRole(String empRole);
 }

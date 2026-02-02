@@ -16,4 +16,5 @@ public class LineDto {
     private boolean current;
     private LocalDateTime actionAt;
     private String empName;
+    private boolean rejected;
 }

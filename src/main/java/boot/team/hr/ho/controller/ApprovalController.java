@@ -1,11 +1,23 @@
 package boot.team.hr.ho.controller;
 
 import boot.team.hr.ho.dto.*;
+import boot.team.hr.ho.repository.ApprovalTypeRepository;
 import boot.team.hr.ho.service.ApprovalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.core.io.Resource;
+
+
+import java.net.URLEncoder;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -14,16 +26,40 @@ import java.util.List;
 public class ApprovalController {
 
     private final ApprovalService approvalService;
+    private final ApprovalTypeRepository approvalTypeRepository;
+
+    // 0. 결재 유형 조회 (Request.jsx)
+    @GetMapping("/type")
+    public List<ApprovalTypeDto> getApprovalTypes() {
+        return approvalTypeRepository.findAll().stream()
+                .map(t -> new ApprovalTypeDto(t.getTypeId(), t.getTypeName(), t.getDescription()))
+                .toList();
+    }
 
     // -----------------------------
     // 1. 결재 신청 (Request.jsx)
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApprovalResponseDto> createApproval(
-            @RequestBody ApprovalRequestDto request
+            @RequestPart("data") String data,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
-        ApprovalResponseDto response = approvalService.createApproval(request);
-        return ResponseEntity.ok(response);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            ApprovalRequestDto requestDto =
+                    objectMapper.readValue(data, ApprovalRequestDto.class);
+
+            ApprovalResponseDto response =
+                    approvalService.createApproval(requestDto, files);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
+
 
     // -----------------------------
     // 2. 결재 이력 (History.jsx)
@@ -104,6 +140,31 @@ public class ApprovalController {
         request.setApprovalId(approvalId);
         approvalService.cancelApproval(request);
         return ResponseEntity.ok().build();
+    }
+    //8. 파일 다운로드
+    @GetMapping("/files/download")
+    public ResponseEntity<Resource> downloadFile(@RequestParam String path) {
+        try {
+            Path filePath = Paths.get(path).toAbsolutePath().normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (!resource.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // 실제 파일 이름 추출
+            String fileName = filePath.getFileName().toString();
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + URLEncoder.encode(fileName, "UTF-8") + "\"")
+                    .body(resource);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }

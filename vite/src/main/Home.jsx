@@ -213,7 +213,7 @@ const Home = () => {
                             <Collapse in={openApproval}>
                                 <div>
                                     <Nav className="flex-column ms-3">
-                                        <Nav.Link as={Link} to="/main/approval/request">결재신청</Nav.Link>
+                                        <Nav.Link as={Link} to="/main/approval/select">결재신청</Nav.Link>
                                         <Nav.Link as={Link} to="/main/approval/pending">결재대기</Nav.Link>
                                         <Nav.Link as={Link} to="/main/approval/history">결재이력</Nav.Link>
                                     </Nav>
