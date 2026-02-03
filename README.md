@@ -27,14 +27,12 @@
       <td align="center"><img src="assets/인사관리%20ERD.png" width="250" alt="ERD Preview"/><br/><a href="assets/ERD.png">📁 크게 보기 (PNG)</a></td>
     </tr>
   </table>
-
-  <p align="center">
-    <strong>[Demo Video]</strong><br/>
-    [🎥 시연 영상 보기](https://private-user-images.githubusercontent.com/179509039/544136197-bb189007-2219-4e18-acc1-1e9dcef0fc29.mp4?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzAwOTU0MzcsIm5iZiI6MTc3MDA5NTEzNywicGF0aCI6Ii8xNzk1MDkwMzkvNTQ0MTM2MTk3LWJiMTg5MDA3LTIyMTktNGUxOC1hY2MxLTFlOWRjZWYwZmMyOS5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwMjAzJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDIwM1QwNTA1MzdaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yOGUxNDU0MzFmMTFjODEwMTlhODQxMGE0MGM0ODk0MjRlZGEwYzQ5ZGM2MDdiYjY3MjM4MjcyN2NkMGU5NGY4JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.fKA4TLf6zYJlE0MHrZayaoTPTitwxVla_ScnTQ6gHbo)
 </div>
 
----
+## [🎥 시연 영상 링크]
+(https://private-user-images.githubusercontent.com/179509039/544136197-bb189007-2219-4e18-acc1-1e9dcef0fc29.mp4?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzAwOTU0MzcsIm5iZiI6MTc3MDA5NTEzNywicGF0aCI6Ii8xNzk1MDkwMzkvNTQ0MTM2MTk3LWJiMTg5MDA3LTIyMTktNGUxOC1hY2MxLTFlOWRjZWYwZmMyOS5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwMjAzJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDIwM1QwNTA1MzdaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yOGUxNDU0MzFmMTFjODEwMTlhODQxMGE0MGM0ODk0MjRlZGEwYzQ5ZGM2MDdiYjY3MjM4MjcyN2NkMGU5NGY4JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.fKA4TLf6zYJlE0MHrZayaoTPTitwxVla_ScnTQ6gHbo)
 
+---
 ## 📌 1. Project Overview (프로젝트 개요)
 
 - **프로젝트 제목**: LLM을 활용한 IT HR 웹 솔루션
