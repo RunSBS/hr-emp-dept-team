@@ -12,7 +12,7 @@
 
 ## 🎬 Project Preview & Documents
 <div align="center">
-  <img src="assets/인사관리%20전체탭.png" alt="프로젝트 배너" width="100%"/>
+  <img src="assets/인사관리%20전체탭.png" alt="프로젝트 배너" width="70%"/>
   <br/><br/>
   
   <table>
@@ -57,18 +57,46 @@
 <br/>
 
 ## 🛠 3. My Contributions (담당 파트)
+
 <div align="center">
-  인사관리 ( 부서, 사원, 파견관리 )
+
+### 👤 인사관리 핵심 기능 개발
+**부서 · 사원 · 파견 관리 전반 담당**
+
 </div>
+
+- 인사관리 도메인 전반 설계 및 구현
+- 부서 / 사원 / 파견 정보 **CRUD 기능 개발**
+- 인사 데이터 기반 **AI 사원 조회 기능 구현**
+
 <br/>
 
-## ✨ 5. Key Features (주요 기능)
-- 부서/사원/파견 CRUD
-- AI 사원 조회 기능
-<img src="assets/AI검색.png">
 ---
 
-## 🗄️6.Database Naming Convention (명명 규칙)
+## ✨ 4. Key Features (주요 기능)
+
+### 📌 인사관리 (HR Management)
+
+- **부서 관리**
+    - 부서 생성, 수정, 삭제, 조회
+- **사원 관리**
+    - 사원 등록 및 정보 관리
+    - 부서·직책·상태 기반 조회
+- **파견 관리**
+    - 파견 이력 관리 및 상태 추적
+
+### 🤖 AI 기반 사원 조회
+
+- 자연어 입력을 통한 사원 정보 검색
+- 기존 조건 검색 대비 **사용자 편의성 향상**
+
+<div align="center">
+  <img src="assets/AI검색.png" width="70%" alt="AI 사원 조회"/>
+  <p><i>LLM을 활용한 자연어 기반 사원 조회 기능</i></p>
+</div>
+
+
+## 🗄️5.Database Naming Convention (명명 규칙)
 
 프로젝트의 유지보수와 가독성을 위해 데이터베이스와 소스코드 간의 명명 규칙을 다음과 같이 정의하여 준수하였습니다.
 
