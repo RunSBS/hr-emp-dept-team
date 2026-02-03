@@ -52,9 +52,10 @@
 | 김재현 <br/> <sub>PM</sub> | 김민영 <br/> <sub>PL</sub> | 김경은 <br/> <sub>FE</sub> | 강규호 <br/> <sub>AI</sub> | 전현규 <br/> <sub>DB</sub> |
 | :---: | :---: | :---: | :---: | :---: |
 | <img src="https://github.com/RunSBS.png" width="110"/> | <img src="https://github.com/clem0927.png" width="110"/> | <img src="https://github.com/KKEUN22.png" width="110"/> | <img src="https://github.com/Kangkyuho.png" width="110"/> | <img src="https://github.com/JeonHyunGyu.png" width="110"/> |
-| 🔹 프로젝트 총괄<br/>🔹 부서·사원 관리 | 🔹 시큐리티<br/>🔹 일정 관리<br/>🔹 챗봇 | 🔹 UI/UX 설계<br/>🔹 근태 관리 | 🔹 AI 기능 | 🔹 DB 모델링<br/>🔹 평가·포상<br/>🔹 전자결재 |
+| 🔹 프로젝트 총괄<br/>🔹 부서·사원 관리 | 🔹 시큐리티<br/>🔹 일정 관리<br/>🔹 챗봇 | 🔹 UI/UX 설계<br/>🔹 근태 관리 | 🔹 AI 기능<br/>🔹 전자결재 | 🔹 DB 모델링<br/>🔹 평가/포상 |
 
 </div>
+
 
 
 
