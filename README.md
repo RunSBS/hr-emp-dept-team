@@ -24,7 +24,6 @@
         <td align="center"><br/>
             <a href="assets/솔데스크%20HR_김재현.pptx" download>📁 다운로드 (PPTX)</a>
         </td>
-        <td align="center"><br/><a href="assets/HR_테이블명세서_최종.xlsx" download>📁 다운로드 (XLSX)</a></td>
         <td align="center"><img src="assets/인사관리%20ERD.png" width="250"/><br/>
             <a href="assets/인사관리%20ERD.png" target="_blank">📁 크게보기 (PNG)</a>
         </td>
@@ -32,7 +31,8 @@
   </table>
 </div>
 
-### [🎥 시연 영상 보기](https://github.com/RunSBS/hr-emp-dept-team/issues/1#issue-3889153264)
+### 🎥 서비스 시연 영상
+👉 [시연 영상 바로 보기](https://github.com/RunSBS/hr-emp-dept-team/issues/1#issue-3889153264)
 
 ---
 ## 📌 1. Project Overview (프로젝트 개요)
@@ -56,6 +56,8 @@
 <br/>
 
 ## 🛠 3. My Contributions (담당 파트)
+
+> 본 프로젝트에서 인사관리 도메인의 **백엔드 설계 및 핵심 기능 구현을 전담**했습니다.
 
 <div align="center">
 
@@ -86,8 +88,8 @@
 
 ### 🤖 AI 기반 사원 조회
 
-- 자연어 입력을 통한 사원 정보 검색
-- 기존 조건 검색 대비 **사용자 편의성 향상**
+- NL2SQL 방식을 통한 AI 검색 기능
+- 검색바 UI로 조건 검색 대비 **사용자 편의성 향상**
 
 <div align="center">
   <img src="assets/AI검색.png" width="70%" alt="AI 사원 조회"/>
