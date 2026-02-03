@@ -12,7 +12,7 @@
 
 ## 🎬 Project Preview & Documents
 <div align="center">
-  <img src="assets/메인.png" alt="프로젝트 배너" width="100%"/>
+  <img src="assets/인사관리%20전체탭.png" alt="프로젝트 배너" width="100%"/>
   <br/><br/>
   
   <table>
@@ -22,18 +22,15 @@
       <td align="center"><b>🗺️ ERD</b></td>
     </tr>
     <tr>
-      <td align="center"><br/><a href="assets/솔데스크HR_김민영 PPT.pptx">📁 다운로드 (PPTX)</a></td>
+      <td align="center"><br/><a href="assets/솔데스크%20HR_김재현.pptx">📁 다운로드 (PPTX)</a></td>
       <td align="center"><br/><a href="assets/HR_테이블명세서_최종.xlsx">📁 다운로드 (XLSX)</a></td>
-      <td align="center"><img src="assets/ERD.png" width="250" alt="ERD Preview"/><br/><a href="assets/ERD.png">📁 크게 보기 (PNG)</a></td>
+      <td align="center"><img src="assets/인사관리%20ERD.png" width="250" alt="ERD Preview"/><br/><a href="assets/ERD.png">📁 크게 보기 (PNG)</a></td>
     </tr>
   </table>
 
   <p align="center">
     <strong>[Demo Video]</strong><br/>
-    <a href="https://github.com/clem0927/HR_young/releases/download/v1.0/HR.mp4">
-      🎬 시연영상 다운로드
-    </a>
-  </p>
+    [🎥 시연 영상 보기](https://private-user-images.githubusercontent.com/179509039/544136197-bb189007-2219-4e18-acc1-1e9dcef0fc29.mp4?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzAwOTU0MzcsIm5iZiI6MTc3MDA5NTEzNywicGF0aCI6Ii8xNzk1MDkwMzkvNTQ0MTM2MTk3LWJiMTg5MDA3LTIyMTktNGUxOC1hY2MxLTFlOWRjZWYwZmMyOS5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwMjAzJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDIwM1QwNTA1MzdaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yOGUxNDU0MzFmMTFjODEwMTlhODQxMGE0MGM0ODk0MjRlZGEwYzQ5ZGM2MDdiYjY3MjM4MjcyN2NkMGU5NGY4JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.fKA4TLf6zYJlE0MHrZayaoTPTitwxVla_ScnTQ6gHbo)
 </div>
 
 ---
@@ -54,7 +51,6 @@
 | :---: | :---: | :---: | :---: | :---: |
 | <img src="https://github.com/RunSBS.png" width="120" height="120" style="border-radius: 50%"/> | <img src="https://github.com/clem0927.png" width="120" height="120" style="border-radius: 50%"/> | <img src="https://github.com/KKEUN22.png" width="120" height="120" style="border-radius: 50%"/> | <img src="https://github.com/JeonHyunGyu.png" width="120" height="120" style="border-radius: 50%"/> | <img src="https://github.com/Kangkyuho.png" width="120" height="120" style="border-radius: 50%"/> |
 | [@RunSBS](https://github.com/RunSBS) | [@clem0927](https://github.com/clem0927) | [@KKEUN22](https://github.com/KKEUN22) | [@JeonHyunGyu](https://github.com/JeonHyunGyu) | [@Kangkyuho](https://github.com/Kangkyuho) |
-| 010-2731-7128 | 010-9917-4907 | 010-6291-2104 | 010-9341-5578 | 010-9588-5776 |
 | <ul style="text-align: left;"><li>프로젝트 총괄 매니징</li><li>부서 및 사원</li></ul> | <ul style="text-align: left;"><li>시큐리티</li><li>일정</li><li>챗봇</li></ul> | <ul style="text-align: left;"><li>UI/UX 프론트엔드 설계</li><li>근태</li></ul> | <ul style="text-align: left;"><li>DB 모델링</li><li>평가 및 포상</li></ul> | <ul style="text-align: left;"><li>전자결재</li></ul> |
 
 <br/>
