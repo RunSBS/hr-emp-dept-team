@@ -62,13 +62,10 @@
 
 ### 👤 인사관리 핵심 기능 개발
 **부서 · 사원 · 파견 관리 전반 담당**
-
 </div>
-
 - 인사관리 도메인 전반 설계 및 구현
 - 부서 / 사원 / 파견 정보 **CRUD 기능 개발**
 - 인사 데이터 기반 **AI 사원 조회 기능 구현**
-
 <br/>
 
 ---
@@ -76,7 +73,6 @@
 ## ✨ 4. Key Features (주요 기능)
 
 ### 📌 인사관리 (HR Management)
-
 - **부서 관리**
     - 부서 생성, 수정, 삭제, 조회
 - **사원 관리**
@@ -118,19 +114,3 @@ private Long userId;
 @Column(name = "project_status")
 private String projectStatus;
 ```
-
-### 🚀 0. Getting Started (시작하기)
-```bash
-
-### 💻 Frontend(React)
-$ cd vite
-$ npm install
-$ npm run dev
-
-### 🍃 Backend (Spring Boot)
-# gradlew 실행 권한 부여 (Linux/Mac)
-# chmod +x gradlew
-$ ./gradlew bootRun
-
-### 🐍 AI Server (Flask)
-$cd C:/Soldesk/HR_Flask$ python run.py
