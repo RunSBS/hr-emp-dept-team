@@ -45,15 +45,17 @@
 
 <br/>
 
-## 👥 2. Team Members (팀원 및 팀 소개)
+## 👥 2. Team Members (팀원 및 역할)
 
-| **김재현 (PM)** | **김민영 (PL)** | **김경은 (FE)** | **전현규 (DB)** | **강규호 (AI)** |
+<div align="center">
+
+| 김재현 <br/> <sub>PM</sub> | 김민영 <br/> <sub>PL</sub> | 김경은 <br/> <sub>FE</sub> | 전현규 <br/> <sub>DB</sub> | 강규호 <br/> <sub>AI</sub> |
 | :---: | :---: | :---: | :---: | :---: |
-| <img src="https://github.com/RunSBS.png" width="120" height="120" style="border-radius: 50%"/> | <img src="https://github.com/clem0927.png" width="120" height="120" style="border-radius: 50%"/> | <img src="https://github.com/KKEUN22.png" width="120" height="120" style="border-radius: 50%"/> | <img src="https://github.com/JeonHyunGyu.png" width="120" height="120" style="border-radius: 50%"/> | <img src="https://github.com/Kangkyuho.png" width="120" height="120" style="border-radius: 50%"/> |
-| [@RunSBS](https://github.com/RunSBS) | [@clem0927](https://github.com/clem0927) | [@KKEUN22](https://github.com/KKEUN22) | [@JeonHyunGyu](https://github.com/JeonHyunGyu) | [@Kangkyuho](https://github.com/Kangkyuho) |
-| <ul style="text-align: left;"><li>프로젝트 총괄 매니징</li><li>부서 및 사원</li></ul> | <ul style="text-align: left;"><li>시큐리티</li><li>일정</li><li>챗봇</li></ul> | <ul style="text-align: left;"><li>UI/UX 프론트엔드 설계</li><li>근태</li></ul> | <ul style="text-align: left;"><li>DB 모델링</li><li>평가 및 포상</li></ul> | <ul style="text-align: left;"><li>전자결재</li></ul> |
+| <img src="https://github.com/RunSBS.png" width="110"/> | <img src="https://github.com/clem0927.png" width="110"/> | <img src="https://github.com/KKEUN22.png" width="110"/> | <img src="https://github.com/JeonHyunGyu.png" width="110"/> | <img src="https://github.com/Kangkyuho.png" width="110"/> |
+| 🔹 프로젝트 총괄<br/>🔹 부서·사원 관리 | 🔹 시큐리티<br/>🔹 일정 관리<br/>🔹 챗봇 | 🔹 UI/UX 설계<br/>🔹 근태 관리 | 🔹 DB 모델링<br/>🔹 평가·포상 | 🔹 전자결재<br/>🔹 AI 기능 |
 
-<br/>
+</div>
+
 
 ## 🛠 3. My Contributions (담당 파트)
 
