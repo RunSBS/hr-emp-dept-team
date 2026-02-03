@@ -18,7 +18,6 @@
   <table>
     <tr>
       <td align="center"><b>📊 발표 PPT</b></td>
-      <td align="center"><b>📋 테이블 명세서</b></td>
       <td align="center"><b>🗺️ ERD</b></td>
     </tr>
     <tr>
@@ -62,10 +61,13 @@
 
 ### 👤 인사관리 핵심 기능 개발
 **부서 · 사원 · 파견 관리 전반 담당**
+
 </div>
+
 - 인사관리 도메인 전반 설계 및 구현
 - 부서 / 사원 / 파견 정보 **CRUD 기능 개발**
 - 인사 데이터 기반 **AI 사원 조회 기능 구현**
+
 <br/>
 
 ---
@@ -73,6 +75,7 @@
 ## ✨ 4. Key Features (주요 기능)
 
 ### 📌 인사관리 (HR Management)
+
 - **부서 관리**
     - 부서 생성, 수정, 삭제, 조회
 - **사원 관리**
@@ -90,27 +93,3 @@
   <img src="assets/AI검색.png" width="70%" alt="AI 사원 조회"/>
   <p><i>LLM을 활용한 자연어 기반 사원 조회 기능</i></p>
 </div>
-
-
-## 🗄️5.Database Naming Convention (명명 규칙)
-
-프로젝트의 유지보수와 가독성을 위해 데이터베이스와 소스코드 간의 명명 규칙을 다음과 같이 정의하여 준수하였습니다.
-
-| 구분 | 규칙 | 예시 |
-| :--- | :--- | :--- |
-| **Database Table** | `snake_case` (대문자/언더바) | `USER_PROFILE`, `PROJECT_HISTORY` |
-| **Database Column** | `snake_case` (대문자/언더바) | `USER_ID`, `CREATED_AT` |
-| **Java Entity / Variable** | `camelCase` (소문자 시작 대문자 구분) | `userId`, `createdAt` |
-| **Java Class** | `PascalCase` (대문자 시작) | `UserProfile`, `ProjectService` |
-
-### 🔗 Mapping Example
-> JPA의 `@Column` 어노테이션 등을 활용하여 DB와 Entity 간의 변수명을 매핑하였습니다.
-
-```java
-// Java Entity (CamelCase)
-@Column(name = "user_id") // DB Column (SnakeCase)
-private Long userId;
-
-@Column(name = "project_status")
-private String projectStatus;
-```
