@@ -58,92 +58,15 @@
 
 ## 🛠 3. My Contributions (담당 파트)
 <div align="center">
-  <img src="assets/담당파트.png" alt="담당파트" width="80%"/>
-  <p><i>프로젝트 기획, 시큐리티 보안 설계 및 AI 서비스 핵심 기능 개발 담당</i></p>
+  인사관리 ( 부서, 사원, 파견관리 )
 </div>
-
-- 스프링 시큐리티를 활용한 회원가입 및 로그인
-- 시큐리티를 통한 권한별 접근통제
-- 일정탭
-- AI 챗봇
-
-<br/>
-
-## 🏗 4. Technology Stack (기술 스택)
-### 4.1 개발환경
-<div align="center">
-  <img src="assets/기술스택.png" alt="기술스택" width="80%"/>
-  <p><i>Spring Boot와 React를 중심으로 한 풀스택 개발 환경 및 AI 기술 스택</i></p>
-</div>
-
 <br/>
 
 ## ✨ 5. Key Features (주요 기능)
-
-### 🔐 Security & Auth
-- **회원가입 및 로그인**: 스프링 시큐리티를 활용한 회원가입 및 로그인
-- **이메일을 통한 사원초대**: 관리자는 사원프로필 생성 후 이메일로 초대, 사원은 이메일을 통해서만 가입 가능
-- **시큐리티를 통한 접근 통제**: 직책별 권한을 통한 페이지 및 컨트롤러 메서드 접근 제한
-
-<div align="center">
-  <img src="assets/회원가입.png" width="35%"/>
-  <img src="assets/이메일.png" width="35%"/>
-  <p><i>회원가입 및 이메일을 통한 사원 초대</i></p>
-</div>
-
+- 부서/사원/파견 CRUD
+- AI 사원 조회 기능
+<img src="assets/AI검색.png">
 ---
-
-### 📅 Management
-- **캘린더**: 개인별 일정, 프로젝트 현황, 휴가 현황을 조회 후 시각화
-- **회의실**: 회의실 생성, 수정, 삭제 조회 및 예약 기능
-
-<div align="center">
-  <img src="assets/캘린더.png" width="80%"/>
-  <p><i>사내 일정을 시각화 해놓은 캘린더</i></p>
-  <br/>
-  <img src="assets/회의실.png" width="50%"/>
-  <img src="assets/회의실 예약.png" width="20%"/> 
-  <p><i>회의실 관리 및 예약 시스템</i></p>
-</div>
-
----
-
-### 📁 Project Progress
-- **프로젝트 생성**:
-  - 소프트웨어공학적인 개발기법에 의거해 개발자 맞춤 프로젝트 생성
-  - 프로젝트 생성, 수정, 삭제, 조회 및 참여자 배정 기능
-  - 모든 조회 리스트 페이징 처리와 검색 기능 구현
-- **프로젝트 관리**: 프로젝트 단계별 목표 설정 및 산출물 업로드
-- **산출물 기능**: 산출물 다운로드 및 이미지 미리보기 지원
-
-<div align="center">
-  <img src="assets/프로젝트.png" width="32%"/>
-  <img src="assets/프로젝트관리.png" width="32%"/>
-  <img src="assets/파일업로드.png" width="32%"/>
-  <p><i> 프로젝트 / 프로젝트관리 / 파일업로드</i></p>
-</div>
-
----
-
-### 🤖 AI Intelligent Service
-- **AI 단계 도우미**: 프로젝트 단계 추가 시 프로젝트 내용이나 목표를 AI가 직접 생성해줌 (Ollama Gemma3:4b 로컬 구동)
-
-<div align="center">
-  <img src="assets/AI단계도우미.png" width="40%"/>
-  <p><i>LLM을 활용한 AI단계 도우미</i></p>
-</div>
-
-- **AI 챗봇**:
-  - CSV 파일 기반 RAG 방식으로 작동
-  - 많이 한 질문을 3개까지 보여주는 누적질문 기능
-  - 비속어를 필터링하는 비속어 필터 기능
-
-<div align="center">
-  <img src="assets/챗봇.png" width="60%"/>
-  <p><i>CSV파일내 사내 규정 및 데이터를 학습한 RAG 기반 지능형 안내 챗봇</i></p>
-</div>
-
-<br/>
 
 ## 🗄️6.Database Naming Convention (명명 규칙)
 
