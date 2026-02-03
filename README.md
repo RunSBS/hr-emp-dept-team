@@ -24,7 +24,7 @@
     <tr>
       <td align="center"><br/><a href="assets/솔데스크%20HR_김재현.pptx">📁 다운로드 (PPTX)</a></td>
       <td align="center"><br/><a href="assets/HR_테이블명세서_최종.xlsx">📁 다운로드 (XLSX)</a></td>
-      <td align="center"><img src="assets/인사관리%20ERD.png" width="250" alt="ERD Preview"/><br/><a href="assets/ERD.png">📁 크게 보기 (https://github.com/RunSBS/hr-emp-dept-team/blob/main/assets/%EC%9D%B8%EC%82%AC%EA%B4%80%EB%A6%AC%20%EC%A0%84%EC%B2%B4%ED%83%AD.png)</a></td>
+      <td align="center"><img src="assets/인사관리%20ERD.png" width="250" alt="ERD Preview"/><br/><a href="assets/ERD.png">[📁 크게보기](https://github.com/RunSBS/hr-emp-dept-team/blob/main/assets/%EC%9D%B8%EC%82%AC%EA%B4%80%EB%A6%AC%20%EC%A0%84%EC%B2%B4%ED%83%AD.png)</a></td>
     </tr>
   </table>
 </div>
