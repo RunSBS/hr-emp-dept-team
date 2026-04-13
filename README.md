@@ -97,11 +97,13 @@
   <p><i>LLM을 활용한 자연어 기반 사원 조회 기능</i></p>
 </div>
 
+## 🗄️5.Database Naming Convention (명명 규칙)
+
+프로젝트의 유지보수와 가독성을 위해 데이터베이스와 소스코드 간의 명명 규칙을 다음과 같이 정의하여 준수하였습니다.
+
 ### 🔗 Mapping Example
 
 > JPA의 `@Column` 어노테이션 등을 활용하여 DB와 Entity 간의 변수명을 매핑하였습니다.
-
----
 
 ```java
 
